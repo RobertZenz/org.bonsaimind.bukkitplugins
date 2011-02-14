@@ -1,12 +1,12 @@
 /*
  * This file is part of SaveStopper.
  *
- * Foobar is free software: you can redistribute it and/or modify
+ * SaveStopper is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Foobar is distributed in the hope that it will be useful,
+ * SaveStopper is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -58,11 +58,13 @@ public class SaveStopper extends JavaPlugin {
 		
         PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
+
+		onPlayerQuit();
 	}
 
 	protected void onPlayerLogin() {
 		if(!isSaving) {
-			System.out.println("Enabling save...");
+			System.out.println("SaveStopper: Enabling save...");
 			CommandHelper.queueConsoleCommand(server, "save-on");
 			isSaving = true;
 		}
@@ -70,8 +72,11 @@ public class SaveStopper extends JavaPlugin {
 
 	protected void onPlayerQuit() {
 		if(isSaving && server.getOnlinePlayers().length == 0) {
-			System.out.println("Disabling save...");
+			System.out.println("SaveStopper: Disabling save...");
+
+			CommandHelper.queueConsoleCommand(server, "save-all");			
 			CommandHelper.queueConsoleCommand(server, "save-off");
+
 			isSaving = false;
 		}
 	}
