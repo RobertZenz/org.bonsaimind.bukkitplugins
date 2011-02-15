@@ -21,7 +21,6 @@
  * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SaveStopper
  * E-Mail: bobby@bonsaimind.org
  */
-
 package org.bonsaimind.bukkitplugins;
 
 import org.bukkit.event.player.PlayerEvent;
@@ -33,6 +32,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
  * @author Robert 'Bobby' Zenz
  */
 public class SaveStopperPlayerListener extends PlayerListener {
+
 	private SaveStopper parent = null;
 
 	public SaveStopperPlayerListener(SaveStopper parentInstance) {
@@ -41,16 +41,15 @@ public class SaveStopperPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		parent.onPlayerLogin();
+		parent.enable();
 
 		super.onPlayerLogin(event);
 	}
 
 	@Override
 	public void onPlayerQuit(PlayerEvent event) {
-		parent.onPlayerQuit();
-		
+		parent.disable();
+
 		super.onPlayerQuit(event);
 	}
-
 }
