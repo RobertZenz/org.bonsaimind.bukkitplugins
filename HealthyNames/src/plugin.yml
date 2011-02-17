@@ -1,0 +1,5 @@
+name: HealthyNames
+author: Robert 'Bobby' Zenz
+
+main: org.bonsaimind.bukkitplugins.HealthyNames
+version: 0.1
