@@ -26,3 +26,13 @@ Show the player names in chat in different colors according to their health.
 
  * http://forums.bukkit.org/threads/misc-chat-healthynames-v0-1-colored-names-in-chat-based-on-health-283.4710/
  * http://forums.bukkit.org/threads/showing-hp-with-the-playername-color.4638/
+ 
+
+
+SpawnRandomizer
+---------------
+ 
+Teleports the player to random locations on respawn.
+
+ * http://forums.bukkit.org/threads/random-teleportation-on-death.5099/
+ * http://forums.bukkit.org/threads/random-spawn.1134/
