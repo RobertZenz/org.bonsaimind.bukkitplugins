@@ -25,9 +25,6 @@ package org.bonsaimind.bukkitplugins;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityListener;
 
@@ -48,30 +45,6 @@ public class HealthyNamesEntityListener extends EntityListener {
 			parent.damageOccured((Player)event.getEntity());
 		}
 		super.onEntityCombust(event);
-	}
-
-	@Override
-	public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
-		if(event.getEntity() instanceof Player) {
-			parent.damageOccured((Player)event.getEntity());
-		}
-		super.onEntityDamageByBlock(event);
-	}
-
-	@Override
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if(event.getEntity() instanceof Player) {
-			parent.damageOccured((Player)event.getEntity());
-		}
-		super.onEntityDamageByEntity(event);
-	}
-
-	@Override
-	public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
-		if(event.getEntity() instanceof Player) {
-			parent.damageOccured((Player)event.getEntity());
-		}
-		super.onEntityDamageByProjectile(event);
 	}
 
 	@Override
