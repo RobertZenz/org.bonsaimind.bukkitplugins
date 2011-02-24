@@ -1,0 +1,5 @@
+name: SpawnRandomizer
+author: Robert 'Bobby' Zenz
+
+main: org.bonsaimind.bukkitplugins.SpawnRandomizer
+version: 0.1
