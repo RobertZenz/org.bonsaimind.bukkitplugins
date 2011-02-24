@@ -32,8 +32,9 @@ import org.bukkit.event.player.PlayerRespawnEvent;
  * @author Robert 'Bobby' Zenz
  */
 public class SpawnRandomizerPlayerListener extends PlayerListener {
+
 	SpawnRandomizer parent = null;
-	
+
 	public SpawnRandomizerPlayerListener(SpawnRandomizer parentInstance) {
 		parent = parentInstance;
 	}
@@ -46,7 +47,10 @@ public class SpawnRandomizerPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
+		if (parent.teleportOnLogin()) {
+			parent.teleport(event.getPlayer());
+		}
+
 		super.onPlayerLogin(event);
 	}
-
 }

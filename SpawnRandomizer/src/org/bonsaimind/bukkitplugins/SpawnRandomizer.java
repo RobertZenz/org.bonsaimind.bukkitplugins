@@ -29,6 +29,7 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -42,21 +43,27 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SpawnRandomizer extends JavaPlugin {
 
-	private final Server server = getServer();
-	SpawnRandomizerPlayerListener listener = null;
+	private Server server = null;
+	SpawnRandomizerPlayerListener listener = new SpawnRandomizerPlayerListener(this);
 	private Map<String, Object> config = null;
 	private Random rand = new Random(System.nanoTime());
-
+	private int diffX = 0;
+	private int diffZ = 0;
+	
 	public void onDisable() {
-		config.clear();
-		config = null;
-
 		rand = null;
 
 		listener = null;
+
+		config.clear();
+		config = null;
+
+		server = null;
 	}
 
 	public void onEnable() {
+		server = getServer();
+
 		PluginManager pm = server.getPluginManager();
 		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Low, this);
 		pm.registerEvent(Type.PLAYER_RESPAWN, listener, Priority.Low, this);
@@ -82,19 +89,19 @@ public class SpawnRandomizer extends JavaPlugin {
 		}
 
 		if (!config.containsKey("minX")) {
-			config.put("minX", 0);
+			config.put("minX", -100);
 		}
 
-		if (!config.containsKey("minY")) {
-			config.put("minY", 0);
+		if (!config.containsKey("minZ")) {
+			config.put("minZ", -100);
 		}
 
 		if (!config.containsKey("maxX")) {
-			config.put("maxX", 0);
+			config.put("maxX", 100);
 		}
 
-		if (!config.containsKey("maxY")) {
-			config.put("maxY", 0);
+		if (!config.containsKey("maxZ")) {
+			config.put("maxZ", 100);
 		}
 
 		if (!config.containsKey("allowCaveSpawn")) {
@@ -105,6 +112,19 @@ public class SpawnRandomizer extends JavaPlugin {
 			System.out.println("SpawnRandomizer: Configuration file doesn't exist, dumping now...");
 			helper.write(config);
 		}
+
+		diffX = Math.abs((Integer) config.get("maxX") - (Integer) config.get("minX") + 1);
+		diffZ = Math.abs((Integer) config.get("maxZ") - (Integer) config.get("minZ") + 1);
+	}
+
+	protected boolean teleportOnLogin() {
+		return (Boolean) config.get("teleportOnLogin");
+	}
+
+	protected void teleport(Player player) {
+		World world = player.getWorld();
+
+		player.teleportTo(getRandomLocation(world));
 	}
 
 	protected void teleport(PlayerRespawnEvent event) {
@@ -114,20 +134,26 @@ public class SpawnRandomizer extends JavaPlugin {
 	}
 
 	private Location getRandomLocation(World world) {
-		int x = rand.nextInt() * (Integer) config.get("minX") % (Integer) config.get("maxX");
-		int y = rand.nextInt() * (Integer) config.get("minY") % (Integer) config.get("maxY");
+		int x = rand.nextInt(diffX) + (Integer) config.get("minX");
+		int z = rand.nextInt(diffZ) + (Integer) config.get("minZ");
 
-		int z = world.getHighestBlockYAt(x, y);
+		System.out.println("x: " + x);
+		System.out.println("z: " + z);
+
+		int y = world.getHighestBlockYAt(x, z);
+
+		System.out.println("y: " + y);
 
 		if ((Boolean) config.get("allowCaveSpawn")) {
-			for (int i = 0; i < world.getHighestBlockYAt(x, y); i++) {
-				if (world.getBlockTypeIdAt(x, y, i) == 0 && world.getBlockTypeIdAt(x, y, i + 1) == 0) {
-					z = i;
+			for (int i = 0; i < y; i++) {
+				if (world.getBlockTypeIdAt(x, z, i) == 0 && world.getBlockTypeIdAt(x, z, i + 1) == 0) {
+					y = i;
 					break;
 				}
 			}
 		}
+		System.out.println("y: " + y);
 
-		return new Location(world, x, y, z);
+		return new Location(world, x + 0.5, y + 2, z + 0.5);
 	}
 }
