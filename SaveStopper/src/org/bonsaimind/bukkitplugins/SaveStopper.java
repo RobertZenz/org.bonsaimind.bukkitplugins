@@ -23,7 +23,6 @@
  */
 package org.bonsaimind.bukkitplugins;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -32,7 +31,6 @@ import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,15 +40,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SaveStopper extends JavaPlugin {
 
-	private final Server server = getServer();
+	private Server server = null;
 	private boolean isSaving = true;
 	private Map<String, Object> config = null;
 	private Timer timer = new Timer(true);
 	private SaveStopperPlayerListener listener = new SaveStopperPlayerListener(this);
-
-	public SaveStopper(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-		super(pluginLoader, instance, desc, folder, plugin, cLoader);
-	}
 
 	public void onDisable() {
 		timer.cancel();
@@ -60,9 +54,13 @@ public class SaveStopper extends JavaPlugin {
 
 		config.clear();
 		config = null;
+
+		server = null;
 	}
 
 	public void onEnable() {
+		server = getServer();
+		
 		PluginManager pm = server.getPluginManager();
 		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Low, this);
 		pm.registerEvent(Type.PLAYER_QUIT, listener, Priority.Low, this);
