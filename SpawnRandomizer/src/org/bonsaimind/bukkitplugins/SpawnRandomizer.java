@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -47,6 +48,7 @@ public class SpawnRandomizer extends JavaPlugin {
 	SpawnRandomizerPlayerListener listener = new SpawnRandomizerPlayerListener(this);
 	private Map<String, Object> config = null;
 	private Random rand = new Random(System.nanoTime());
+	private int air = Material.AIR.getId();
 	private int diffX = 0;
 	private int diffZ = 0;
 	
@@ -105,7 +107,7 @@ public class SpawnRandomizer extends JavaPlugin {
 		}
 
 		if (!config.containsKey("allowCaveSpawn")) {
-			config.put("allowCaveSpawn", false);
+			config.put("allowCaveSpawn", true);
 		}
 
 		if (!helper.exists()) {
@@ -137,22 +139,16 @@ public class SpawnRandomizer extends JavaPlugin {
 		int x = rand.nextInt(diffX) + (Integer) config.get("minX");
 		int z = rand.nextInt(diffZ) + (Integer) config.get("minZ");
 
-		System.out.println("x: " + x);
-		System.out.println("z: " + z);
-
 		int y = world.getHighestBlockYAt(x, z);
-
-		System.out.println("y: " + y);
 
 		if ((Boolean) config.get("allowCaveSpawn")) {
 			for (int i = 0; i < y; i++) {
-				if (world.getBlockTypeIdAt(x, z, i) == 0 && world.getBlockTypeIdAt(x, z, i + 1) == 0) {
+				if (world.getBlockTypeIdAt(x, i, z) == air && world.getBlockTypeIdAt(x, i + 1, z) == air) {
 					y = i;
 					break;
 				}
 			}
 		}
-		System.out.println("y: " + y);
 
 		return new Location(world, x + 0.5, y + 2, z + 0.5);
 	}
