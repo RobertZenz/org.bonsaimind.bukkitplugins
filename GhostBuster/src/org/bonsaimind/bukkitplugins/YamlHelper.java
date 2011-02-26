@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -73,6 +74,27 @@ public class YamlHelper {
 			try {
 				Reader rdr = new FileReader(configFile);
 				res = (Map<String, Object>) yaml.load(rdr);
+				rdr.close();
+			} catch (FileNotFoundException ex) {
+				System.err.println(ex.getMessage());
+			} catch (IOException ex) {
+				System.err.println(ex.getMessage());
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Read the configuration file and return the content.
+	 * @return The content of the configuration file. null on error.
+	 */
+	public List<String> readList() {
+		List<String> res = null;
+		if (configFile.exists() && configFile.canRead()) {
+			try {
+				Reader rdr = new FileReader(configFile);
+				res = (List<String>) yaml.load(rdr);
 				rdr.close();
 			} catch (FileNotFoundException ex) {
 				System.err.println(ex.getMessage());

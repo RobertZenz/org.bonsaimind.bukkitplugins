@@ -25,6 +25,8 @@ package org.bonsaimind.bukkitplugins;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -45,6 +47,7 @@ public class GhostBuster extends JavaPlugin {
 	private GhostBusterPlayerListener listener = new GhostBusterPlayerListener(this);
 	private Map<String, Object> config = null;
 	private Map<String, Object> ghosts = null;
+	private List<String> exceptions = null;
 
 	public void onDisable() {
 		setGhosts();
@@ -62,6 +65,7 @@ public class GhostBuster extends JavaPlugin {
 
 		readConfiguration();
 		getGhosts();
+		getExceptions();
 	}
 
 	protected void readConfiguration() {
@@ -80,6 +84,10 @@ public class GhostBuster extends JavaPlugin {
 
 		if (!config.containsKey("keepAtRestart")) {
 			config.put("keepAtRestart", true);
+		}
+
+		if (!config.containsKey("freeSlotsMode")) {
+			config.put("freeSlotsMode", false);
 		}
 
 		if (!config.containsKey("deathMessage")) {
@@ -116,16 +124,29 @@ public class GhostBuster extends JavaPlugin {
 		}
 	}
 
-	protected void makeGhost(Player player) {
-		ghosts.put(player.getName(), new Date());
+	protected void getExceptions() {
+		YamlHelper helper = new YamlHelper("plugins/GhostBuster/exceptions.yml");
+		exceptions = helper.readList();
 
-		System.out.println("makeGhost()");
-		player.kickPlayer((String) config.get("deathMessage"));
+		if (exceptions == null) {
+			System.out.println("GhostBuster: No exceptions list was found.");
+			exceptions = new LinkedList<String>();
+		}
+	}
+
+	protected void makeGhost(Player player) {
+		if (!exceptions.contains(player.getName())) {
+			// Only ban if the freeSlotsMode is off or the Server is full...
+			if (!(Boolean) config.get("freeSlotsMode") || server.getOnlinePlayers().length == server.getMaxPlayers()) {
+				ghosts.put(player.getName(), new Date());
+				player.kickPlayer((String) config.get("deathMessage"));
+			}
+		}
 	}
 
 	protected void playerLoggedIn(PlayerLoginEvent event) {
 		String name = event.getPlayer().getName();
-		System.out.println("ghostJoined()");
+
 		if (ghosts.containsKey(name)) {
 			Date now = new Date();
 			Date then = (Date) ghosts.get(name);
