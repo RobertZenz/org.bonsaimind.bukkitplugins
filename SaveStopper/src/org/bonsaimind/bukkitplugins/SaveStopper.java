@@ -80,9 +80,7 @@ public class SaveStopper extends JavaPlugin {
 		config = helper.read();
 
 		if (config == null) {
-			if ((Boolean) config.get("verbose")) {
-				System.out.println("SaveStopper: No configuration file found, using defaults.");
-			}
+			System.out.println("SaveStopper: No configuration file found, using defaults.");
 			config = new HashMap<String, Object>();
 		}
 
@@ -104,9 +102,7 @@ public class SaveStopper extends JavaPlugin {
 		}
 
 		if (!helper.exists()) {
-			if ((Boolean) config.get("verbose")) {
-				System.out.println("SaveStopper: Configuration file doesn't exist, dumping now...");
-			}
+			System.out.println("SaveStopper: Configuration file doesn't exist, dumping now...");
 			helper.write(config);
 		}
 	}
