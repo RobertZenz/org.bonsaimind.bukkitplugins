@@ -23,7 +23,9 @@
  */
 package org.bonsaimind.bukkitplugins;
 
+import java.util.Arrays;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
@@ -32,10 +34,28 @@ import org.bukkit.event.player.PlayerRespawnEvent;
  * @author Robert 'Bobby' Zenz
  */
 public class HealthyNamesPlayerListener extends PlayerListener {
+
 	private HealthyNames parent = null;
+	private Integer foodIds[] = {
+		260,	// Red Apple
+		282,	// Mushroom Stew...reminds me of Wiggles.
+		//296,	// Wheat
+		297,	// Bread
+		319,	// Raw Porkchop
+		320,	// Cooked Porkchop
+		322,	// Golden Apple
+		335,	// Milk
+		//344,	// Egg
+		349,	// Raw Fish
+		350,	// Fish
+		//353,	// Sugar
+		354		// Why do I implement this? It's a lie anyway...
+	};
 
 	public HealthyNamesPlayerListener(HealthyNames parentInstance) {
 		parent = parentInstance;
+
+		Arrays.sort(foodIds);
 	}
 
 	@Override
@@ -48,5 +68,14 @@ public class HealthyNamesPlayerListener extends PlayerListener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		parent.damageOccured(event.getPlayer());
 		super.onPlayerRespawn(event);
+	}
+
+	@Override
+	public void onPlayerItem(PlayerItemEvent event) {
+		if (Arrays.binarySearch(foodIds, event.getItem().getTypeId()) >= 0) {
+			parent.damageOccured(event.getPlayer());
+		}
+
+		super.onPlayerItem(event);
 	}
 }

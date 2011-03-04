@@ -34,6 +34,7 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 /**
  *
@@ -42,6 +43,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class HealthyNames extends JavaPlugin {
 
 	private Server server = null;
+	private BukkitScheduler scheduler = null;
 	private Map<Integer, ChatColor> colors = new HashMap<Integer, ChatColor>();
 	private HealthyNamesPlayerListener playerListener = new HealthyNamesPlayerListener(this);
 	private HealthyNamesEntityListener entityListener = new HealthyNamesEntityListener(this);
@@ -53,10 +55,12 @@ public class HealthyNames extends JavaPlugin {
 
 	public void onEnable() {
 		server = getServer();
+		scheduler = server.getScheduler();
 
 		PluginManager pm = server.getPluginManager();
 		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Low, this);
 		pm.registerEvent(Type.PLAYER_RESPAWN, playerListener, Priority.Low, this);
+		pm.registerEvent(Type.PLAYER_ITEM, playerListener, Priority.Low, this);
 		pm.registerEvent(Type.ENTITY_DAMAGED, entityListener, Priority.Low, this);
 		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Low, this);
 
@@ -102,7 +106,7 @@ public class HealthyNames extends JavaPlugin {
 		}
 
 		// Now we'll convert our new shiny list
-		// what we actually need.
+		// to what we actually need.
 		colors.clear();
 
 		for (Entry<Integer, Integer> entry : temp.entrySet()) {
@@ -111,10 +115,19 @@ public class HealthyNames extends JavaPlugin {
 	}
 
 	protected void damageOccured(Player player) {
-		if (colors.containsKey(player.getHealth())) {
-			player.setDisplayName(colors.get(player.getHealth()) + player.getName() + ChatColor.WHITE);
-		} else {
-			player.setDisplayName(ChatColor.WHITE + player.getName() + ChatColor.WHITE);
-		}
+		final Player finalPlayer = player;
+
+		scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
+
+			public void run() {
+				if (finalPlayer != null) {
+					if (colors.containsKey(finalPlayer.getHealth())) {
+						finalPlayer.setDisplayName(colors.get(finalPlayer.getHealth()) + finalPlayer.getName() + ChatColor.WHITE);
+					} else {
+						finalPlayer.setDisplayName(ChatColor.WHITE + finalPlayer.getName() + ChatColor.WHITE);
+					}
+				}
+			}
+		}, 4);
 	}
 }
