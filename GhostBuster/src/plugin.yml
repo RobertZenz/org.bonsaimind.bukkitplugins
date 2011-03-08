@@ -2,7 +2,7 @@ name: GhostBuster
 author: Robert 'Bobby' Zenz
 
 main: org.bonsaimind.bukkitplugins.GhostBuster
-version: 0.2
+version: 0.3
 
 commands:
  ghost_ban:
