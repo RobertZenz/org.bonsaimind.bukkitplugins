@@ -38,7 +38,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class YamlHelper {
+public class SaveStopperYamlHelper {
 
 	private File configFile = null;
 	private Yaml yaml = null;
@@ -47,7 +47,7 @@ public class YamlHelper {
 	 * Create the class.
 	 * @param configFile The path to the configuration file.
 	 */
-	public YamlHelper(String configFile) {
+	public SaveStopperYamlHelper(String configFile) {
 		this.configFile = new File(configFile);
 
 		DumperOptions options = new DumperOptions();

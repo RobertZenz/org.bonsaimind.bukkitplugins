@@ -60,7 +60,7 @@ public class SaveStopper extends JavaPlugin {
 
 	public void onEnable() {
 		server = getServer();
-		
+
 		PluginManager pm = server.getPluginManager();
 		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Low, this);
 		pm.registerEvent(Type.PLAYER_QUIT, listener, Priority.Low, this);
@@ -76,7 +76,7 @@ public class SaveStopper extends JavaPlugin {
 	}
 
 	protected void readConfiguration() {
-		YamlHelper helper = new YamlHelper("plugins/SaveStopper/config.yml");
+		SaveStopperYamlHelper helper = new SaveStopperYamlHelper("plugins/SaveStopper/config.yml");
 		config = helper.read();
 
 		if (config == null) {
@@ -120,7 +120,7 @@ public class SaveStopper extends JavaPlugin {
 			if ((Boolean) config.get("verbose")) {
 				System.out.println("SaveStopper: Enabling saving...");
 			}
-			CommandHelper.queueConsoleCommand(server, "save-on");
+			SaveStopperCommandHelper.queueConsoleCommand(server, "save-on");
 			isSaving = true;
 		}
 	}
@@ -129,23 +129,25 @@ public class SaveStopper extends JavaPlugin {
 	 * Disable saving, check if we should use the timer or not.
 	 */
 	protected void disable() {
-		long wait = ((Number) config.get("wait")).longValue();
-		if (wait > 0) {
+		if (isSaving && server.getOnlinePlayers().length == 0) {
+			long wait = ((Number) config.get("wait")).longValue();
+			if (wait > 0) {
 
-			if ((Boolean) config.get("verbose")) {
-				System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(wait) + " seconds...");
-			}
-
-			timer.schedule(new TimerTask() {
-
-				@Override
-				public void run() {
-					internalDisable();
+				if ((Boolean) config.get("verbose")) {
+					System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(wait) + " seconds...");
 				}
-			},
-					wait * 1000);
-		} else {
-			internalDisable();
+
+				timer.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						internalDisable();
+					}
+				},
+						wait * 1000);
+			} else {
+				internalDisable();
+			}
 		}
 	}
 
@@ -159,10 +161,10 @@ public class SaveStopper extends JavaPlugin {
 			}
 
 			if ((Boolean) config.get("saveAll")) {
-				CommandHelper.queueConsoleCommand(server, "save-all");
+				SaveStopperCommandHelper.queueConsoleCommand(server, "save-all");
 			}
 
-			CommandHelper.queueConsoleCommand(server, "save-off");
+			SaveStopperCommandHelper.queueConsoleCommand(server, "save-off");
 
 			isSaving = false;
 		}
