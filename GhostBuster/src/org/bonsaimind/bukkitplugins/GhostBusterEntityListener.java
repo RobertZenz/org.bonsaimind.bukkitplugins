@@ -23,24 +23,29 @@
  */
 package org.bonsaimind.bukkitplugins;
 
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityListener;
 
 /**
  *
  * @author Robert 'Bobby' Zenz
  */
-public class GhostBusterPlayerListener extends PlayerListener {
-
+public class GhostBusterEntityListener extends EntityListener {
+	
 	private GhostBuster parent = null;
 
-	public GhostBusterPlayerListener(GhostBuster parentInstance) {
+	public GhostBusterEntityListener(GhostBuster parentInstance) {
 		parent = parentInstance;
 	}
 
 	@Override
-	public void onPlayerLogin(PlayerLoginEvent event) {
-		parent.playerLoggedIn(event);
-		super.onPlayerLogin(event);
+	public void onEntityDeath(EntityDeathEvent event) {
+		if (event.getEntity() instanceof Player) {
+			parent.makeGhost((Player)event.getEntity());
+		}
+		
+		super.onEntityDeath(event);
 	}
+
 }

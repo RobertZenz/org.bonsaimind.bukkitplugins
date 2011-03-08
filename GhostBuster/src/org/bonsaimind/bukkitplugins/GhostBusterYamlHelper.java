@@ -30,8 +30,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.List;
-import java.util.Map;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -39,7 +37,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class YamlHelper {
+public class GhostBusterYamlHelper {
 
 	private File configFile = null;
 	private Yaml yaml = null;
@@ -48,7 +46,7 @@ public class YamlHelper {
 	 * Create the class.
 	 * @param configFile The path to the configuration file.
 	 */
-	public YamlHelper(String configFile) {
+	public GhostBusterYamlHelper(String configFile) {
 		this.configFile = new File(configFile);
 
 		DumperOptions options = new DumperOptions();
@@ -68,33 +66,12 @@ public class YamlHelper {
 	 * Read the configuration file and return the content.
 	 * @return The content of the configuration file. null on error.
 	 */
-	public Map<String, Object> read() {
-		Map<String, Object> res = null;
+	public Object read() {
+		Object res = null;
 		if (configFile.exists() && configFile.canRead()) {
 			try {
 				Reader rdr = new FileReader(configFile);
-				res = (Map<String, Object>) yaml.load(rdr);
-				rdr.close();
-			} catch (FileNotFoundException ex) {
-				System.err.println(ex.getMessage());
-			} catch (IOException ex) {
-				System.err.println(ex.getMessage());
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Read the configuration file and return the content.
-	 * @return The content of the configuration file. null on error.
-	 */
-	public List<String> readList() {
-		List<String> res = null;
-		if (configFile.exists() && configFile.canRead()) {
-			try {
-				Reader rdr = new FileReader(configFile);
-				res = (List<String>) yaml.load(rdr);
+				res = yaml.load(rdr);
 				rdr.close();
 			} catch (FileNotFoundException ex) {
 				System.err.println(ex.getMessage());
@@ -111,7 +88,7 @@ public class YamlHelper {
 	 * @param content The new content to write.
 	 * @return true if the file was successfully written.
 	 */
-	public boolean write(Map<String, Object> content) {
+	public boolean write(Object content) {
 		if (!configFile.exists()) {
 			File parentDir = new File(configFile.getParent());
 			if (!parentDir.exists()) {

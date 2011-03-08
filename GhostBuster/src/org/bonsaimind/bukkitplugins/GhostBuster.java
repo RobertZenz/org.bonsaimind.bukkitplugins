@@ -23,12 +23,16 @@
  */
 package org.bonsaimind.bukkitplugins;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -44,33 +48,36 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class GhostBuster extends JavaPlugin {
 
 	private Server server = null;
-	private GhostBusterPlayerListener listener = new GhostBusterPlayerListener(this);
+	private GhostBusterPlayerListener playerListener = new GhostBusterPlayerListener(this);
+	private GhostBusterEntityListener entityListener = new GhostBusterEntityListener(this);
 	private Map<String, Object> config = null;
-	private Map<String, Object> ghosts = null;
+	private Map<String, Date> ghosts = null;
 	private List<String> exceptions = null;
 
 	public void onDisable() {
-		setGhosts();
+		saveGhosts();
 	}
 
 	public void onEnable() {
 		server = getServer();
 
 		PluginManager pm = server.getPluginManager();
-		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Highest, this);
-		pm.registerEvent(Type.PLAYER_RESPAWN, listener, Priority.High, this);
+		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Highest, this);
+		pm.registerEvent(Type.ENTITY_DEATH, entityListener, Priority.High, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
 		readConfiguration();
-		getGhosts();
+		loadGhosts();
 		getExceptions();
+
+		setCommands();
 	}
 
 	protected void readConfiguration() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/config.yml");
-		config = helper.read();
+		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/config.yml");
+		config = (Map<String, Object>) helper.read();
 
 		if (config == null) {
 			System.out.println("GhostBuster: No configuration file found, using defaults.");
@@ -104,34 +111,117 @@ public class GhostBuster extends JavaPlugin {
 		}
 	}
 
-	protected void getGhosts() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/ghosts.yml");
-		ghosts = helper.read();
+	protected void loadGhosts() {
+		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/ghosts.yml");
+		ghosts = (Map<String, Date>) helper.read();
 
 		if (ghosts == null) {
 			System.out.println("GhostBuster: No ghost list was found.");
-			ghosts = new HashMap<String, Object>();
+			ghosts = new HashMap<String, Date>();
 		}
 	}
 
-	protected void setGhosts() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/ghosts.yml");
+	protected void saveGhosts() {
+		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/ghosts.yml");
 
 		if ((Boolean) config.get("keepAtRestart")) {
 			helper.write(ghosts);
 		} else {
-			helper.write(new HashMap<String, Object>());
+			helper.write(new HashMap<String, Date>());
 		}
 	}
 
 	protected void getExceptions() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/exceptions.yml");
-		exceptions = helper.readList();
+		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/exceptions.yml");
+		exceptions = (List<String>) helper.read();
 
 		if (exceptions == null) {
 			System.out.println("GhostBuster: No exceptions list was found.");
 			exceptions = new LinkedList<String>();
 		}
+	}
+
+	protected void setCommands() {
+		getCommand("ghost_ban").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				if (strings.length > 0) {
+					String playerName = strings[0];
+					Player player = server.getPlayer(playerName);
+
+					if (player != null) {
+						cs.sendMessage("GhostBuster: Banning \"" + playerName + "\"...");
+						makeGhost(player);
+					} else {
+						cs.sendMessage("GhostBuster: Sorry, I don't know who \"" + playerName + "\" is...");
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+		});
+
+		getCommand("ghost_unban").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				if (strings.length > 0) {
+					String playerName = strings[0];
+
+					if (ghosts.containsKey(playerName)) {
+						cs.sendMessage("GhostBuster: Unbanning \"" + playerName + "\"...");
+						ghosts.remove(playerName);
+						saveGhosts();
+					} else {
+						cs.sendMessage("GhostBuster: \"" + playerName + "\" isn't banned...");
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+		});
+
+		getCommand("ghost_list").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				Integer counter = 0;
+				Long now = new Date().getTime();
+				DecimalFormat format = new DecimalFormat("00");
+
+				for (Map.Entry<String, Date> ghost : ghosts.entrySet()) {
+					long diff = (now - ghost.getValue().getTime()) / 1000 / 60;
+
+					if (diff < (Integer) config.get("banTime")) {
+						cs.sendMessage("\"" + ghost.getKey() + "\" is banned for " + format.format(diff / 60) + ":" + format.format(diff % 60));
+						counter++;
+					}
+				}
+
+				if (counter <= 0) {
+					cs.sendMessage("GhostBuster: No ghosts on this server.");
+				}
+
+				return true;
+			}
+		});
 	}
 
 	protected void makeGhost(Player player) {
@@ -140,6 +230,7 @@ public class GhostBuster extends JavaPlugin {
 			if (!(Boolean) config.get("freeSlotsMode") || server.getOnlinePlayers().length == server.getMaxPlayers()) {
 				ghosts.put(player.getName(), new Date());
 				player.kickPlayer((String) config.get("deathMessage"));
+				saveGhosts();
 			}
 		}
 	}
@@ -149,14 +240,19 @@ public class GhostBuster extends JavaPlugin {
 
 		if (ghosts.containsKey(name)) {
 			Date now = new Date();
-			Date then = (Date) ghosts.get(name);
+			Date then = ghosts.get(name);
 			long diff = (now.getTime() - then.getTime()) / 1000 / 60;
 
 			if (diff < (Integer) config.get("banTime")) {
 				event.disallow(PlayerLoginEvent.Result.KICK_OTHER, (String) config.get("stillDeadMessage"));
 			} else {
 				ghosts.remove(name);
+				saveGhosts();
 			}
+		} else if (event.getPlayer().getHealth() <= 0) {
+			ghosts.put(name, new Date());
+			event.disallow(PlayerLoginEvent.Result.KICK_OTHER, (String) config.get("deathMessage"));
+			saveGhosts();
 		}
 	}
 }
