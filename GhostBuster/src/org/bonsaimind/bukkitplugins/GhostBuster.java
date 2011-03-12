@@ -210,7 +210,7 @@ public class GhostBuster extends JavaPlugin {
 					long diff = (now - ghost.getValue().getTime()) / 1000 / 60;
 
 					if (diff < (Integer) config.get("banTime")) {
-						cs.sendMessage("\"" + ghost.getKey() + "\" is banned for " + format.format(diff / 60) + ":" + format.format(diff % 60));
+						cs.sendMessage(prepareMessage("\"" + ghost.getKey() + "\" is banned for %h:%m", (Integer) config.get("banTime") - diff));
 						counter++;
 					}
 				}
@@ -222,6 +222,37 @@ public class GhostBuster extends JavaPlugin {
 				return true;
 			}
 		});
+
+		getCommand("ghost_clear").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				ghosts.clear();
+				saveGhosts();
+				System.out.println("GhostBuster: All ghosts are revived.");
+
+				return true;
+			}
+		});
+
+		getCommand("ghost_reinit").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				readConfiguration();
+				System.out.println("GhostBuster: Configuration reloaded.");
+
+				return true;
+			}
+		});
 	}
 
 	protected void makeGhost(Player player) {
@@ -229,7 +260,7 @@ public class GhostBuster extends JavaPlugin {
 			// Only ban if the freeSlotsMode is off or the Server is full...
 			if (!(Boolean) config.get("freeSlotsMode") || server.getOnlinePlayers().length == server.getMaxPlayers()) {
 				ghosts.put(player.getName(), new Date());
-				player.kickPlayer((String) config.get("deathMessage"));
+				player.kickPlayer(prepareMessage((String) config.get("deathMessage"), ((Integer) (config.get("banTime"))).longValue()));
 				saveGhosts();
 			}
 		}
@@ -244,15 +275,18 @@ public class GhostBuster extends JavaPlugin {
 			long diff = (now.getTime() - then.getTime()) / 1000 / 60;
 
 			if (diff < (Integer) config.get("banTime")) {
-				event.disallow(PlayerLoginEvent.Result.KICK_OTHER, (String) config.get("stillDeadMessage"));
+				event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage((String) config.get("stillDeadMessage"), (Integer) config.get("banTime") - diff));
 			} else {
 				ghosts.remove(name);
 				saveGhosts();
 			}
-		} else if (event.getPlayer().getHealth() <= 0) {
-			ghosts.put(name, new Date());
-			event.disallow(PlayerLoginEvent.Result.KICK_OTHER, (String) config.get("deathMessage"));
-			saveGhosts();
 		}
+	}
+
+	private String prepareMessage(String message, long timeLeft) {
+		message = message.replace("%h", Long.toString(timeLeft / 60));
+		message = message.replace("%m", Long.toString(timeLeft % 60));
+
+		return message;
 	}
 }
