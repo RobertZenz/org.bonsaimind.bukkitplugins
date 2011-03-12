@@ -15,7 +15,7 @@ SaveStopper
 
 Stops the automatic saving of the world.
 
- * http://forums.bukkit.org/threads/misc-savestopper-v0-4-stops-saving-of-the-world-439.3959/
+ * Bukkit Forum: http://forums.bukkit.org/threads/3959/
 
 
 
@@ -24,8 +24,8 @@ HealthyNames
  
 Show the player names in chat in different colors according to their health.
 
- * http://forums.bukkit.org/threads/misc-chat-healthynames-v0-2-colored-names-in-chat-based-on-health-439.4710/
- * http://forums.bukkit.org/threads/showing-hp-with-the-playername-color.4638/
+ * Bukkit Forum: http://forums.bukkit.org/threads/4710/
+ * Bukkit Forum (Request): http://forums.bukkit.org/threads/4638/
  
 
 
@@ -34,15 +34,25 @@ SpawnRandomizer
  
 Teleports the player to random locations on respawn.
 
- * http://forums.bukkit.org/threads/fun-misc-spawnrandomizer-v0-1-random-re-spawn-locations-439.5931/
- * http://forums.bukkit.org/threads/random-teleportation-on-death.5099/
- * http://forums.bukkit.org/threads/random-spawn.1134/
+ * Bukkit Forum: http://forums.bukkit.org/threads/5931/
+ * Bukkit Forum (Request): http://forums.bukkit.org/threads/5099/
+ * Bukkit Forum (Request): http://forums.bukkit.org/threads/1134/
 
 
 GhostBuster
----------------
+-----------
  
 Ban dead players for a certain amount of time.
 
- * http://forums.bukkit.org/threads/fun-misc-ghostbuster-v0-2-ban-dead-players-for-some-time-439.5950/
- * http://forums.bukkit.org/threads/request-survival-extreame.5926/
+ * Bukkit Forum: http://forums.bukkit.org/threads/.5950/
+ * Bukkit Forum (Request): http://forums.bukkit.org/threads/5926/
+ 
+ 
+SimpleCronClone
+---------------
+
+A simple cron clone for bukkit, using the cron4j scheduler from Carlo Pelliccia.
+
+ * cron4j: http://www.sauronsoftware.it/projects/cron4j/
+ * Bukkit Forum: http://forums.bukkit.org/threads/6331/
+ * Bukkit Forum (Request): http://forums.bukkit.org/threads/5843/
