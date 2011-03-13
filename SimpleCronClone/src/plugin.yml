@@ -2,4 +2,15 @@ name: SimpleCronClone
 author: Robert 'Bobby' Zenz
 
 main: org.bonsaimind.bukkitplugins.SimpleCronClone
-version: 0.1
+version: 0.2
+
+commands:
+  cron_reinit:
+    description: Reload the complete configuration.
+    usage: /<command>
+  cron_stop:
+    description: Stop the scheduler completely.
+    usage: /<command>
+  cron_exec:
+    description: Executes the given script.
+    usage: /<command> <script>...

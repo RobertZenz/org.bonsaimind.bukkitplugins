@@ -25,6 +25,9 @@ package org.bonsaimind.bukkitplugins;
 
 import java.io.File;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -53,5 +56,69 @@ public class SimpleCronClone extends JavaPlugin {
 
 		helper = new SimpleCronCloneHelper(server, new File("plugins/SimpleCronClone/"));
 		helper.start();
+
+		setCommands();
+	}
+
+	public void setCommands() {
+		getCommand("cron_reinit").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				helper.stop();
+				helper.start();
+				cs.sendMessage("SimpleCronClone: Configuration reloaded.");
+
+				return true;
+			}
+		});
+
+		getCommand("cron_stop").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				helper.stop();
+				cs.sendMessage("SimpleCronClone: HALTED!");
+				cs.sendMessage("SimpleCronClone: Use /cron_reinit to restart it.");
+
+				return true;
+			}
+		});
+
+		getCommand("cron_exec").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
+				if (!cs.isOp()) {
+					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				if (strings.length == 0) {
+					return false;
+				}
+
+				for (String script : strings) {
+					if (!script.endsWith(".scc")) {
+						script += ".scc";
+					}
+
+					if(helper.executeScript(new File("plugins/SimpleCronClone/" + script))){
+						cs.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script + "\".");
+					} else {
+						cs.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script + "\".");
+					}
+				}
+
+				return true;
+			}
+		});
 	}
 }

@@ -41,13 +41,11 @@ public final class SimpleCronCloneHelper {
 
 	private File workingDir = null;
 	private Server parent = null;
-	private Scheduler scheduler = new Scheduler();
+	private Scheduler scheduler = null;
 
 	public SimpleCronCloneHelper(Server parent, File workingDir) {
 		this.parent = parent;
 		this.workingDir = workingDir;
-		
-		scheduler.setDaemon(true);
 	}
 
 	public void start() {
@@ -57,7 +55,7 @@ public final class SimpleCronCloneHelper {
 	}
 
 	public void stop() {
-		if (scheduler.isStarted()) {
+		if (scheduler != null && scheduler.isStarted()) {
 			scheduler.stop();
 		}
 
@@ -65,10 +63,15 @@ public final class SimpleCronCloneHelper {
 	}
 
 	protected boolean readTab() {
+		if (scheduler == null) {
+			scheduler = new Scheduler();
+			scheduler.setDaemon(true);
+		}
+
 		File tab = new File(workingDir, "tab.scc");
 
 		if (!tab.exists() || !tab.canRead()) {
-			System.out.println("SimpleCronHelper: " + tab.getPath() + " does not exists or is not accessible.");
+			System.out.println("SimpleCronHelper: " + tab.getPath() + " does not exist or is not accessible.");
 			return false;
 		}
 
@@ -112,7 +115,7 @@ public final class SimpleCronCloneHelper {
 	protected boolean executeScript(File script) {
 		System.out.println("SimpleCronHelper: Executing: " + script.getPath());
 		if (!script.exists() || !script.canRead()) {
-			System.out.println("SimpleCronHelper: " + script.getPath() + " does not exists or is not accessible.");
+			System.out.println("SimpleCronHelper: " + script.getPath() + " does not exist or is not accessible.");
 			return false;
 		}
 
@@ -124,7 +127,16 @@ public final class SimpleCronCloneHelper {
 			String lastOutput = "";
 			while ((line = bufReader.readLine()) != null) {
 				if (!line.isEmpty() && line.charAt(0) != '#') {
-					lastOutput = parseScriptLine(line.trim().replace("$?", lastOutput));
+					// Remove inlined comments
+					if (line.contains("#")) {
+						line = line.substring(0, line.indexOf("#"));
+					}
+
+					line = line.trim();
+
+					if (!line.isEmpty() && line.indexOf(' ') > 0) {
+						lastOutput = parseScriptLine(line.trim().replace("$?", lastOutput));
+					}
 				}
 			}
 
@@ -147,7 +159,7 @@ public final class SimpleCronCloneHelper {
 
 		if (type.equalsIgnoreCase("do")) {
 			// Server command
-			CommandHelper.queueConsoleCommand(parent, command);
+			SimpleCronCloneCommandHelper.queueConsoleCommand(parent, command);
 
 			return "";
 
@@ -168,16 +180,16 @@ public final class SimpleCronCloneHelper {
 				proc.waitFor();
 
 				StringBuilder builder = new StringBuilder();
-				
+
 				InputStreamReader reader = new InputStreamReader(proc.getInputStream());
 				BufferedReader bufReader = new BufferedReader(reader);
-				
+
 				String tempLine;
 				while ((tempLine = bufReader.readLine()) != null) {
 					builder.append(tempLine);
 					builder.append(" ");
 				}
-				
+
 				bufReader.close();
 				reader.close();
 

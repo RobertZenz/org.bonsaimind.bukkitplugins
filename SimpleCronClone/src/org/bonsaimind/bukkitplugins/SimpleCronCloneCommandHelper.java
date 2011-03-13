@@ -11,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
 
-public class CommandHelper {
+public class SimpleCronCloneCommandHelper {
 
 	public static void queueConsoleCommand(Server server, String cmd) {
 		if (server == null) {
