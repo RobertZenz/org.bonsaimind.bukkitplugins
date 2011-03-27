@@ -40,6 +40,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 /**
  *
@@ -48,6 +49,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class GhostBuster extends JavaPlugin {
 
 	private Server server = null;
+	private BukkitScheduler scheduler = null;
 	private GhostBusterPlayerListener playerListener = new GhostBusterPlayerListener(this);
 	private GhostBusterEntityListener entityListener = new GhostBusterEntityListener(this);
 	private Map<String, Object> config = null;
@@ -60,10 +62,11 @@ public class GhostBuster extends JavaPlugin {
 
 	public void onEnable() {
 		server = getServer();
+		scheduler = server.getScheduler();
 
 		PluginManager pm = server.getPluginManager();
-		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Highest, this);
-		pm.registerEvent(Type.ENTITY_DEATH, entityListener, Priority.High, this);
+		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.ENTITY_DEATH, entityListener, Priority.Monitor, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
@@ -105,10 +108,11 @@ public class GhostBuster extends JavaPlugin {
 			config.put("stillDeadMessage", "You're a ghost, you don't exist, go away.");
 		}
 
-		if (!helper.exists()) {
-			System.out.println("GhostBuster: Configuration file doesn't exist, dumping now...");
-			helper.write(config);
+		if (!config.containsKey("freeSlotsMode")) {
+			config.put("freeSlotsMode", false);
 		}
+
+		helper.write(config);
 	}
 
 	protected void loadGhosts() {
@@ -205,11 +209,12 @@ public class GhostBuster extends JavaPlugin {
 				Integer counter = 0;
 				Long now = new Date().getTime();
 				DecimalFormat format = new DecimalFormat("00");
-
+				Integer banTime = (Integer) config.get("banTime");
+				
 				for (Map.Entry<String, Date> ghost : ghosts.entrySet()) {
 					long diff = (now - ghost.getValue().getTime()) / 1000 / 60;
 
-					if (diff < (Integer) config.get("banTime")) {
+					if (diff < banTime) {
 						cs.sendMessage(prepareMessage("\"" + ghost.getKey() + "\" is banned for %h:%m", (Integer) config.get("banTime") - diff));
 						counter++;
 					}
@@ -233,7 +238,7 @@ public class GhostBuster extends JavaPlugin {
 
 				ghosts.clear();
 				saveGhosts();
-				System.out.println("GhostBuster: All ghosts are revived.");
+				System.out.println("GhostBuster: All ghosts have been revived.");
 
 				return true;
 			}
@@ -260,8 +265,16 @@ public class GhostBuster extends JavaPlugin {
 			// Only ban if the freeSlotsMode is off or the Server is full...
 			if (!(Boolean) config.get("freeSlotsMode") || server.getOnlinePlayers().length == server.getMaxPlayers()) {
 				ghosts.put(player.getName(), new Date());
-				player.kickPlayer(prepareMessage((String) config.get("deathMessage"), ((Integer) (config.get("banTime"))).longValue()));
 				saveGhosts();
+
+				final Player thatPlayer = player;
+				final String message  = prepareMessage((String) config.get("deathMessage"), ((Integer) (config.get("banTime"))).longValue());
+				scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
+
+					public void run() {
+						thatPlayer.kickPlayer(message);
+					}
+				}, 4);
 			}
 		}
 	}
@@ -273,9 +286,10 @@ public class GhostBuster extends JavaPlugin {
 			Date now = new Date();
 			Date then = ghosts.get(name);
 			long diff = (now.getTime() - then.getTime()) / 1000 / 60;
+			Integer banTime = (Integer) config.get("banTime");
 
-			if (diff < (Integer) config.get("banTime")) {
-				event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage((String) config.get("stillDeadMessage"), (Integer) config.get("banTime") - diff));
+			if (diff < banTime) {
+				event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage((String) config.get("stillDeadMessage"), banTime - diff));
 			} else {
 				ghosts.remove(name);
 				saveGhosts();
