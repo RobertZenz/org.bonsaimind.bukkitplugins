@@ -23,9 +23,9 @@
  */
 package org.bonsaimind.bukkitplugins;
 
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
@@ -42,14 +42,10 @@ public class SaveStopperPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		parent.enable();
-
-		super.onPlayerLogin(event);
 	}
 
 	@Override
-	public void onPlayerQuit(PlayerEvent event) {
+	public void onPlayerQuit(PlayerQuitEvent event) {
 		parent.disable();
-
-		super.onPlayerQuit(event);
 	}
 }

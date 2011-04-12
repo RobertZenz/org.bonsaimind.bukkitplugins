@@ -97,10 +97,6 @@ public class SaveStopper extends JavaPlugin {
 			config.put("wait", 300);
 		}
 
-		if (!config.containsKey("verbose")) {
-			config.put("verbose", true);
-		}
-
 		if (!helper.exists()) {
 			System.out.println("SaveStopper: Configuration file doesn't exist, dumping now...");
 			helper.write(config);
@@ -117,9 +113,7 @@ public class SaveStopper extends JavaPlugin {
 		}
 
 		if (!isSaving) {
-			if ((Boolean) config.get("verbose")) {
-				System.out.println("SaveStopper: Enabling saving...");
-			}
+			System.out.println("SaveStopper: Enabling saving...");
 			SaveStopperCommandHelper.queueConsoleCommand(server, "save-on");
 			isSaving = true;
 		}
@@ -129,13 +123,10 @@ public class SaveStopper extends JavaPlugin {
 	 * Disable saving, check if we should use the timer or not.
 	 */
 	protected void disable() {
-		if (isSaving && server.getOnlinePlayers().length == 0) {
+		if (isSaving && server.getOnlinePlayers().length <= 1) {
 			long wait = ((Number) config.get("wait")).longValue();
 			if (wait > 0) {
-
-				if ((Boolean) config.get("verbose")) {
-					System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(wait) + " seconds...");
-				}
+				System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(wait) + " seconds...");
 
 				timer.schedule(new TimerTask() {
 
@@ -156,9 +147,7 @@ public class SaveStopper extends JavaPlugin {
 	 */
 	private void internalDisable() {
 		if (isSaving && server.getOnlinePlayers().length == 0) {
-			if ((Boolean) config.get("verbose")) {
-				System.out.println("SaveStopper: Disabling saving...");
-			}
+			System.out.println("SaveStopper: Disabling saving...");
 
 			if ((Boolean) config.get("saveAll")) {
 				SaveStopperCommandHelper.queueConsoleCommand(server, "save-all");
