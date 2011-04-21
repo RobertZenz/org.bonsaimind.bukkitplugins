@@ -29,8 +29,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.regex.Pattern;
 import org.bukkit.Server;
 
 /**
@@ -42,6 +44,14 @@ public final class SimpleCronCloneHelper {
 	private File workingDir = null;
 	private Server parent = null;
 	private Scheduler scheduler = null;
+	/**
+	 * If you wonder what this is, no problem. I'll tell you.
+	 * This is some awesome RegEx written by Tim Pietzcker
+	 * http://stackoverflow.com/questions/4780728/regex-split-string-preserving-quotes
+	 *
+	 * Go and vote that awesome guy up!
+	 */
+	Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
 
 	public SimpleCronCloneHelper(Server parent, File workingDir) {
 		this.parent = parent;
@@ -71,7 +81,7 @@ public final class SimpleCronCloneHelper {
 		File tab = new File(workingDir, "tab.scc");
 
 		if (!tab.exists() || !tab.canRead()) {
-			System.out.println("SimpleCronHelper: " + tab.getPath() + " does not exist or is not accessible.");
+			System.out.println("SimpleCronClone: " + tab.getPath() + " does not exist or is not accessible.");
 			return false;
 		}
 
@@ -103,7 +113,7 @@ public final class SimpleCronCloneHelper {
 		String timerPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
-		System.out.println("SimpleCronHelper: Scheduling: " + commandPart);
+		System.out.println("SimpleCronClone: Scheduling: " + commandPart);
 		scheduler.schedule(timerPart, new Runnable() {
 
 			public void run() {
@@ -113,9 +123,9 @@ public final class SimpleCronCloneHelper {
 	}
 
 	protected boolean executeScript(File script) {
-		System.out.println("SimpleCronHelper: Executing: " + script.getPath());
+		System.out.println("SimpleCronClone: Executing: " + script.getPath());
 		if (!script.exists() || !script.canRead()) {
-			System.out.println("SimpleCronHelper: " + script.getPath() + " does not exist or is not accessible.");
+			System.out.println("SimpleCronClone: " + script.getPath() + " does not exist or is not accessible.");
 			return false;
 		}
 
@@ -176,24 +186,22 @@ public final class SimpleCronCloneHelper {
 		} else if (type.equalsIgnoreCase("execWait")) {
 			// Execute a process
 			try {
-				Process proc = Runtime.getRuntime().exec(command);
-				proc.waitFor();
-
-				StringBuilder builder = new StringBuilder();
-
-				InputStreamReader reader = new InputStreamReader(proc.getInputStream());
-				BufferedReader bufReader = new BufferedReader(reader);
-
-				String tempLine;
-				while ((tempLine = bufReader.readLine()) != null) {
-					builder.append(tempLine);
-					builder.append(" ");
+				// We need to split the string to pass it to the system
+				String[] splittedCommand = preparePattern.split(command);
+				for (int idx = 0; idx < splittedCommand.length; idx++) {
+					// Strip single quotes from the commands
+					splittedCommand[idx] = splittedCommand[idx].replaceAll("^'|'$", "");
 				}
 
-				bufReader.close();
-				reader.close();
+				Process proc = Runtime.getRuntime().exec(splittedCommand);
+				proc.waitFor();
 
-				return builder.toString();
+				String errOutput = getStreamOutput(proc.getErrorStream());
+				if (errOutput.length() > 0) {
+					System.err.println("Command returned with an error: " + errOutput);
+				}
+
+				return getStreamOutput(proc.getInputStream());
 			} catch (IOException ex) {
 				System.err.println(ex.getMessage());
 			} catch (InterruptedException ex) {
@@ -202,5 +210,26 @@ public final class SimpleCronCloneHelper {
 		}
 
 		return "";
+	}
+
+	protected static String getStreamOutput(InputStream strm) {
+		StringBuilder builder = new StringBuilder();
+
+		String tempLine;
+		try {
+			InputStreamReader reader = new InputStreamReader(strm);
+			BufferedReader bufReader = new BufferedReader(reader);
+			while ((tempLine = bufReader.readLine()) != null) {
+				builder.append(tempLine);
+				builder.append(" ");
+			}
+
+			bufReader.close();
+			reader.close();
+		} catch (IOException ex) {
+			System.err.println(ex.getMessage());
+		}
+
+		return builder.toString();
 	}
 }
