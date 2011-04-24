@@ -46,8 +46,8 @@ public class SaveStopperCommandHelper {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
 		}
-		if ((!ms.g) && (MinecraftServer.a(ms))) {
-			ms.a(cmd, ms);
+		if ((!ms.isStopped) && (MinecraftServer.isRunning(ms))) {
+			ms.issueCommand(cmd, ms);
 		}
 	}
 }
