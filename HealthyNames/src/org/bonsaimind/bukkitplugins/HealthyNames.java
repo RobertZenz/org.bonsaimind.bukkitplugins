@@ -58,11 +58,12 @@ public class HealthyNames extends JavaPlugin {
 		scheduler = server.getScheduler();
 
 		PluginManager pm = server.getPluginManager();
-		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Low, this);
-		pm.registerEvent(Type.PLAYER_RESPAWN, playerListener, Priority.Low, this);
-		pm.registerEvent(Type.PLAYER_ITEM, playerListener, Priority.Low, this);
-		pm.registerEvent(Type.ENTITY_DAMAGED, entityListener, Priority.Low, this);
-		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Low, this);
+		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_RESPAWN, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Monitor, this);
+		pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
@@ -114,18 +115,17 @@ public class HealthyNames extends JavaPlugin {
 		}
 	}
 
-	protected void damageOccured(Player player) {
-		final Player finalPlayer = player;
+	protected void refreshHealth(Player player) {
+		final String playerName = player.getName();
 
 		scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
 
 			public void run() {
-				if (finalPlayer != null) {
-					if (colors.containsKey(finalPlayer.getHealth())) {
-						finalPlayer.setDisplayName(colors.get(finalPlayer.getHealth()) + finalPlayer.getName() + ChatColor.WHITE);
-					} else {
-						finalPlayer.setDisplayName(ChatColor.WHITE + finalPlayer.getName() + ChatColor.WHITE);
-					}
+				Player player = server.getPlayer(playerName);
+				if (colors.containsKey(player.getHealth())) {
+					player.setDisplayName(colors.get(player.getHealth()) + player.getName() + ChatColor.WHITE);
+				} else {
+					player.setDisplayName(ChatColor.WHITE + player.getName() + ChatColor.WHITE);
 				}
 			}
 		}, 4);

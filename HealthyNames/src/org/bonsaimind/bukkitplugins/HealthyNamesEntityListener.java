@@ -42,16 +42,14 @@ public class HealthyNamesEntityListener extends EntityListener {
 	@Override
 	public void onEntityCombust(EntityCombustEvent event) {
 		if(event.getEntity() instanceof Player) {
-			parent.damageOccured((Player)event.getEntity());
+			parent.refreshHealth((Player)event.getEntity());
 		}
-		super.onEntityCombust(event);
 	}
 
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
 		if(event.getEntity() instanceof Player) {
-			parent.damageOccured((Player)event.getEntity());
+			parent.refreshHealth((Player)event.getEntity());
 		}
-		super.onEntityDamage(event);
 	}
 }

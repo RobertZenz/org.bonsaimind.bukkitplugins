@@ -24,10 +24,11 @@
 package org.bonsaimind.bukkitplugins;
 
 import java.util.Arrays;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  *
@@ -37,6 +38,7 @@ public class HealthyNamesPlayerListener extends PlayerListener {
 
 	private HealthyNames parent = null;
 	private Integer foodIds[] = {
+		92,		// Cake (Block)
 		260,	// Red Apple
 		282,	// Mushroom Stew...reminds me of Wiggles.
 		//296,	// Wheat
@@ -49,7 +51,8 @@ public class HealthyNamesPlayerListener extends PlayerListener {
 		349,	// Raw Fish
 		350,	// Fish
 		//353,	// Sugar
-		354		// Why do I implement this? It's a lie anyway...
+		354,	// Why do I implement this? It's a lie anyway...
+		357		// Cookies!!!
 	};
 
 	public HealthyNamesPlayerListener(HealthyNames parentInstance) {
@@ -59,23 +62,27 @@ public class HealthyNamesPlayerListener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerJoin(PlayerEvent event) {
-		parent.damageOccured(event.getPlayer());
-		super.onPlayerJoin(event);
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		parent.refreshHealth(event.getPlayer());
 	}
 
 	@Override
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		parent.damageOccured(event.getPlayer());
-		super.onPlayerRespawn(event);
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		parent.refreshHealth(event.getPlayer());
 	}
 
 	@Override
-	public void onPlayerItem(PlayerItemEvent event) {
-		if (Arrays.binarySearch(foodIds, event.getItem().getTypeId()) >= 0) {
-			parent.damageOccured(event.getPlayer());
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if(event.hasBlock()) {
+			if(Arrays.binarySearch(foodIds, event.getClickedBlock().getTypeId()) >= 0) {
+				parent.refreshHealth(event.getPlayer());
+			}
 		}
 
-		super.onPlayerItem(event);
+		if(event.hasItem()) {
+			if(Arrays.binarySearch(foodIds, event.getItem().getTypeId()) >= 0) {
+				parent.refreshHealth(event.getPlayer());
+			}
+		}
 	}
 }
