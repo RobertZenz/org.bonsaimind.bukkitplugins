@@ -107,7 +107,7 @@ public class SaveStopper extends JavaPlugin {
 	 * Enable saving.
 	 */
 	protected void enable() {
-		if (server.getOnlinePlayers().length == 0 && isSaving && (Boolean) config.get("verbose")) {
+		if (server.getOnlinePlayers().length == 0 && isSaving) {
 			System.out.println("SaveStopper: Canceling scheduled disabling...");
 			timer.purge();
 		}
