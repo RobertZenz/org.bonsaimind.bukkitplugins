@@ -40,11 +40,11 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		parent.enable();
+		parent.enableSaving();
 	}
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		parent.disable();
+		parent.disableSaving();
 	}
 }

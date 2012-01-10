@@ -25,7 +25,6 @@ package org.bonsaimind.bukkitplugins.SaveStopper;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -76,21 +75,21 @@ public class Plugin extends JavaPlugin {
 		settings.load();
 
 		if (settings.getDisableOnStart()) {
-			internalDisable();
+			internalDisableSaving();
 		}
 	}
 
 	/**
 	 * Enable saving.
 	 */
-	protected void enable() {
+	protected void enableSaving() {
 		if (server.getOnlinePlayers().length == 0 && isSaving) {
-			System.out.println("SaveStopper: Canceling scheduled disabling...");
+			println("Canceling scheduled disabling...");
 			timer.purge();
 		}
 
 		if (!isSaving) {
-			System.out.println("SaveStopper: Enabling saving...");
+			println("Enabling saving...");
 			CommandHelper.queueConsoleCommand(server, "save-on");
 			isSaving = true;
 		}
@@ -99,20 +98,20 @@ public class Plugin extends JavaPlugin {
 	/**
 	 * Disable saving, check if we should use the timer or not.
 	 */
-	protected void disable() {
+	protected void disableSaving() {
 		if (isSaving && server.getOnlinePlayers().length <= 1) {
 			if (settings.getWait() > 0) {
-				System.out.println("SaveStopper: Scheduling disabling in " + Integer.toString(settings.getWait()) + " seconds...");
+				println("Scheduling disabling in " + Integer.toString(settings.getWait()) + " seconds...");
 
 				timer.schedule(new TimerTask() {
 
 					@Override
 					public void run() {
-						internalDisable();
+						internalDisableSaving();
 					}
 				}, settings.getWait() * 1000);
 			} else {
-				internalDisable();
+				internalDisableSaving();
 			}
 		}
 	}
@@ -120,9 +119,9 @@ public class Plugin extends JavaPlugin {
 	/**
 	 * Disable saving.
 	 */
-	private void internalDisable() {
+	private void internalDisableSaving() {
 		if (isSaving && server.getOnlinePlayers().length == 0) {
-			System.out.println("SaveStopper: Disabling saving...");
+			println("Disabling saving...");
 
 			if (settings.getSaveAll()) {
 				CommandHelper.queueConsoleCommand(server, "save-all");
@@ -152,9 +151,9 @@ public class Plugin extends JavaPlugin {
 					} else if (arg.equalsIgnoreCase("stop")) {
 						println("Stop?!");
 					} else if (arg.equalsIgnoreCase("enable")) {
-						enable();
+						enableSaving();
 					} else if (arg.equalsIgnoreCase("disable")) {
-						disable();
+						disableSaving();
 					} else if (arg.equalsIgnoreCase("status")) {
 						println("Status?!");
 					}
