@@ -21,7 +21,7 @@
  * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SaveStopper
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.SaveStopper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +38,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class SaveStopperYamlHelper {
+public class YamlHelper {
 
 	private File configFile = null;
 	private Yaml yaml = null;
@@ -47,7 +47,7 @@ public class SaveStopperYamlHelper {
 	 * Create the class.
 	 * @param configFile The path to the configuration file.
 	 */
-	public SaveStopperYamlHelper(String configFile) {
+	public YamlHelper(String configFile) {
 		this.configFile = new File(configFile);
 
 		DumperOptions options = new DumperOptions();

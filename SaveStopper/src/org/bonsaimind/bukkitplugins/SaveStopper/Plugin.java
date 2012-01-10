@@ -1,27 +1,27 @@
 /*
- * This file is part of SaveStopper.
+ * This file is part of Plugin.
  *
- * SaveStopper is free software: you can redistribute it and/or modify
+ * Plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * SaveStopper is distributed in the hope that it will be useful,
+ * Plugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with SaveStopper.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Plugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * Author: Robert 'Bobby' Zenz
  * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SaveStopper
+ * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.SaveStopper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,13 +38,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 
  * @author Robert 'Bobby' Zenz
  */
-public class SaveStopper extends JavaPlugin {
+public class Plugin extends JavaPlugin {
 
 	private Server server = null;
 	private boolean isSaving = true;
 	private Map<String, Object> config = null;
 	private Timer timer = new Timer(true);
-	private SaveStopperPlayerListener listener = new SaveStopperPlayerListener(this);
+	private PlayerListener listener = new PlayerListener(this);
 
 	public void onDisable() {
 		timer.cancel();
@@ -76,7 +76,7 @@ public class SaveStopper extends JavaPlugin {
 	}
 
 	protected void readConfiguration() {
-		SaveStopperYamlHelper helper = new SaveStopperYamlHelper("plugins/SaveStopper/config.yml");
+		YamlHelper helper = new YamlHelper("plugins/SaveStopper/config.yml");
 		config = helper.read();
 
 		if (config == null) {
@@ -114,7 +114,7 @@ public class SaveStopper extends JavaPlugin {
 
 		if (!isSaving) {
 			System.out.println("SaveStopper: Enabling saving...");
-			SaveStopperCommandHelper.queueConsoleCommand(server, "save-on");
+			CommandHelper.queueConsoleCommand(server, "save-on");
 			isSaving = true;
 		}
 	}
@@ -150,10 +150,10 @@ public class SaveStopper extends JavaPlugin {
 			System.out.println("SaveStopper: Disabling saving...");
 
 			if ((Boolean) config.get("saveAll")) {
-				SaveStopperCommandHelper.queueConsoleCommand(server, "save-all");
+				CommandHelper.queueConsoleCommand(server, "save-all");
 			}
 
-			SaveStopperCommandHelper.queueConsoleCommand(server, "save-off");
+			CommandHelper.queueConsoleCommand(server, "save-off");
 
 			isSaving = false;
 		}

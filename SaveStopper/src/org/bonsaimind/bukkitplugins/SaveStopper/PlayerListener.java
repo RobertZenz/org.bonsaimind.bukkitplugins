@@ -21,9 +21,8 @@
  * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SaveStopper
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.SaveStopper;
 
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -31,11 +30,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class SaveStopperPlayerListener extends PlayerListener {
+public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
-	private SaveStopper parent = null;
+	private Plugin parent = null;
 
-	public SaveStopperPlayerListener(SaveStopper parentInstance) {
+	public PlayerListener(Plugin parentInstance) {
 		parent = parentInstance;
 	}
 
