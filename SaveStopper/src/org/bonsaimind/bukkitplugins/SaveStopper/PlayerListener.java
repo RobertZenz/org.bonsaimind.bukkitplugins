@@ -33,18 +33,31 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
 	private Plugin parent = null;
+	private boolean enabled = true;
 
 	public PlayerListener(Plugin parentInstance) {
 		parent = parentInstance;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		parent.enableSaving();
+		if (enabled) {
+			parent.enableSaving();
+		}
 	}
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		parent.disableSaving();
+		if (enabled) {
+			parent.disableSaving();
+		}
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

@@ -147,15 +147,15 @@ public class Plugin extends JavaPlugin {
 
 				for (String arg : args) {
 					if (arg.equalsIgnoreCase("start")) {
-						println("Start?!");
+						listener.setEnabled(true);
 					} else if (arg.equalsIgnoreCase("stop")) {
-						println("Stop?!");
+						listener.setEnabled(false);
 					} else if (arg.equalsIgnoreCase("enable")) {
 						enableSaving();
 					} else if (arg.equalsIgnoreCase("disable")) {
 						disableSaving();
 					} else if (arg.equalsIgnoreCase("status")) {
-						println("Status?!");
+						println("Started: " + listener.isEnabled() + ", Saving: " + isSaving);
 					}
 				}
 
