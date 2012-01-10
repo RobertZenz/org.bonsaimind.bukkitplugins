@@ -23,8 +23,6 @@
  */
 package org.bonsaimind.bukkitplugins.SaveStopper;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.bukkit.Server;
@@ -40,20 +38,20 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Plugin extends JavaPlugin {
 
+	private static final String CONFIG_FILE = "./plugins/SaveStopper/config.yml";
 	private Server server = null;
 	private boolean isSaving = true;
-	private Map<String, Object> config = null;
 	private Timer timer = new Timer(true);
 	private PlayerListener listener = new PlayerListener(this);
+	private Settings settings;
 
 	public void onDisable() {
+		settings.save(CONFIG_FILE);
+
 		timer.cancel();
 		timer = null;
 
 		listener = null;
-
-		config.clear();
-		config = null;
 
 		server = null;
 	}
@@ -62,44 +60,17 @@ public class Plugin extends JavaPlugin {
 		server = getServer();
 
 		PluginManager pm = server.getPluginManager();
-		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Low, this);
-		pm.registerEvent(Type.PLAYER_QUIT, listener, Priority.Low, this);
+		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_QUIT, listener, Priority.Monitor, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		readConfiguration();
+		settings = new Settings();
+		settings.load(CONFIG_FILE);
 
-		if ((Boolean) config.get("disableOnStart")) {
+		if (settings.getDisableOnStart()) {
 			internalDisable();
-		}
-	}
-
-	protected void readConfiguration() {
-		YamlHelper helper = new YamlHelper("plugins/SaveStopper/config.yml");
-		config = helper.read();
-
-		if (config == null) {
-			System.out.println("SaveStopper: No configuration file found, using defaults.");
-			config = new HashMap<String, Object>();
-		}
-
-		// Set the defaults
-		if (!config.containsKey("disableOnStart")) {
-			config.put("disableOnStart", true);
-		}
-
-		if (!config.containsKey("saveAll")) {
-			config.put("saveAll", true);
-		}
-
-		if (!config.containsKey("wait")) {
-			config.put("wait", 300);
-		}
-
-		if (!helper.exists()) {
-			System.out.println("SaveStopper: Configuration file doesn't exist, dumping now...");
-			helper.write(config);
 		}
 	}
 
@@ -124,9 +95,8 @@ public class Plugin extends JavaPlugin {
 	 */
 	protected void disable() {
 		if (isSaving && server.getOnlinePlayers().length <= 1) {
-			long wait = ((Number) config.get("wait")).longValue();
-			if (wait > 0) {
-				System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(wait) + " seconds...");
+			if (settings.getWait() > 0) {
+				System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(settings.getWait()) + " seconds...");
 
 				timer.schedule(new TimerTask() {
 
@@ -134,8 +104,7 @@ public class Plugin extends JavaPlugin {
 					public void run() {
 						internalDisable();
 					}
-				},
-						wait * 1000);
+				}, settings.getWait() * 1000);
 			} else {
 				internalDisable();
 			}
@@ -149,7 +118,7 @@ public class Plugin extends JavaPlugin {
 		if (isSaving && server.getOnlinePlayers().length == 0) {
 			System.out.println("SaveStopper: Disabling saving...");
 
-			if ((Boolean) config.get("saveAll")) {
+			if (settings.getSaveAll()) {
 				CommandHelper.queueConsoleCommand(server, "save-all");
 			}
 
