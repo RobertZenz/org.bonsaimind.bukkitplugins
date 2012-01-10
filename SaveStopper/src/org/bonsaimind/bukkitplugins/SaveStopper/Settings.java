@@ -78,8 +78,8 @@ public class Settings {
 	 * Timeout to wait until saving is diasbled (in seconds).
 	 * @return
 	 */
-	public long getWait() {
-		return (Long) get(WAIT);
+	public int getWait() {
+		return (Integer) get(WAIT);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Settings {
 			settings.put(SAVE_ALL, true);
 		}
 		if (!settings.containsKey(WAIT)) {
-			settings.put(WAIT, 300L);
+			settings.put(WAIT, 300);
 		}
 	}
 

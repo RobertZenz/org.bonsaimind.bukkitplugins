@@ -3,3 +3,8 @@ author: Robert 'Bobby' Zenz
 
 main: org.bonsaimind.bukkitplugins.SaveStopper.Plugin
 version: 0.9
+
+commands:
+  savestopper:
+    description: Main command.
+    usage: /<command> [start|stop|enable|disable|status]

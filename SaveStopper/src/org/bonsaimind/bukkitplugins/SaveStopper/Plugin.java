@@ -25,7 +25,11 @@ package org.bonsaimind.bukkitplugins.SaveStopper;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executor;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -66,6 +70,8 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
+		setCommand();
+
 		settings = new Settings("./plugins/SaveStopper/config.yml");
 		settings.load();
 
@@ -96,7 +102,7 @@ public class Plugin extends JavaPlugin {
 	protected void disable() {
 		if (isSaving && server.getOnlinePlayers().length <= 1) {
 			if (settings.getWait() > 0) {
-				System.out.println("SaveStopper: Scheduling disabling in " + Long.toString(settings.getWait()) + " seconds...");
+				System.out.println("SaveStopper: Scheduling disabling in " + Integer.toString(settings.getWait()) + " seconds...");
 
 				timer.schedule(new TimerTask() {
 
@@ -126,5 +132,36 @@ public class Plugin extends JavaPlugin {
 
 			isSaving = false;
 		}
+	}
+
+	private void println(String text) {
+		System.out.println("SaveStopper: " + text);
+	}
+
+	private void setCommand() {
+		getCommand("savestopper").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				if (args.length == 0) {
+					return false;
+				}
+
+				for (String arg : args) {
+					if (arg.equalsIgnoreCase("start")) {
+						println("Start?!");
+					} else if (arg.equalsIgnoreCase("stop")) {
+						println("Stop?!");
+					} else if (arg.equalsIgnoreCase("enable")) {
+						enable();
+					} else if (arg.equalsIgnoreCase("disable")) {
+						disable();
+					} else if (arg.equalsIgnoreCase("status")) {
+						println("Status?!");
+					}
+				}
+
+				return true;
+			}
+		});
 	}
 }
