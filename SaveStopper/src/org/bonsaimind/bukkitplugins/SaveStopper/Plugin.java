@@ -46,7 +46,7 @@ public class Plugin extends JavaPlugin {
 	private Settings settings;
 
 	public void onDisable() {
-		settings.save(CONFIG_FILE);
+		settings.save();
 
 		timer.cancel();
 		timer = null;
@@ -66,8 +66,8 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		settings = new Settings();
-		settings.load(CONFIG_FILE);
+		settings = new Settings("./plugins/SaveStopper/config.yml");
+		settings.load();
 
 		if (settings.getDisableOnStart()) {
 			internalDisable();

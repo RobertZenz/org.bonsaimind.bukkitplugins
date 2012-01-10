@@ -23,6 +23,7 @@
  */
 package org.bonsaimind.bukkitplugins.SaveStopper;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -41,7 +42,21 @@ public class Settings {
 	private static final String DISABLE_ON_START = "disableOnStart";
 	private static final String SAVE_ALL = "saveAll";
 	private static final String WAIT = "wait";
+	private File settingsFile;
 	private Map<String, Object> settings = null;
+
+	public Settings(String settingsFile) {
+		this.settingsFile = new File(settingsFile);
+
+		if (!this.settingsFile.exists()) {
+			try {
+				this.settingsFile.getParentFile().mkdirs();
+				this.settingsFile.createNewFile();
+			} catch (IOException ex) {
+				System.err.println(ex);
+			}
+		}
+	}
 
 	/**
 	 * Disable saving on start.
@@ -91,7 +106,7 @@ public class Settings {
 	 * Load the settings.
 	 * @param settingsFile Load from this file.
 	 */
-	public void load(String settingsFile) {
+	public void load() {
 		FileReader reader = null;
 		try {
 			reader = new FileReader(settingsFile);
@@ -112,14 +127,14 @@ public class Settings {
 	 * Save the settings.
 	 * @param settingsFile Save to this file.
 	 */
-	public void save(String settingsFile) {
+	public void save() {
 		// Init in case something went wrong so far.
 		init();
 
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(settingsFile);
-			getYaml().dump(settings);
+			getYaml().dump(settings, writer);
 		} catch (IOException ex) {
 			System.err.println(ex);
 		} finally {
