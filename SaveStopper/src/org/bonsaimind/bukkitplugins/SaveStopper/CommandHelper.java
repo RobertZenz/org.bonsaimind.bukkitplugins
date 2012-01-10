@@ -13,7 +13,7 @@ import org.bukkit.craftbukkit.CraftServer;
 
 public class CommandHelper {
 
-	public static void queueConsoleCommand(Server server, String cmd) {
+	public static void queueConsoleCommand(Server server, String command) {
 		if (server == null) {
 			System.err.println("CommandHelper: server is null...is the plugin broken?");
 			return;
@@ -24,10 +24,9 @@ public class CommandHelper {
 			return;
 		}
 
-		CraftServer cs = (CraftServer) server;
-		Field f;
+		Field field;
 		try {
-			f = CraftServer.class.getDeclaredField("console");
+			field = CraftServer.class.getDeclaredField("console");
 		} catch (NoSuchFieldException ex) {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
@@ -35,10 +34,11 @@ public class CommandHelper {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
 		}
-		MinecraftServer ms;
+		
+		MinecraftServer minecraftServer;
 		try {
-			f.setAccessible(true);
-			ms = (MinecraftServer) f.get(cs);
+			field.setAccessible(true);
+			minecraftServer = (MinecraftServer) field.get(server);
 		} catch (IllegalArgumentException ex) {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
@@ -46,8 +46,9 @@ public class CommandHelper {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
 		}
-		if ((!ms.isStopped) && (MinecraftServer.isRunning(ms))) {
-			ms.issueCommand(cmd, ms);
+		
+		if ((!minecraftServer.isStopped) && (MinecraftServer.isRunning(minecraftServer))) {
+			minecraftServer.issueCommand(command, minecraftServer);
 		}
 	}
 }
