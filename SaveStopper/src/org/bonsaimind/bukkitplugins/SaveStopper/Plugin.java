@@ -84,12 +84,12 @@ public class Plugin extends JavaPlugin {
 	 */
 	protected void enableSaving() {
 		if (server.getOnlinePlayers().length == 0 && isSaving) {
-			println("Canceling scheduled disabling...");
+			println("Canceling scheduled disabling.");
 			timer.purge();
 		}
 
 		if (!isSaving) {
-			println("Enabling saving...");
+			println("Enabling saving.");
 			CommandHelper.queueConsoleCommand(server, "save-on");
 			isSaving = true;
 		}
@@ -121,7 +121,7 @@ public class Plugin extends JavaPlugin {
 	 */
 	private void internalDisableSaving() {
 		if (isSaving && server.getOnlinePlayers().length == 0) {
-			println("Disabling saving...");
+			println("Disabling saving.");
 
 			if (settings.getSaveAll()) {
 				CommandHelper.queueConsoleCommand(server, "save-all");
