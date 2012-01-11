@@ -50,7 +50,8 @@ public class Plugin extends JavaPlugin {
 
 	public void onDisable() {
 		settings.save();
-
+		settings = null;
+		
 		timer.cancel();
 		timer = null;
 
