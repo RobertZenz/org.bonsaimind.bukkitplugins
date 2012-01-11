@@ -79,40 +79,15 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
-	/**
-	 * Enable saving.
-	 */
-	protected void enableSaving() {
+	protected void check() {
+		// Clear out the timer to make sure that the event
+		// does not interrupt us.
+		timer.purge();
+
 		if (server.getOnlinePlayers().length == 0 && isSaving) {
-			println("Canceling scheduled disabling.");
-			timer.purge();
-		}
-
-		if (!isSaving) {
-			println("Enabling saving.");
-			CommandHelper.queueConsoleCommand(server, "save-on");
-			isSaving = true;
-		}
-	}
-
-	/**
-	 * Disable saving, check if we should use the timer or not.
-	 */
-	protected void disableSaving() {
-		if (isSaving && server.getOnlinePlayers().length <= 1) {
-			if (settings.getWait() > 0) {
-				println("Scheduling disabling in " + Integer.toString(settings.getWait()) + " seconds...");
-
-				timer.schedule(new TimerTask() {
-
-					@Override
-					public void run() {
-						internalDisableSaving();
-					}
-				}, settings.getWait() * 1000);
-			} else {
-				internalDisableSaving();
-			}
+			saveOffScheduled();
+		} else {
+			saveOn();
 		}
 	}
 
@@ -137,6 +112,40 @@ public class Plugin extends JavaPlugin {
 		System.out.println("SaveStopper: " + text);
 	}
 
+	private void saveOff() {
+		println("Disabling saving.");
+
+		if (settings.getSaveAll()) {
+			CommandHelper.queueConsoleCommand(server, "save-all");
+		}
+
+		CommandHelper.queueConsoleCommand(server, "save-off");
+
+		isSaving = false;
+	}
+
+	private void saveOffScheduled() {
+		if (settings.getWait() > 0) {
+			println("Disabled scheduled, " + settings.getWait() + " seconds.");
+
+			timer.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					saveOff();
+				}
+			}, settings.getWait() * 1000);
+		} else {
+			saveOff();
+		}
+	}
+
+	private void saveOn() {
+		println("Enabling saving.");
+
+		CommandHelper.queueConsoleCommand(server, "save-on");
+	}
+
 	private void setCommand() {
 		getCommand("savestopper").setExecutor(new CommandExecutor() {
 
@@ -146,16 +155,18 @@ public class Plugin extends JavaPlugin {
 				}
 
 				for (String arg : args) {
-					if (arg.equalsIgnoreCase("start")) {
+					if (arg.equalsIgnoreCase("check")) {
+						check();
+					} else if (arg.equalsIgnoreCase("save-off")) {
+						saveOff();
+					} else if (arg.equalsIgnoreCase("save-on")) {
+						saveOn();
+					} else if (arg.equalsIgnoreCase("start")) {
 						listener.setEnabled(true);
-					} else if (arg.equalsIgnoreCase("stop")) {
-						listener.setEnabled(false);
-					} else if (arg.equalsIgnoreCase("enable")) {
-						enableSaving();
-					} else if (arg.equalsIgnoreCase("disable")) {
-						disableSaving();
 					} else if (arg.equalsIgnoreCase("status")) {
 						println("Started: " + listener.isEnabled() + ", Saving: " + isSaving);
+					} else if (arg.equalsIgnoreCase("stop")) {
+						listener.setEnabled(false);
 					}
 				}
 
