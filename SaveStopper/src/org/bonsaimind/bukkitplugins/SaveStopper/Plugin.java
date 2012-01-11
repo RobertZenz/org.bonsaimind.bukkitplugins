@@ -75,7 +75,7 @@ public class Plugin extends JavaPlugin {
 		settings.load();
 
 		if (settings.getDisableOnStart()) {
-			internalDisableSaving();
+			saveOff();
 		}
 	}
 
@@ -90,28 +90,11 @@ public class Plugin extends JavaPlugin {
 			saveOn();
 		} else {
 			// Ohoh...something's wrong...*very* wrong...
-			if(server.getOnlinePlayers().length == 0) {
+			if (server.getOnlinePlayers().length == 0) {
 				saveOffScheduled();
 			} else {
 				saveOn();
 			}
-		}
-	}
-
-	/**
-	 * Disable saving.
-	 */
-	private void internalDisableSaving() {
-		if (isSaving && server.getOnlinePlayers().length == 0) {
-			println("Disabling saving.");
-
-			if (settings.getSaveAll()) {
-				CommandHelper.queueConsoleCommand(server, "save-all");
-			}
-
-			CommandHelper.queueConsoleCommand(server, "save-off");
-
-			isSaving = false;
 		}
 	}
 
