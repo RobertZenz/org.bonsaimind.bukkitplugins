@@ -43,7 +43,6 @@ public class Plugin extends JavaPlugin {
 
 	private static final String CONFIG_FILE = "./plugins/SaveStopper/config.yml";
 	private Server server = null;
-	private boolean isSaving = true;
 	private Timer timer = new Timer(true);
 	private PlayerListener listener = new PlayerListener(this);
 	private Settings settings;
@@ -85,17 +84,10 @@ public class Plugin extends JavaPlugin {
 		// does not interrupt us.
 		timer.purge();
 
-		if (server.getOnlinePlayers().length == 0 && isSaving) {
+		if (server.getOnlinePlayers().length == 0) {
 			saveOffScheduled();
-		} else if (server.getOnlinePlayers().length > 0 && !isSaving) {
-			saveOn();
 		} else {
-			// Ohoh...something's wrong...*very* wrong...
-			if (server.getOnlinePlayers().length == 0) {
-				saveOffScheduled();
-			} else {
-				saveOn();
-			}
+			saveOn();
 		}
 	}
 
@@ -111,13 +103,11 @@ public class Plugin extends JavaPlugin {
 		}
 
 		CommandHelper.queueConsoleCommand(server, "save-off");
-
-		isSaving = false;
 	}
 
 	private void saveOffScheduled() {
 		if (settings.getWait() > 0) {
-			println("Disabled scheduled, " + settings.getWait() + " seconds.");
+			println("Disabling scheduled, " + settings.getWait() + " seconds.");
 
 			timer.schedule(new TimerTask() {
 
@@ -155,7 +145,7 @@ public class Plugin extends JavaPlugin {
 					} else if (arg.equalsIgnoreCase("start")) {
 						listener.setEnabled(true);
 					} else if (arg.equalsIgnoreCase("status")) {
-						println("Started: " + listener.isEnabled() + ", Saving: " + isSaving);
+						println("Monitoring: " + listener.isEnabled());
 					} else if (arg.equalsIgnoreCase("stop")) {
 						listener.setEnabled(false);
 					}
