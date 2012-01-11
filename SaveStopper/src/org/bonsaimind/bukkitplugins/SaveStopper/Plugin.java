@@ -86,8 +86,15 @@ public class Plugin extends JavaPlugin {
 
 		if (server.getOnlinePlayers().length == 0 && isSaving) {
 			saveOffScheduled();
-		} else {
+		} else if (server.getOnlinePlayers().length > 0 && !isSaving) {
 			saveOn();
+		} else {
+			// Ohoh...something's wrong...*very* wrong...
+			if(server.getOnlinePlayers().length == 0) {
+				saveOffScheduled();
+			} else {
+				saveOn();
+			}
 		}
 	}
 
