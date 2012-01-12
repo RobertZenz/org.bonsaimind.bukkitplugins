@@ -61,59 +61,43 @@ public class Plugin extends JavaPlugin {
 	}
 
 	public void setCommands() {
-		getCommand("cron_reinit").setExecutor(new CommandExecutor() {
+		getCommand("simplecronclone").setExecutor(new CommandExecutor() {
 
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				if (!sender.isOp()) {
+					sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
 					return true;
 				}
 
-				helper.stop();
-				helper.start();
-				cs.sendMessage("SimpleCronClone: Configuration reloaded.");
-
-				return true;
-			}
-		});
-
-		getCommand("cron_stop").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				helper.stop();
-				cs.sendMessage("SimpleCronClone: HALTED!");
-				cs.sendMessage("SimpleCronClone: Use /cron_reinit to restart it.");
-
-				return true;
-			}
-		});
-
-		getCommand("cron_exec").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				if (strings.length == 0) {
+				if (args.length == 0) {
 					return false;
 				}
 
-				for (String script : strings) {
-					if (!script.endsWith(".scc")) {
-						script += ".scc";
-					}
+				for (int idx = 0; idx < args.length; idx++) {
+					String arg = args[idx];
 
-					if(helper.executeScript(new File("plugins/SimpleCronClone/" + script))){
-						cs.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script + "\".");
-					} else {
-						cs.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script + "\".");
+					if (arg.equalsIgnoreCase("exec")) {
+						for (int scriptIdx = idx + 1; scriptIdx < args.length; scriptIdx++) {
+							String script = args[scriptIdx];
+
+							if (!script.endsWith(".scc")) {
+								script += ".scc";
+							}
+
+							if (helper.executeScript(new File("plugins/SimpleCronClone/" + script))) {
+								sender.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script + "\".");
+							} else {
+								sender.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script + "\".");
+							}
+						}
+					} else if (arg.equalsIgnoreCase("restart")) {
+						helper.stop();
+						helper.start();
+						sender.sendMessage("SimpleCronClone: Configuration reloaded.");
+					} else if (arg.equalsIgnoreCase("stop")) {
+						helper.stop();
+						sender.sendMessage("SimpleCronClone: HALTED!");
+						sender.sendMessage("SimpleCronClone: Use /cron_reinit to restart it.");
 					}
 				}
 

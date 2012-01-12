@@ -5,12 +5,6 @@ main: org.bonsaimind.bukkitplugins.simplecronclone.Plugin
 version: 0.4
 
 commands:
-  cron_reinit:
-    description: Reload the complete configuration.
-    usage: /<command>
-  cron_stop:
-    description: Stop the scheduler completely.
-    usage: /<command>
-  cron_exec:
-    description: Executes the given script.
-    usage: /<command> <script>...
+  simplecronclone:
+    description: Main command.
+    usage: /<command> [exec|restart|stop]
