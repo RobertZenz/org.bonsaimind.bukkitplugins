@@ -96,8 +96,8 @@ public final class Engine {
 
 			String line;
 			while ((line = bufReader.readLine()) != null) {
-				if (!line.isEmpty() && line.charAt(0) != '#') {
-					parseTabLine(line.trim());
+				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
+					parseTabLine(line);
 				}
 			}
 
@@ -115,6 +115,8 @@ public final class Engine {
 	}
 
 	protected void parseTabLine(String line) {
+		line = line.trim();
+		
 		String timerPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
@@ -141,7 +143,7 @@ public final class Engine {
 			String line;
 			String lastOutput = "";
 			while ((line = bufReader.readLine()) != null) {
-				if (!line.isEmpty() && line.charAt(0) != '#') {
+				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
 					// Remove inlined comments
 					if (line.contains(COMMENT_START)) {
 						line = line.substring(0, line.indexOf(COMMENT_START));
@@ -217,15 +219,15 @@ public final class Engine {
 		return "";
 	}
 
-	protected static String getStreamOutput(InputStream strm) {
+	private static String getStreamOutput(InputStream strm) {
 		StringBuilder builder = new StringBuilder();
 
-		String tempLine;
+		String line;
 		try {
 			InputStreamReader reader = new InputStreamReader(strm);
 			BufferedReader bufReader = new BufferedReader(reader);
-			while ((tempLine = bufReader.readLine()) != null) {
-				builder.append(tempLine);
+			while ((line = bufReader.readLine()) != null) {
+				builder.append(line);
 				builder.append(" ");
 			}
 
