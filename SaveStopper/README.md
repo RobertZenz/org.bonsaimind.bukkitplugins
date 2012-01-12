@@ -6,6 +6,17 @@ SaveStopper is a simple administration plugin which will disable world saving if
 This will most likely have no effect onto the lifetime or performance of your harddisks, but it is nice if you don't hear your harddisks constantly writing.
 
 
+Bukkit Updates
+--------------
+
+If you want to run this Plugin but you're not sure if it still works, do the following check list:
+
+ * Does it load without error?
+ * Does `check` execute without an error?
+
+If you can answer both questions with **yes**, then it works.
+
+
 Commands
 --------
 
