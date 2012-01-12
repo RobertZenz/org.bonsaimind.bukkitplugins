@@ -131,6 +131,11 @@ public class Plugin extends JavaPlugin {
 		getCommand("savestopper").setExecutor(new CommandExecutor() {
 
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				if(!sender.isOp()) {
+					sender.sendMessage("Touch me one more time and I'll scream rape!");
+					return true;
+				}
+
 				if (args.length == 0) {
 					return false;
 				}
