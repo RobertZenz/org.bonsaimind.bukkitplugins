@@ -60,7 +60,7 @@ public class Plugin extends JavaPlugin {
 		setCommands();
 	}
 
-	public void setCommands() {
+	private void setCommands() {
 		getCommand("simplecronclone").setExecutor(new CommandExecutor() {
 
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
