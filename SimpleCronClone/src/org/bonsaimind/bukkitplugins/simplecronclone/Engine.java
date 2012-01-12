@@ -41,6 +41,11 @@ import org.bukkit.Server;
  */
 public final class Engine {
 
+	private static String COMMAND_DO = "do";
+	private static String COMMAND_EXEC = "exec";
+	private static String COMMAND_EXECWAIT = "execWait";
+	private static String COMMENT_START = "#";
+	private static String OUTPUT_TOKEN = "$?";
 	private File workingDir = null;
 	private Server parent = null;
 	private Scheduler scheduler = null;
@@ -138,14 +143,14 @@ public final class Engine {
 			while ((line = bufReader.readLine()) != null) {
 				if (!line.isEmpty() && line.charAt(0) != '#') {
 					// Remove inlined comments
-					if (line.contains("#")) {
-						line = line.substring(0, line.indexOf("#"));
+					if (line.contains(COMMENT_START)) {
+						line = line.substring(0, line.indexOf(COMMENT_START));
 					}
 
 					line = line.trim();
 
 					if (!line.isEmpty() && line.indexOf(' ') > 0) {
-						lastOutput = parseScriptLine(line.trim().replace("$?", lastOutput));
+						lastOutput = parseScriptLine(line.trim().replace(OUTPUT_TOKEN, lastOutput));
 					}
 				}
 			}
@@ -167,13 +172,13 @@ public final class Engine {
 		String type = line.substring(0, line.indexOf(" ")).trim();
 		String command = line.substring(line.indexOf(" ") + 1).trim();
 
-		if (type.equalsIgnoreCase("do")) {
+		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
 			CommandHelper.queueConsoleCommand(parent, command);
 
 			return "";
 
-		} else if (type.equalsIgnoreCase("exec")) {
+		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
 			try {
 				Process proc = Runtime.getRuntime().exec(command);
@@ -183,7 +188,7 @@ public final class Engine {
 
 			return "";
 
-		} else if (type.equalsIgnoreCase("execWait")) {
+		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
 			try {
 				// We need to split the string to pass it to the system
