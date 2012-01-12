@@ -46,9 +46,9 @@ public final class Engine {
 	private static String COMMAND_EXECWAIT = "execWait";
 	private static String COMMENT_START = "#";
 	private static String OUTPUT_TOKEN = "$?";
-	private File workingDir = null;
-	private Server parent = null;
-	private Scheduler scheduler = null;
+	private File workingDir;
+	private Server server;
+	private Scheduler scheduler;
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -58,8 +58,8 @@ public final class Engine {
 	 */
 	Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
 
-	public Engine(Server parent, File workingDir) {
-		this.parent = parent;
+	public Engine(Server server, File workingDir) {
+		this.server = server;
 		this.workingDir = workingDir;
 	}
 
@@ -103,15 +103,15 @@ public final class Engine {
 
 			bufReader.close();
 			reader.close();
+
+			return true;
 		} catch (FileNotFoundException ex) {
 			System.err.println(ex);
-			return false;
 		} catch (IOException ex) {
 			System.err.println(ex);
-			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	protected void parseTabLine(String line) {
@@ -174,7 +174,7 @@ public final class Engine {
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
-			CommandHelper.queueConsoleCommand(parent, command);
+			CommandHelper.queueConsoleCommand(server, command);
 
 			return "";
 
