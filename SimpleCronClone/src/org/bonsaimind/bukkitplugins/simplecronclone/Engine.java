@@ -104,10 +104,10 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (FileNotFoundException ex) {
-			System.err.println(ex.getMessage());
+			System.err.println(ex);
 			return false;
 		} catch (IOException ex) {
-			System.err.println(ex.getMessage());
+			System.err.println(ex);
 			return false;
 		}
 
@@ -158,10 +158,10 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (FileNotFoundException ex) {
-			System.err.println(ex.getMessage());
+			System.err.println(ex);
 			return false;
 		} catch (IOException ex) {
-			System.err.println(ex.getMessage());
+			System.err.println(ex);
 			return false;
 		}
 
@@ -183,7 +183,7 @@ public final class Engine {
 			try {
 				Process proc = Runtime.getRuntime().exec(command);
 			} catch (IOException ex) {
-				System.err.println(ex.getMessage());
+				System.err.println(ex);
 			}
 
 			return "";
@@ -208,9 +208,9 @@ public final class Engine {
 
 				return getStreamOutput(proc.getInputStream());
 			} catch (IOException ex) {
-				System.err.println(ex.getMessage());
+				System.err.println(ex);
 			} catch (InterruptedException ex) {
-				System.err.println(ex.getMessage());
+				System.err.println(ex);
 			}
 		}
 
@@ -232,7 +232,7 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (IOException ex) {
-			System.err.println(ex.getMessage());
+			System.err.println(ex);
 		}
 
 		return builder.toString();
