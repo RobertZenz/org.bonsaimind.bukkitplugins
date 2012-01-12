@@ -90,11 +90,11 @@ public class Plugin extends JavaPlugin {
 					} else if (arg.equalsIgnoreCase("restart")) {
 						engine.stop();
 						engine.start();
-						sender.sendMessage("SimpleCronClone: Configuration reloaded.");
+						sender.sendMessage("SimpleCronClone: Restarted.");
 					} else if (arg.equalsIgnoreCase("stop")) {
 						engine.stop();
 						sender.sendMessage("SimpleCronClone: HALTED!");
-						sender.sendMessage("SimpleCronClone: Use /cron_reinit to restart it.");
+						sender.sendMessage("SimpleCronClone: Use \"/simplecronclone restart\" to restart it.");
 					}
 				}
 
