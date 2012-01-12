@@ -38,12 +38,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Plugin extends JavaPlugin {
 
-	private Server server = null;
-	private Engine helper = null;
+	private Server server;
+	private Engine engine;
 
 	public void onDisable() {
-		helper.stop();
-		helper = null;
+		engine.stop();
+		engine = null;
 	}
 
 	public void onEnable() {
@@ -54,8 +54,8 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		helper = new Engine(server, new File("plugins/SimpleCronClone/"));
-		helper.start();
+		engine = new Engine(server, new File("plugins/SimpleCronClone/"));
+		engine.start();
 
 		setCommands();
 	}
@@ -84,18 +84,18 @@ public class Plugin extends JavaPlugin {
 								script += ".scc";
 							}
 
-							if (helper.executeScript(new File("plugins/SimpleCronClone/" + script))) {
+							if (engine.executeScript(new File("plugins/SimpleCronClone/" + script))) {
 								sender.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script + "\".");
 							} else {
 								sender.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script + "\".");
 							}
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
-						helper.stop();
-						helper.start();
+						engine.stop();
+						engine.start();
 						sender.sendMessage("SimpleCronClone: Configuration reloaded.");
 					} else if (arg.equalsIgnoreCase("stop")) {
-						helper.stop();
+						engine.stop();
 						sender.sendMessage("SimpleCronClone: HALTED!");
 						sender.sendMessage("SimpleCronClone: Use /cron_reinit to restart it.");
 					}
