@@ -4,14 +4,14 @@
  *
  * Modified by me
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.lang.reflect.Field;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
 
-public class SimpleCronCloneCommandHelper {
+public class CommandHelper {
 
 	public static void queueConsoleCommand(Server server, String cmd) {
 		if (server == null) {

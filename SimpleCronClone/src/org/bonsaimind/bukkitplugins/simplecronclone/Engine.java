@@ -21,7 +21,7 @@
  * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SimpleCronClone
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import it.sauronsoftware.cron4j.Scheduler;
 import java.io.BufferedReader;
@@ -39,7 +39,7 @@ import org.bukkit.Server;
  *
  * @author Robert 'Bobby' Zenz
  */
-public final class SimpleCronCloneHelper {
+public final class Engine {
 
 	private File workingDir = null;
 	private Server parent = null;
@@ -53,7 +53,7 @@ public final class SimpleCronCloneHelper {
 	 */
 	Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
 
-	public SimpleCronCloneHelper(Server parent, File workingDir) {
+	public Engine(Server parent, File workingDir) {
 		this.parent = parent;
 		this.workingDir = workingDir;
 	}
@@ -169,7 +169,7 @@ public final class SimpleCronCloneHelper {
 
 		if (type.equalsIgnoreCase("do")) {
 			// Server command
-			SimpleCronCloneCommandHelper.queueConsoleCommand(parent, command);
+			CommandHelper.queueConsoleCommand(parent, command);
 
 			return "";
 

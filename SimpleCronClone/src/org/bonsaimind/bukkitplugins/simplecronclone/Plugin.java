@@ -1,27 +1,27 @@
 /*
- * This file is part of SimpleCronClone.
+ * This file is part of Plugin.
  *
- * SimpleCronClone is free software: you can redistribute it and/or modify
+ * Plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * SimpleCronClone is distributed in the hope that it will be useful,
+ * Plugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with SimpleCronClone.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Plugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * Author: Robert 'Bobby' Zenz
  * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SimpleCronClone
+ * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.io.File;
 import org.bukkit.Server;
@@ -36,10 +36,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class SimpleCronClone extends JavaPlugin {
+public class Plugin extends JavaPlugin {
 
 	private Server server = null;
-	private SimpleCronCloneHelper helper = null;
+	private Engine helper = null;
 
 	public void onDisable() {
 		helper.stop();
@@ -54,7 +54,7 @@ public class SimpleCronClone extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		helper = new SimpleCronCloneHelper(server, new File("plugins/SimpleCronClone/"));
+		helper = new Engine(server, new File("plugins/SimpleCronClone/"));
 		helper.start();
 
 		setCommands();
