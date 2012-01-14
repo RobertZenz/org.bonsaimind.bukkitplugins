@@ -35,6 +35,8 @@ Commands
 
 `save-on` and `save-off` are doing basically the same as the default server commands. Except that `save-off` does an additional `save-all` if configured to do so, otherwise they work exactly the same.
 
+Also be aware that those commands can only be used by OPs from in-game or from the administration console.
+
 
 Usage in combination with backup scripts
 ----------------------------------------
