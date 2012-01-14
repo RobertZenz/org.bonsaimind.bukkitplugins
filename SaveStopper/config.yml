@@ -1,0 +1,13 @@
+# Default configuration file
+# No need to create this, as it is created the
+# first time the plugin is run.
+
+# Issue a save-all command before disabling saving
+saveAll: true
+
+# Wait x seconds before disabling saving
+# after the last player quit
+wait: 300
+
+# Disable saving when the server starts
+disableOnStart: true
