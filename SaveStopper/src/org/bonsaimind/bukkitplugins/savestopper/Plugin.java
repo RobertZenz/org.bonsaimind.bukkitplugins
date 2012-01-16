@@ -44,13 +44,14 @@ public class Plugin extends JavaPlugin {
 	private static final String CONFIG_FILE = "./plugins/SaveStopper/config.yml";
 	private Server server = null;
 	private Timer timer = new Timer(true);
+	private TimerTask currentTask;
 	private PlayerListener listener = new PlayerListener(this);
 	private Settings settings;
 
 	public void onDisable() {
 		settings.save();
 		settings = null;
-		
+
 		timer.cancel();
 		timer = null;
 
@@ -82,6 +83,10 @@ public class Plugin extends JavaPlugin {
 	protected void check() {
 		// Clear out the timer to make sure that the event
 		// does not interrupt us.
+		if (currentTask != null) {
+			currentTask.cancel();
+			currentTask = null;
+		}
 		timer.purge();
 
 		if (server.getOnlinePlayers().length == 0) {
@@ -109,13 +114,15 @@ public class Plugin extends JavaPlugin {
 		if (settings.getWait() > 0) {
 			println("Disabling scheduled, " + settings.getWait() + " seconds.");
 
-			timer.schedule(new TimerTask() {
+			currentTask = new TimerTask() {
 
 				@Override
 				public void run() {
 					saveOff();
 				}
-			}, settings.getWait() * 1000);
+			};
+
+			timer.schedule(currentTask, settings.getWait() * 1000);
 		} else {
 			saveOff();
 		}
@@ -131,7 +138,7 @@ public class Plugin extends JavaPlugin {
 		getCommand("savestopper").setExecutor(new CommandExecutor() {
 
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-				if(!sender.isOp()) {
+				if (!sender.isOp()) {
 					sender.sendMessage("Touch me one more time and I'll scream rape!");
 					return true;
 				}
