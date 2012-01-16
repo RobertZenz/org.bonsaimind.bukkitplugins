@@ -1,3 +1,12 @@
+0.11
+----
+
+ > 280676a6e9
+
+ * Fixed wrong handling of the scheduled disabling (will now be really stopped).
+ * Fixed wrong handling of the Login/Quit-Events.
+
+
 0.10
 ----
 
