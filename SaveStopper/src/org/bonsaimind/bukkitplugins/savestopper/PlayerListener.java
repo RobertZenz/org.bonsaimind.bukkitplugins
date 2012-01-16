@@ -46,14 +46,14 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		if (enabled) {
-			parent.check();
+			parent.guess();
 		}
 	}
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (enabled) {
-			parent.check();
+			parent.guess();
 		}
 	}
 

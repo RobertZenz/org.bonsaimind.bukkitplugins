@@ -80,14 +80,12 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Checks if saving should be enabled or disabled.
+	 * If there are no players online, it will be disabled.
+	 */
 	protected void check() {
-		// Clear out the timer to make sure that the event
-		// does not interrupt us.
-		if (currentTask != null) {
-			currentTask.cancel();
-			currentTask = null;
-		}
-		timer.purge();
+		purgeTask();
 
 		if (server.getOnlinePlayers().length == 0) {
 			saveOffScheduled();
@@ -96,8 +94,31 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Takes an educated guess if saving should be enabled or disabled.
+	 * If only one player is online, it will be disabled, if no players
+	 * are online or more than one then it will be enabled.
+	 */
+	protected void guess() {
+		purgeTask();
+
+		if (server.getOnlinePlayers().length == 1) {
+			saveOffScheduled();
+		} else {
+			saveOn();
+		}
+	}
+
 	private void println(String text) {
 		System.out.println("SaveStopper: " + text);
+	}
+
+	private void purgeTask() {
+		if (currentTask != null) {
+			currentTask.cancel();
+			currentTask = null;
+		}
+		timer.purge();
 	}
 
 	private void saveOff() {
