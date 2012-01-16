@@ -176,10 +176,12 @@ public class Plugin extends JavaPlugin {
 					} else if (arg.equalsIgnoreCase("save-on")) {
 						saveOn();
 					} else if (arg.equalsIgnoreCase("start")) {
+						println("Started.");
 						listener.setEnabled(true);
 					} else if (arg.equalsIgnoreCase("status")) {
 						println("Monitoring: " + listener.isEnabled());
 					} else if (arg.equalsIgnoreCase("stop")) {
+						println("Stopped.");
 						listener.setEnabled(false);
 					}
 				}
