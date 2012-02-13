@@ -1,0 +1,22 @@
+# Let's be polite first, say hello.
+do say Hello there!
+
+# Okay, now some fancy stuff,
+# let's save the world!
+do save-all
+
+# Let's do something easy
+exec externalScript.sh
+
+# Now we'll wait sometime.
+# This only works on any half
+# decent Operating System which
+# has a wait-command
+execWait wait 500
+
+# Now get some system info
+execWait uname -a
+
+# But what could does that do
+# if we can't show off with it?
+do say This server runs on: $?

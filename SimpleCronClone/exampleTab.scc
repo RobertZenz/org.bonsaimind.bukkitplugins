@@ -1,0 +1,10 @@
+# Copy this file to plugins/SimpleCronClone/tab.scc
+
+# +----------------> Minute
+# | +--------------> Hour
+# | | +------------> Day of month
+# | | | +----------> Month
+# | | | | +--------> Day of week
+# | | | | |     +--> Script/File
+# | | | | |     | 
+  * * * * * sayHello.scc
