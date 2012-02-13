@@ -174,24 +174,15 @@ public final class Engine {
 		String type = line.substring(0, line.indexOf(" ")).trim();
 		String command = line.substring(line.indexOf(" ") + 1).trim();
 
-		if (type.equalsIgnoreCase(COMMAND_DO)) {
-			// Server command
+		if (type.equalsIgnoreCase(COMMAND_DO)) { // Server command
 			CommandHelper.queueConsoleCommand(server, command);
-
-			return "";
-
-		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
-			// Kick off a process
+		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) { // Kick off a process
 			try {
 				Process proc = Runtime.getRuntime().exec(command);
 			} catch (IOException ex) {
 				System.err.println(ex);
 			}
-
-			return "";
-
-		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
-			// Execute a process
+		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) { // Execute a process
 			try {
 				// We need to split the string to pass it to the system
 				String[] splittedCommand = preparePattern.split(command);
