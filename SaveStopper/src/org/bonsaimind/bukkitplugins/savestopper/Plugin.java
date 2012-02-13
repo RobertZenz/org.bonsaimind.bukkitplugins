@@ -56,7 +56,7 @@ public class Plugin extends JavaPlugin {
 		timer = null;
 
 		listener = null;
-
+		
 		server = null;
 	}
 
