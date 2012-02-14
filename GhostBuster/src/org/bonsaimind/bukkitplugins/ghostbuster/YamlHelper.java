@@ -21,7 +21,7 @@
  * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/GhostBuster
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.ghostbuster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +37,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class GhostBusterYamlHelper {
+public class YamlHelper {
 
 	private File configFile = null;
 	private Yaml yaml = null;
@@ -46,7 +46,7 @@ public class GhostBusterYamlHelper {
 	 * Create the class.
 	 * @param configFile The path to the configuration file.
 	 */
-	public GhostBusterYamlHelper(String configFile) {
+	public YamlHelper(String configFile) {
 		this.configFile = new File(configFile);
 
 		DumperOptions options = new DumperOptions();

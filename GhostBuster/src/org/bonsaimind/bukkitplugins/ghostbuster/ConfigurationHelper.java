@@ -21,7 +21,7 @@
  * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/GhostBuster
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.ghostbuster;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +37,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author robert
  */
-public class GhostBusterConfigurationHelper {
+public class ConfigurationHelper {
 
 	public enum timeUnit {
 
@@ -157,16 +157,16 @@ public class GhostBusterConfigurationHelper {
 	}
 
 	protected static File config = new File("./plugins/GhostBuster/config.yml");
-	public static GhostBusterConfigurationHelper load() {
+	public static ConfigurationHelper load() {
 		DumperOptions options = new DumperOptions();
 		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		Yaml yaml = new Yaml(options);
 
-		GhostBusterConfigurationHelper res = new GhostBusterConfigurationHelper();
+		ConfigurationHelper res = new ConfigurationHelper();
 		if (config.exists() && config.canRead()) {
 			try {
 				Reader rdr = new FileReader(config);
-				res = (GhostBusterConfigurationHelper) yaml.load(rdr);
+				res = (ConfigurationHelper) yaml.load(rdr);
 				rdr.close();
 			} catch (FileNotFoundException ex) {
 				System.err.println(ex.getMessage());

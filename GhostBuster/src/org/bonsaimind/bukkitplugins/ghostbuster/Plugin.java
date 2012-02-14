@@ -1,27 +1,27 @@
 /*
- * This file is part of GhostBuster.
+ * This file is part of Plugin.
  *
- * GhostBuster is free software: you can redistribute it and/or modify
+ * Plugin is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * GhostBuster is distributed in the hope that it will be useful,
+ * Plugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with GhostBuster.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Plugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
  * Author: Robert 'Bobby' Zenz
  * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/GhostBuster
+ * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
  * E-Mail: bobby@bonsaimind.org
  */
-package org.bonsaimind.bukkitplugins;
+package org.bonsaimind.bukkitplugins.ghostbuster;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -46,12 +46,12 @@ import org.bukkit.scheduler.BukkitScheduler;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class GhostBuster extends JavaPlugin {
+public class Plugin extends JavaPlugin {
 
 	private Server server = null;
 	private BukkitScheduler scheduler = null;
-	private GhostBusterPlayerListener playerListener = new GhostBusterPlayerListener(this);
-	private GhostBusterEntityListener entityListener = new GhostBusterEntityListener(this);
+	private PlayerLoginListener playerListener = new PlayerLoginListener(this);
+	private EntityDeathListener entityListener = new EntityDeathListener(this);
 	private Map<String, Object> config = null;
 	private Map<String, Date> ghosts = null;
 	private List<String> exceptions = null;
@@ -79,7 +79,7 @@ public class GhostBuster extends JavaPlugin {
 	}
 
 	protected void readConfiguration() {
-		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/config.yml");
+		YamlHelper helper = new YamlHelper("plugins/GhostBuster/config.yml");
 		config = (Map<String, Object>) helper.read();
 
 		if (config == null) {
@@ -116,7 +116,7 @@ public class GhostBuster extends JavaPlugin {
 	}
 
 	protected void loadGhosts() {
-		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/ghosts.yml");
+		YamlHelper helper = new YamlHelper("plugins/GhostBuster/ghosts.yml");
 		ghosts = (Map<String, Date>) helper.read();
 
 		if (ghosts == null) {
@@ -126,7 +126,7 @@ public class GhostBuster extends JavaPlugin {
 	}
 
 	protected void saveGhosts() {
-		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/ghosts.yml");
+		YamlHelper helper = new YamlHelper("plugins/GhostBuster/ghosts.yml");
 
 		if ((Boolean) config.get("keepAtRestart")) {
 			helper.write(ghosts);
@@ -136,7 +136,7 @@ public class GhostBuster extends JavaPlugin {
 	}
 
 	protected void getExceptions() {
-		GhostBusterYamlHelper helper = new GhostBusterYamlHelper("plugins/GhostBuster/exceptions.yml");
+		YamlHelper helper = new YamlHelper("plugins/GhostBuster/exceptions.yml");
 		exceptions = (List<String>) helper.read();
 
 		if (exceptions == null) {
