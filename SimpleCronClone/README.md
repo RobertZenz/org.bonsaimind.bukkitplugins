@@ -34,4 +34,16 @@ Be aware that `exec` assumes that the given script can be found under `plugins/S
 Internal Structure
 ------------------
 
-TODO
+The Plugin is divided into three files:
+
+ * Plugin.java
+ * Engine.java
+ * CommandHelper.java
+
+The heavy-lifting is done inside the `Engine` class. It will read the `tab.scc`, parse it and set up the cron4j scheduler.
+
+
+Bukkit Forum
+------------
+
+There's a thread at the Bukkit Forum: http://forums.bukkit.org/threads/admn-simplecronclone-v0-5-a-cron-like-scheduling-system-1337.6331/
