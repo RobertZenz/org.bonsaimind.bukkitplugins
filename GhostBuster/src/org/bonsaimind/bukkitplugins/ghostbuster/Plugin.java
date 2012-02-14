@@ -52,12 +52,16 @@ public class Plugin extends JavaPlugin {
 	private BukkitScheduler scheduler = null;
 	private PlayerLoginListener playerListener = new PlayerLoginListener(this);
 	private EntityDeathListener entityListener = new EntityDeathListener(this);
-	private Map<String, Object> config = null;
-	private Map<String, Date> ghosts = null;
-	private List<String> exceptions = null;
+	private Settings settings;
 
 	public void onDisable() {
-		saveGhosts();
+		settings.save();
+		settings = null;
+
+		playerListener = null;
+		entityListener = null;
+
+		server = null;
 	}
 
 	public void onEnable() {
@@ -71,78 +75,10 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		readConfiguration();
-		loadGhosts();
-		getExceptions();
+		settings = new Settings("./plugins/GhostBuster/");
+		settings.load();
 
 		setCommands();
-	}
-
-	protected void readConfiguration() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/config.yml");
-		config = (Map<String, Object>) helper.read();
-
-		if (config == null) {
-			System.out.println("GhostBuster: No configuration file found, using defaults.");
-			config = new HashMap<String, Object>();
-		}
-
-		// Set the defaults
-		if (!config.containsKey("banTime")) {
-			config.put("banTime", 120);
-		}
-
-		if (!config.containsKey("keepAtRestart")) {
-			config.put("keepAtRestart", true);
-		}
-
-		if (!config.containsKey("freeSlotsMode")) {
-			config.put("freeSlotsMode", false);
-		}
-
-		if (!config.containsKey("deathMessage")) {
-			config.put("deathMessage", "You've died...come back when you live again.");
-		}
-
-		if (!config.containsKey("stillDeadMessage")) {
-			config.put("stillDeadMessage", "You're a ghost, you don't exist, go away.");
-		}
-
-		if (!config.containsKey("freeSlotsMode")) {
-			config.put("freeSlotsMode", false);
-		}
-
-		helper.write(config);
-	}
-
-	protected void loadGhosts() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/ghosts.yml");
-		ghosts = (Map<String, Date>) helper.read();
-
-		if (ghosts == null) {
-			System.out.println("GhostBuster: No ghost list was found.");
-			ghosts = new HashMap<String, Date>();
-		}
-	}
-
-	protected void saveGhosts() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/ghosts.yml");
-
-		if ((Boolean) config.get("keepAtRestart")) {
-			helper.write(ghosts);
-		} else {
-			helper.write(new HashMap<String, Date>());
-		}
-	}
-
-	protected void getExceptions() {
-		YamlHelper helper = new YamlHelper("plugins/GhostBuster/exceptions.yml");
-		exceptions = (List<String>) helper.read();
-
-		if (exceptions == null) {
-			System.out.println("GhostBuster: No exceptions list was found.");
-			exceptions = new LinkedList<String>();
-		}
 	}
 
 	protected void setCommands() {
@@ -210,7 +146,7 @@ public class Plugin extends JavaPlugin {
 				Long now = new Date().getTime();
 				DecimalFormat format = new DecimalFormat("00");
 				Integer banTime = (Integer) config.get("banTime");
-				
+
 				for (Map.Entry<String, Date> ghost : ghosts.entrySet()) {
 					long diff = (now - ghost.getValue().getTime()) / 1000 / 60;
 
@@ -252,12 +188,34 @@ public class Plugin extends JavaPlugin {
 					return true;
 				}
 
-				readConfiguration();
+				//readConfiguration();
 				System.out.println("GhostBuster: Configuration reloaded.");
 
 				return true;
 			}
 		});
+	}
+
+	protected void banPlayer(Player player) {
+		if (!settings.isExcepted(player.getName())) {
+			if (!settings.getFreeSlotsMode() || server.getOnlinePlayers().length >= server.getMaxPlayers()) {
+				// Now ban the bastard!
+				settings.banPlayer(player.getName());
+
+				// Now kick the player
+				final Player finalizedPlayer = player;
+				scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
+
+					public void run() {
+						finalizedPlayer.kickPlayer("");
+					}
+				}, 4);
+			}
+		}
+	}
+
+	protected void checkPlayer(Player player) {
+		
 	}
 
 	protected void makeGhost(Player player) {
@@ -268,7 +226,7 @@ public class Plugin extends JavaPlugin {
 				saveGhosts();
 
 				final Player thatPlayer = player;
-				final String message  = prepareMessage((String) config.get("deathMessage"), ((Integer) (config.get("banTime"))).longValue());
+				final String message = prepareMessage((String) config.get("deathMessage"), ((Integer) (config.get("banTime"))).longValue());
 				scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
 
 					public void run() {
