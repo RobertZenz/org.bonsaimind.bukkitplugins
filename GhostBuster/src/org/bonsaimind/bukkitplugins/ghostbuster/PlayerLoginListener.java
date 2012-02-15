@@ -40,7 +40,7 @@ public class PlayerLoginListener extends PlayerListener {
 
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		parent.playerLoggedIn(event);
+		parent.checkPlayer(event);
 		super.onPlayerLogin(event);
 	}
 }

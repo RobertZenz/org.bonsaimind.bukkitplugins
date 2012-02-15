@@ -42,7 +42,7 @@ public class EntityDeathListener extends EntityListener {
 	@Override
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (event.getEntity() instanceof Player) {
-			parent.makeGhost((Player)event.getEntity());
+			parent.banPlayer((Player)event.getEntity());
 		}
 		
 		super.onEntityDeath(event);

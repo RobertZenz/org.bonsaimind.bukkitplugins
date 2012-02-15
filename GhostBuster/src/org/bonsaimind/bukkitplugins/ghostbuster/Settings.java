@@ -76,6 +76,20 @@ public class Settings {
 	}
 
 	/**
+	 * Returns how long the player is still banned (in minutes).
+	 * @param playerName
+	 * @return
+	 */
+	public long getBanExpiration(String playerName) {
+		Date bannedSince = getBanTime(playerName);
+		if(bannedSince == null) {
+			return -1;
+		}
+
+		return getBanTime() - (new Date().getTime() - bannedSince.getTime()) / 60;
+	}
+
+	/**
 	 * How long should the player be banned (in minutes).
 	 * @return
 	 */
@@ -129,38 +143,10 @@ public class Settings {
 	}
 
 	/**
-	 * Initialize the settings. This will not overwrite anything,
-	 * but makes sure that the class can be safely used.
+	 * Check if the player ist still banned.
+	 * @param playerName
+	 * @return
 	 */
-	public void init() {
-		if (ghosts == null) {
-			ghosts = new HashMap<String, Date>();
-		}
-		if (exceptions == null) {
-			exceptions = new ArrayList<String>();
-		}
-		if (settings == null) {
-			settings = new HashMap<String, Object>();
-		}
-
-		// Default configuration
-		if (!settings.containsKey(BANTIME)) {
-			settings.put(BANTIME, 120);
-		}
-		if (!settings.containsKey(DEATH_MESSAGE)) {
-			settings.put(DEATH_MESSAGE, "You've died...come back when you live again.");
-		}
-		if (!settings.containsKey(FREE_SLOTS_MODE)) {
-			settings.put(FREE_SLOTS_MODE, false);
-		}
-		if (!settings.containsKey(KEEP_AT_RESTART)) {
-			settings.put(KEEP_AT_RESTART, true);
-		}
-		if (!settings.containsKey(STILL_DEAD_MESSAGE)) {
-			settings.put(STILL_DEAD_MESSAGE, "You're a ghost, you don't exist, go away!");
-		}
-	}
-
 	public boolean isBanned(String playerName) {
 		Date bannedSince = getBanTime(playerName);
 		return bannedSince != null && ((new Date().getTime() - bannedSince.getTime()) <= getBanTime());
@@ -201,6 +187,39 @@ public class Settings {
 		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 
 		return new Yaml(options);
+	}
+
+	/**
+	 * Initialize the settings. This will not overwrite anything,
+	 * but makes sure that the class can be safely used.
+	 */
+	private void init() {
+		if (ghosts == null) {
+			ghosts = new HashMap<String, Date>();
+		}
+		if (exceptions == null) {
+			exceptions = new ArrayList<String>();
+		}
+		if (settings == null) {
+			settings = new HashMap<String, Object>();
+		}
+
+		// Default configuration
+		if (!settings.containsKey(BANTIME)) {
+			settings.put(BANTIME, 120);
+		}
+		if (!settings.containsKey(DEATH_MESSAGE)) {
+			settings.put(DEATH_MESSAGE, "You've died...come back when you live again.");
+		}
+		if (!settings.containsKey(FREE_SLOTS_MODE)) {
+			settings.put(FREE_SLOTS_MODE, false);
+		}
+		if (!settings.containsKey(KEEP_AT_RESTART)) {
+			settings.put(KEEP_AT_RESTART, true);
+		}
+		if (!settings.containsKey(STILL_DEAD_MESSAGE)) {
+			settings.put(STILL_DEAD_MESSAGE, "You're a ghost, you don't exist, go away!");
+		}
 	}
 
 	public Object load(File file) {

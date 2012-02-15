@@ -69,7 +69,7 @@ public class Plugin extends JavaPlugin {
 		scheduler = server.getScheduler();
 
 		PluginManager pm = server.getPluginManager();
-		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Highest, this);
 		pm.registerEvent(Type.ENTITY_DEATH, entityListener, Priority.Monitor, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -207,54 +207,27 @@ public class Plugin extends JavaPlugin {
 				scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
 
 					public void run() {
-						finalizedPlayer.kickPlayer("");
+						finalizedPlayer.kickPlayer(prepareMessage(settings.getDeathMessage(), settings.getBanExpiration(finalizedPlayer.getName())));
 					}
 				}, 4);
 			}
 		}
 	}
 
-	protected void checkPlayer(Player player) {
-		
-	}
-
-	protected void makeGhost(Player player) {
-		if (!exceptions.contains(player.getName())) {
-			// Only ban if the freeSlotsMode is off or the Server is full...
-			if (!(Boolean) config.get("freeSlotsMode") || server.getOnlinePlayers().length == server.getMaxPlayers()) {
-				ghosts.put(player.getName(), new Date());
-				saveGhosts();
-
-				final Player thatPlayer = player;
-				final String message = prepareMessage((String) config.get("deathMessage"), ((Integer) (config.get("banTime"))).longValue());
-				scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
-
-					public void run() {
-						thatPlayer.kickPlayer(message);
-					}
-				}, 4);
-			}
+	protected void checkPlayer(PlayerLoginEvent event) {
+		// Check if the player is allowed to join
+		if (settings.isBanned(event.getPlayer().getName())) {
+			// Nope, it's not...
+			event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage(settings.getStillDeadMessage(), settings.getBanExpiration(event.getPlayer().getName())));
 		}
 	}
 
-	protected void playerLoggedIn(PlayerLoginEvent event) {
-		String name = event.getPlayer().getName();
-
-		if (ghosts.containsKey(name)) {
-			Date now = new Date();
-			Date then = ghosts.get(name);
-			long diff = (now.getTime() - then.getTime()) / 1000 / 60;
-			Integer banTime = (Integer) config.get("banTime");
-
-			if (diff < banTime) {
-				event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage((String) config.get("stillDeadMessage"), banTime - diff));
-			} else {
-				ghosts.remove(name);
-				saveGhosts();
-			}
-		}
-	}
-
+	/**
+	 * Replace %h and %m.
+	 * @param message The message.
+	 * @param timeLeft Time left, in minutes!
+	 * @return
+	 */
 	private String prepareMessage(String message, long timeLeft) {
 		message = message.replace("%h", Long.toString(timeLeft / 60));
 		message = message.replace("%m", Long.toString(timeLeft % 60));
