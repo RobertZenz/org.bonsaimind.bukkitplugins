@@ -5,18 +5,6 @@ main: org.bonsaimind.bukkitplugins.GhostBuster
 version: 0.5
 
 commands:
-  ghost_ban:
-    description: Ban the specified player (same as if he would have died).
-    usage: /<command> <player>
-  ghost_unban:
-    description: Unban the specified player.
-    usage: /<command> <player>
-  ghost_list:
-    description: Lists all banned players.
-    usage: /<command>
-  ghost_clear:
-    description: Clears the complete ghost list.
-    usage: /<command>
-  ghost_reinit:
-    descrition: Reload the complete config file.
-    usage: /<command>
+  ghostbuster:
+    description: Main command.
+    usage: /<command> [ban|except|info|reload|unban|unban_all|unexcept] [PLAYERNAME]

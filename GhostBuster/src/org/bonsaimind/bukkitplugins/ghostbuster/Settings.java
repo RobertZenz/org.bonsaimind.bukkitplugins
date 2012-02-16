@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -71,8 +72,38 @@ public class Settings {
 		init();
 	}
 
-	public void banPlayer(String playerName) {
+	/**
+	 * Add the player to the exception list. Will also unban
+	 * the player if necessary.
+	 * @param playerName
+	 * @return False if the player is already on the list.
+	 */
+	public boolean addException(String playerName) {
+		if (isExcepted(playerName)) {
+			return false;
+		}
+
+		if (ghosts.containsKey(playerName)) {
+			ghosts.remove(playerName);
+		}
+		exceptions.add(playerName);
+
+		return true;
+	}
+
+	/**
+	 * Ban the player.
+	 * @param playerName
+	 * @return False if the player is on the exception list.
+	 */
+	public boolean banPlayer(String playerName) {
+		if (isExcepted(playerName)) {
+			return false;
+		}
+
 		ghosts.put(playerName, new Date());
+
+		return true;
 	}
 
 	/**
@@ -82,7 +113,7 @@ public class Settings {
 	 */
 	public long getBanExpiration(String playerName) {
 		Date bannedSince = getBanTime(playerName);
-		if(bannedSince == null) {
+		if (bannedSince == null) {
 			return -1;
 		}
 
@@ -162,7 +193,32 @@ public class Settings {
 		settings = (Map<String, Object>) load(settingsFile);
 	}
 
+	/**
+	 * Reloads only the configuration and the exception list.
+	 */
+	public void reload() {
+		exceptions = (List<String>) load(exceptionFile);
+		settings = (Map<String, Object>) load(settingsFile);
+	}
+
+	/**
+	 * Remove the player from the exceptionlist.
+	 * @param playerName
+	 * @return False if the player was not on the list.
+	 */
+	public boolean removeException(String playerName) {
+		if (!isExcepted(playerName)) {
+			return false;
+		}
+
+		exceptions.remove(playerName);
+
+		return true;
+	}
+
 	public void save() {
+		clearGhosts();
+
 		if (ghosts != null) {
 			save(ghostFile, ghosts);
 		}
@@ -172,6 +228,76 @@ public class Settings {
 		if (settings == null) {
 			save(settingsFile, settings);
 		}
+	}
+
+	public Object load(File file) {
+		FileReader reader = null;
+		try {
+			reader = new FileReader(file);
+			return getYaml().load(reader);
+		} catch (FileNotFoundException ex) {
+			System.err.println(ex);
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException ex) {
+				System.err.println(ex);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Unbans the player.
+	 * @param playerName
+	 * @return False if there was nothing todo.
+	 */
+	public boolean unbanPlayer(String playerName) {
+		if (!isBanned(playerName)) {
+			return false;
+		}
+
+		ghosts.remove(playerName);
+
+		return true;
+	}
+
+	/**
+	 * Save.
+	 * @param settingsFile Save to this file.
+	 */
+	public void save(File file, Object content) {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(file);
+			getYaml().dump(content, writer);
+		} catch (IOException ex) {
+			System.err.println(ex);
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException ex) {
+				System.err.println(ex);
+			}
+		}
+	}
+
+	/**
+	 * Clears the ghost-list from...hehe...ghost entries.
+	 */
+	private void clearGhosts() {
+		long now = new Date().getTime();
+		int banTime = getBanTime();
+
+		Map<String, Date> newGhostList = new HashMap<String, Date>();
+		for (Map.Entry<String, Date> entry : ghosts.entrySet()) {
+			if (banTime - now - entry.getValue().getTime() > 0) {
+				newGhostList.put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		ghosts = newGhostList;
 	}
 
 	private Object get(String name) {
@@ -219,44 +345,6 @@ public class Settings {
 		}
 		if (!settings.containsKey(STILL_DEAD_MESSAGE)) {
 			settings.put(STILL_DEAD_MESSAGE, "You're a ghost, you don't exist, go away!");
-		}
-	}
-
-	public Object load(File file) {
-		FileReader reader = null;
-		try {
-			reader = new FileReader(file);
-			return getYaml().load(reader);
-		} catch (FileNotFoundException ex) {
-			System.err.println(ex);
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException ex) {
-				System.err.println(ex);
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Save.
-	 * @param settingsFile Save to this file.
-	 */
-	public void save(File file, Object content) {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(file);
-			getYaml().dump(content, writer);
-		} catch (IOException ex) {
-			System.err.println(ex);
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException ex) {
-				System.err.println(ex);
-			}
 		}
 	}
 }

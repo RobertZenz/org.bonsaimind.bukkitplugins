@@ -78,122 +78,7 @@ public class Plugin extends JavaPlugin {
 		settings = new Settings("./plugins/GhostBuster/");
 		settings.load();
 
-		setCommands();
-	}
-
-	protected void setCommands() {
-		getCommand("ghost_ban").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				if (strings.length > 0) {
-					String playerName = strings[0];
-					Player player = server.getPlayer(playerName);
-
-					if (player != null) {
-						cs.sendMessage("GhostBuster: Banning \"" + playerName + "\"...");
-						makeGhost(player);
-					} else {
-						cs.sendMessage("GhostBuster: Sorry, I don't know who \"" + playerName + "\" is...");
-					}
-
-					return true;
-				}
-
-				return false;
-			}
-		});
-
-		getCommand("ghost_unban").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				if (strings.length > 0) {
-					String playerName = strings[0];
-
-					if (ghosts.containsKey(playerName)) {
-						cs.sendMessage("GhostBuster: Unbanning \"" + playerName + "\"...");
-						ghosts.remove(playerName);
-						saveGhosts();
-					} else {
-						cs.sendMessage("GhostBuster: \"" + playerName + "\" isn't banned...");
-					}
-
-					return true;
-				}
-
-				return false;
-			}
-		});
-
-		getCommand("ghost_list").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				Integer counter = 0;
-				Long now = new Date().getTime();
-				DecimalFormat format = new DecimalFormat("00");
-				Integer banTime = (Integer) config.get("banTime");
-
-				for (Map.Entry<String, Date> ghost : ghosts.entrySet()) {
-					long diff = (now - ghost.getValue().getTime()) / 1000 / 60;
-
-					if (diff < banTime) {
-						cs.sendMessage(prepareMessage("\"" + ghost.getKey() + "\" is banned for %h:%m", (Integer) config.get("banTime") - diff));
-						counter++;
-					}
-				}
-
-				if (counter <= 0) {
-					cs.sendMessage("GhostBuster: No ghosts on this server.");
-				}
-
-				return true;
-			}
-		});
-
-		getCommand("ghost_clear").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				ghosts.clear();
-				saveGhosts();
-				System.out.println("GhostBuster: All ghosts have been revived.");
-
-				return true;
-			}
-		});
-
-		getCommand("ghost_reinit").setExecutor(new CommandExecutor() {
-
-			public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
-				if (!cs.isOp()) {
-					cs.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
-				//readConfiguration();
-				System.out.println("GhostBuster: Configuration reloaded.");
-
-				return true;
-			}
-		});
+		setCommand();
 	}
 
 	protected void banPlayer(Player player) {
@@ -233,5 +118,85 @@ public class Plugin extends JavaPlugin {
 		message = message.replace("%m", Long.toString(timeLeft % 60));
 
 		return message;
+
+	}
+
+	private void setCommand() {
+		getCommand("ghostbuster").setExecutor(new CommandExecutor() {
+
+			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				if (!sender.isOp()) {
+					sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
+					return true;
+				}
+
+				if (args.length == 0) {
+					return false;
+				}
+
+				for (int idx = 0; idx < args.length; idx++) {
+					String arg = args[idx];
+
+					if (arg.equalsIgnoreCase("ban")) {
+						if (idx >= args.length) {
+							return false;
+						}
+
+						if (settings.banPlayer(args[idx + 1])) {
+							sender.sendMessage("Done.");
+						} else {
+							sender.sendMessage("That player is on the exception list.");
+						}
+					} else if (arg.equalsIgnoreCase("except")) {
+						if (idx >= args.length) {
+							return false;
+						}
+
+						if (settings.addException(args[idx + 1])) {
+							sender.sendMessage("Done.");
+						} else {
+							sender.sendMessage("That player is already on the exception list.");
+						}
+					} else if (arg.equalsIgnoreCase("info")) {
+						if (idx >= args.length) {
+							return false;
+						}
+
+						long expires = settings.getBanExpiration(args[idx + 1]);
+						if (expires > 0) {
+							sender.sendMessage(prepareMessage("Banned for another %h hours and %m minutes.", expires));
+						} else {
+							sender.sendMessage("That player is not banned.");
+						}
+					} else if (arg.equalsIgnoreCase("reload")) {
+						settings.reload();
+						sender.sendMessage("Done.");
+					} else if (arg.equalsIgnoreCase("unban")) {
+						if (idx >= args.length) {
+							return false;
+						}
+
+						if (settings.unbanPlayer(args[idx + 1])) {
+							sender.sendMessage("Done.");
+						} else {
+							sender.sendMessage("That player is not banned.");
+						}
+					} else if (arg.equalsIgnoreCase("unban_all")) {
+					} else if (arg.equalsIgnoreCase("unexcept")) {
+						if (idx >= args.length) {
+							return false;
+						}
+
+						if (settings.removeException(args[idx + 1])) {
+							sender.sendMessage("Done.");
+						} else {
+							sender.sendMessage("That player is not on the exception list.");
+						}
+					}
+				}
+
+				return true;
+			}
+		});
 	}
 }
