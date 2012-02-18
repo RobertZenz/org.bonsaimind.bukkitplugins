@@ -156,11 +156,15 @@ public class Plugin extends JavaPlugin {
 							return false;
 						}
 
-						long expires = winston.getBanExpiration(args[idx + 1]);
-						if (expires > 0) {
-							sender.sendMessage(prepareMessage("Banned for another %h hours and %m minutes.", expires));
+						if (winston.isExcepted(args[idx + 1])) {
+							sender.sendMessage("That player is on the exception list.");
 						} else {
-							sender.sendMessage("That player is not banned.");
+							long expires = winston.getBanExpiration(args[idx + 1]);
+							if (expires > 0) {
+								sender.sendMessage(prepareMessage("Banned for another %h hours and %m minutes.", expires));
+							} else {
+								sender.sendMessage("That player is not banned.");
+							}
 						}
 					} else if (arg.equalsIgnoreCase("reload")) {
 						winston.reload();
