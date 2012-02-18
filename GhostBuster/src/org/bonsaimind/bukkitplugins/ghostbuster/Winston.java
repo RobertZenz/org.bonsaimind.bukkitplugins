@@ -40,7 +40,7 @@ import org.yaml.snakeyaml.Yaml;
  *
  * @author Robert 'Bobby' Zenz
  */
-public class Settings {
+public class Winston {
 
 	private static final String BANTIME = "banTime";
 	private static final String FREE_SLOTS_MODE = "freeSlotsMode";
@@ -54,7 +54,7 @@ public class Settings {
 	private Map<String, Date> ghosts;
 	private Map<String, Object> settings;
 
-	public Settings(String settingsFile) {
+	public Winston(String settingsFile) {
 		this.settingsFile = new File(settingsFile + "config.yml");
 		this.exceptionFile = new File(settingsFile + "exceptions.yml");
 		this.ghostFile = new File(settingsFile + "ghosts.yml");

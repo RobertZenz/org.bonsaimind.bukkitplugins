@@ -46,11 +46,11 @@ public class Plugin extends JavaPlugin {
 	private BukkitScheduler scheduler = null;
 	private PlayerLoginListener playerListener = new PlayerLoginListener(this);
 	private EntityDeathListener entityListener = new EntityDeathListener(this);
-	private Settings settings;
+	private Winston winston;
 
 	public void onDisable() {
-		settings.save();
-		settings = null;
+		winston.save();
+		winston = null;
 
 		playerListener = null;
 		entityListener = null;
@@ -69,24 +69,24 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		settings = new Settings("./plugins/GhostBuster/");
-		settings.load();
+		winston = new Winston("./plugins/GhostBuster/");
+		winston.load();
 
 		setCommand();
 	}
 
 	protected void banPlayer(Player player) {
-		if (!settings.isExcepted(player.getName())) {
-			if (!settings.getFreeSlotsMode() || server.getOnlinePlayers().length >= server.getMaxPlayers()) {
+		if (!winston.isExcepted(player.getName())) {
+			if (!winston.getFreeSlotsMode() || server.getOnlinePlayers().length >= server.getMaxPlayers()) {
 				// Now ban the bastard!
-				settings.banPlayer(player.getName());
+				winston.banPlayer(player.getName());
 
 				// Now kick the player
 				final Player finalizedPlayer = player;
 				scheduler.scheduleAsyncDelayedTask(this, new Runnable() {
 
 					public void run() {
-						finalizedPlayer.kickPlayer(prepareMessage(settings.getDeathMessage(), settings.getBanExpiration(finalizedPlayer.getName())));
+						finalizedPlayer.kickPlayer(prepareMessage(winston.getDeathMessage(), winston.getBanExpiration(finalizedPlayer.getName())));
 					}
 				}, 4);
 			}
@@ -95,9 +95,9 @@ public class Plugin extends JavaPlugin {
 
 	protected void checkPlayer(PlayerLoginEvent event) {
 		// Check if the player is allowed to join
-		if (settings.isBanned(event.getPlayer().getName())) {
+		if (winston.isBanned(event.getPlayer().getName())) {
 			// Nope, it's not...
-			event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage(settings.getStillDeadMessage(), settings.getBanExpiration(event.getPlayer().getName())));
+			event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage(winston.getStillDeadMessage(), winston.getBanExpiration(event.getPlayer().getName())));
 		}
 	}
 
@@ -136,7 +136,7 @@ public class Plugin extends JavaPlugin {
 							return false;
 						}
 
-						if (settings.banPlayer(args[idx + 1])) {
+						if (winston.banPlayer(args[idx + 1])) {
 							sender.sendMessage("Done.");
 						} else {
 							sender.sendMessage("That player is on the exception list.");
@@ -146,7 +146,7 @@ public class Plugin extends JavaPlugin {
 							return false;
 						}
 
-						if (settings.addException(args[idx + 1])) {
+						if (winston.addException(args[idx + 1])) {
 							sender.sendMessage("Done.");
 						} else {
 							sender.sendMessage("That player is already on the exception list.");
@@ -156,21 +156,21 @@ public class Plugin extends JavaPlugin {
 							return false;
 						}
 
-						long expires = settings.getBanExpiration(args[idx + 1]);
+						long expires = winston.getBanExpiration(args[idx + 1]);
 						if (expires > 0) {
 							sender.sendMessage(prepareMessage("Banned for another %h hours and %m minutes.", expires));
 						} else {
 							sender.sendMessage("That player is not banned.");
 						}
 					} else if (arg.equalsIgnoreCase("reload")) {
-						settings.reload();
+						winston.reload();
 						sender.sendMessage("Done.");
 					} else if (arg.equalsIgnoreCase("unban")) {
 						if (idx >= args.length) {
 							return false;
 						}
 
-						if (settings.unbanPlayer(args[idx + 1])) {
+						if (winston.unbanPlayer(args[idx + 1])) {
 							sender.sendMessage("Done.");
 						} else {
 							sender.sendMessage("That player is not banned.");
@@ -181,7 +181,7 @@ public class Plugin extends JavaPlugin {
 							return false;
 						}
 
-						if (settings.removeException(args[idx + 1])) {
+						if (winston.removeException(args[idx + 1])) {
 							sender.sendMessage("Done.");
 						} else {
 							sender.sendMessage("That player is not on the exception list.");
