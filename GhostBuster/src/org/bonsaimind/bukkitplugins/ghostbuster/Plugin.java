@@ -165,6 +165,9 @@ public class Plugin extends JavaPlugin {
 					} else if (arg.equalsIgnoreCase("reload")) {
 						winston.reload();
 						sender.sendMessage("Done.");
+					} else if (arg.equalsIgnoreCase("save")) {
+						winston.save();
+						sender.sendMessage("Done.");
 					} else if (arg.equalsIgnoreCase("unban")) {
 						if (idx >= args.length) {
 							return false;

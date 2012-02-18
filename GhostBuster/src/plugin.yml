@@ -7,4 +7,4 @@ version: 0.5
 commands:
   ghostbuster:
     description: Main command.
-    usage: /<command> [ban|except|info|reload|unban|unban_all|unexcept] [PLAYERNAME]
+    usage: /<command> [ban|except|info|reload|save|unban|unban_all|unexcept] [PLAYERNAME]
