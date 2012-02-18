@@ -23,6 +23,7 @@ Commands
     ghostbuster
 
         ban PLAYERNAME         Ban the player with given name.
+                               You'll have to kick the player yourself.
         except PLAYERNAME      Add that player to the exception-list.
         info PLAYERNAME        Display info about that player.
         reload                 Reload the exception-list and the settings.
