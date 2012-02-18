@@ -1,0 +1,20 @@
+# Defines the time how long the player will be banned, in minutes.
+# If you want to ban them basically forever, just set it to something
+# large, like 525600, which is roughly a year.
+banTime: 120
+
+# Defines if players should stay banned even if the server restarts.
+keepAtRestart: true
+
+# Free-Slots-Mode
+# Players will only be banned if the maximum number of players
+# on the server is reached.
+freeSlotsMode: false
+
+# Message which will be displayed if the player dies.
+# You can use %h and %m as subsitutes for remaining hours and minutes.
+deathMessage: You've died...come back when you live again.
+
+# Message if the player tries to join before that ban is over.
+stillDeadMessage: You're a ghost, you don't exist, go away.
+
