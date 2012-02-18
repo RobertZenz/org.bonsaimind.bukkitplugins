@@ -176,6 +176,8 @@ public class Plugin extends JavaPlugin {
 							sender.sendMessage("That player is not banned.");
 						}
 					} else if (arg.equalsIgnoreCase("unban_all")) {
+						winston.unbanAll();
+						sender.sendMessage("Done.");
 					} else if (arg.equalsIgnoreCase("unexcept")) {
 						if (idx >= args.length) {
 							return false;

@@ -283,6 +283,13 @@ public class Winston {
 	}
 
 	/**
+	 * Unban all players with no exceptions.
+	 */
+	public void unbanAll() {
+		ghosts.clear();
+	}
+
+	/**
 	 * Clears the ghost-list from...hehe...ghost entries.
 	 */
 	private void clearGhosts() {
