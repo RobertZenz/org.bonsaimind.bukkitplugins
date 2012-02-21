@@ -132,7 +132,7 @@ public class Plugin extends JavaPlugin {
 					String arg = args[idx];
 
 					if (arg.equalsIgnoreCase("ban")) {
-						if (idx >= args.length) {
+						if (idx >= args.length - 1) {
 							return false;
 						}
 
@@ -142,7 +142,7 @@ public class Plugin extends JavaPlugin {
 							sender.sendMessage("That player is on the exception list.");
 						}
 					} else if (arg.equalsIgnoreCase("except")) {
-						if (idx >= args.length) {
+						if (idx >= args.length - 1) {
 							return false;
 						}
 
@@ -152,7 +152,7 @@ public class Plugin extends JavaPlugin {
 							sender.sendMessage("That player is already on the exception list.");
 						}
 					} else if (arg.equalsIgnoreCase("info")) {
-						if (idx >= args.length) {
+						if (idx >= args.length - 1) {
 							return false;
 						}
 
@@ -173,7 +173,7 @@ public class Plugin extends JavaPlugin {
 						winston.save();
 						sender.sendMessage("Done.");
 					} else if (arg.equalsIgnoreCase("unban")) {
-						if (idx >= args.length) {
+						if (idx >= args.length - 1) {
 							return false;
 						}
 
@@ -186,7 +186,7 @@ public class Plugin extends JavaPlugin {
 						winston.unbanAll();
 						sender.sendMessage("Done.");
 					} else if (arg.equalsIgnoreCase("unexcept")) {
-						if (idx >= args.length) {
+						if (idx >= args.length - 1) {
 							return false;
 						}
 
