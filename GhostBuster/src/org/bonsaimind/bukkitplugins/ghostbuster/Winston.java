@@ -117,7 +117,7 @@ public class Winston {
 			return -1;
 		}
 
-		return getBanTime() - (new Date().getTime() - bannedSince.getTime()) / 60000;
+		return getBanTime() - (long)Math.ceil((new Date().getTime() - bannedSince.getTime()) / 60000f);
 	}
 
 	/**
@@ -179,8 +179,7 @@ public class Winston {
 	 * @return
 	 */
 	public boolean isBanned(String playerName) {
-		Date bannedSince = getBanTime(playerName);
-		return bannedSince != null && ((new Date().getTime() - bannedSince.getTime()) / 60000 <= getBanTime());
+		return getBanExpiration(playerName) > 0;
 	}
 
 	public boolean isExcepted(String playerName) {
