@@ -100,6 +100,7 @@ public class Winston {
 			return false;
 		}
 
+		System.out.println(new Date());
 		ghosts.put(playerName, new Date());
 
 		return true;
@@ -116,7 +117,7 @@ public class Winston {
 			return -1;
 		}
 
-		return getBanTime() - (new Date().getTime() - bannedSince.getTime()) / 60;
+		return getBanTime() - (new Date().getTime() - bannedSince.getTime()) / 60000;
 	}
 
 	/**
