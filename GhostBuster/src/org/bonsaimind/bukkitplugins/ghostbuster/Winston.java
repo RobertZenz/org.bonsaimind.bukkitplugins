@@ -179,7 +179,7 @@ public class Winston {
 	 */
 	public boolean isBanned(String playerName) {
 		Date bannedSince = getBanTime(playerName);
-		return bannedSince != null && ((new Date().getTime() - bannedSince.getTime()) <= getBanTime());
+		return bannedSince != null && ((new Date().getTime() - bannedSince.getTime()) / 60 <= getBanTime());
 	}
 
 	public boolean isExcepted(String playerName) {
@@ -187,9 +187,15 @@ public class Winston {
 	}
 
 	public void load() {
-		ghosts = (Map<String, Date>) load(ghostFile);
-		exceptions = (List<String>) load(exceptionFile);
-		settings = (Map<String, Object>) load(settingsFile);
+		if ((ghosts = (Map<String, Date>) load(ghostFile)) == null) {
+			ghosts = new HashMap<String, Date>();
+		}
+		if ((exceptions = (List<String>) load(exceptionFile)) == null) {
+			exceptions = new ArrayList<String>();
+		}
+		if ((settings = (Map<String, Object>) load(settingsFile)) == null) {
+			settings = new HashMap<String, Object>();
+		}
 	}
 
 	/**
@@ -221,15 +227,19 @@ public class Winston {
 		if (ghosts != null) {
 			save(ghostFile, ghosts);
 		}
-		if (exceptions == null) {
+		if (exceptions != null) {
 			save(exceptionFile, exceptions);
 		}
-		if (settings == null) {
+		if (settings != null) {
 			save(settingsFile, settings);
 		}
 	}
 
 	public Object load(File file) {
+		if (!file.exists()) {
+			return null;
+		}
+
 		FileReader reader = null;
 		try {
 			reader = new FileReader(file);
