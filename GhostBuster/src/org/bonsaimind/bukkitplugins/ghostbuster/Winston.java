@@ -180,7 +180,7 @@ public class Winston {
 	 */
 	public boolean isBanned(String playerName) {
 		Date bannedSince = getBanTime(playerName);
-		return bannedSince != null && ((new Date().getTime() - bannedSince.getTime()) / 60 <= getBanTime());
+		return bannedSince != null && ((new Date().getTime() - bannedSince.getTime()) / 60000 <= getBanTime());
 	}
 
 	public boolean isExcepted(String playerName) {
