@@ -23,15 +23,17 @@
  */
 package org.bonsaimind.bukkitplugins;
 
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.Listener; // MeneXia: Added import.
+import org.bukkit.event.EventHandler; // See above
+import org.bukkit.event.EventPriority; // See above
 
 /**
  *
  * @author Robert 'Bobby' Zenz
  */
-public class SpawnRandomizerPlayerListener extends PlayerListener {
+public class SpawnRandomizerPlayerListener implements Listener { // MeneXia: No longer extends PlayerListener, will instead implement Listener
 
 	SpawnRandomizer parent = null;
 
@@ -39,14 +41,14 @@ public class SpawnRandomizerPlayerListener extends PlayerListener {
 		parent = parentInstance;
 	}
 
-	@Override
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL) // MeneXia: Updated to the new Event system, >=CB1.0.0
+	public void randomPlayerRespawn(final PlayerRespawnEvent event) {
 		parent.teleport(event);
 		super.onPlayerRespawn(event);
 	}
 
 	@Override
-	public void onPlayerLogin(PlayerLoginEvent event) {
+	public void onLogin(final PlayerLoginEvent event) {
 		if (parent.teleportOnLogin()) {
 			parent.teleport(event.getPlayer());
 		}
