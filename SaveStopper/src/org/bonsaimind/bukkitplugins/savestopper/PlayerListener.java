@@ -25,12 +25,15 @@ package org.bonsaimind.bukkitplugins.savestopper;
 
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.Listener; // MeneXia: Added import.
+import org.bukkit.event.EventHandler; // See above
+import org.bukkit.event.EventPriority; // See above
 
 /**
  *
  * @author Robert 'Bobby' Zenz
  */
-public class PlayerListener extends org.bukkit.event.player.PlayerListener {
+public class PlayerListener implements Listener { // MeneXia: implements listener for new event system
 
 	private Plugin parent = null;
 	private boolean enabled = true;
@@ -43,15 +46,15 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 		return enabled;
 	}
 
-	@Override
-	public void onPlayerLogin(PlayerLoginEvent event) {
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL) // MeneXia: uses new event system
+	public void playerLogin(PlayerLoginEvent event) {
 		if (enabled) {
 			parent.guess();
 		}
 	}
 
-	@Override
-	public void onPlayerQuit(PlayerQuitEvent event) {
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+	public void playerQuit(PlayerQuitEvent event) { // MeneXia: same as above
 		if (enabled) {
 			parent.guess();
 		}
