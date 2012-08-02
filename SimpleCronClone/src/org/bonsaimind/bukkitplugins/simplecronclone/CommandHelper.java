@@ -7,9 +7,9 @@
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.lang.reflect.Field;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
+import net.minecraft.server.DedicatedServer;
 
 public class CommandHelper {
 
@@ -35,10 +35,10 @@ public class CommandHelper {
 			return;
 		}
 
-		MinecraftServer minecraftServer;
+		DedicatedServer minecraftServer;
 		try {
 			field.setAccessible(true);
-			minecraftServer = (MinecraftServer) field.get(server);
+			minecraftServer = (DedicatedServer) field.get(server);
 		} catch (IllegalArgumentException ex) {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
@@ -47,7 +47,7 @@ public class CommandHelper {
 			return;
 		}
 
-		if ((!minecraftServer.isStopped) && (MinecraftServer.isRunning(minecraftServer))) {
+		if ((!minecraftServer.isStopped()) && (minecraftServer.isRunning())) {
 			minecraftServer.issueCommand(command, minecraftServer);
 		}
 	}
