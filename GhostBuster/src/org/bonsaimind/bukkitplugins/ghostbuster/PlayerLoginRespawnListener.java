@@ -25,16 +25,17 @@ package org.bonsaimind.bukkitplugins.ghostbuster;
 
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 /**
  *
  * @author Robert 'Bobby' Zenz
  */
-public class PlayerLoginListener extends PlayerListener {
+public class PlayerLoginRespawnListener extends PlayerListener {
 
 	private Plugin parent = null;
 
-	public PlayerLoginListener(Plugin parentInstance) {
+	public PlayerLoginRespawnListener(Plugin parentInstance) {
 		parent = parentInstance;
 	}
 
@@ -42,5 +43,11 @@ public class PlayerLoginListener extends PlayerListener {
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		parent.checkPlayer(event);
 		super.onPlayerLogin(event);
+	}
+
+	@Override
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		parent.checkPlayer(event);
+		super.onPlayerRespawn(event);
 	}
 }

@@ -43,9 +43,11 @@ import org.yaml.snakeyaml.Yaml;
 public class Winston {
 
 	private static final String BANTIME = "banTime";
-	private static final String FREE_SLOTS_MODE = "freeSlotsMode";
 	private static final String DEATH_MESSAGE = "deathMessage";
+	private static final String FREE_SLOTS_MODE = "freeSlotsMode";
+	private static final String HELL_WORLD = "hellWorld";
 	private static final String KEEP_AT_RESTART = "keepAtRestart";
+	private static final String SPAWN_WORLD = "spawnWorld";
 	private static final String STILL_DEAD_MESSAGE = "stillDeadMessage";
 	private File exceptionFile;
 	private File ghostFile;
@@ -117,7 +119,7 @@ public class Winston {
 			return -1;
 		}
 
-		return getBanTime() - (long)Math.ceil((new Date().getTime() - bannedSince.getTime()) / 60000f);
+		return getBanTime() - (long) Math.ceil((new Date().getTime() - bannedSince.getTime()) / 60000f);
 	}
 
 	/**
@@ -158,11 +160,23 @@ public class Winston {
 	}
 
 	/**
+	 * Get defined Hell-World.
+	 * @return
+	 */
+	public String getHellWorld() {
+		return (String) get(HELL_WORLD);
+	}
+
+	/**
 	 * Keep the ghost list even when the server restarts.
 	 * @return
 	 */
 	public boolean getKeepAtRestart() {
 		return (Boolean) get(KEEP_AT_RESTART);
+	}
+
+	public String getSpawnWorld() {
+		return (String) get(SPAWN_WORLD);
 	}
 
 	/**
@@ -171,6 +185,14 @@ public class Winston {
 	 */
 	public String getStillDeadMessage() {
 		return (String) get(STILL_DEAD_MESSAGE);
+	}
+
+	/**
+	 * Returns true if a hell world is set.
+	 * @return
+	 */
+	public boolean hasHellWorld() {
+		return getHellWorld() != null && getHellWorld().length() > 0;
 	}
 
 	/**
@@ -356,8 +378,14 @@ public class Winston {
 		if (!settings.containsKey(FREE_SLOTS_MODE)) {
 			settings.put(FREE_SLOTS_MODE, false);
 		}
+		if (!settings.containsKey(HELL_WORLD)) {
+			settings.put(HELL_WORLD, "");
+		}
 		if (!settings.containsKey(KEEP_AT_RESTART)) {
 			settings.put(KEEP_AT_RESTART, true);
+		}
+		if (!settings.containsKey(SPAWN_WORLD)) {
+			settings.put(SPAWN_WORLD, "world");
 		}
 		if (!settings.containsKey(STILL_DEAD_MESSAGE)) {
 			settings.put(STILL_DEAD_MESSAGE, "You're a ghost, you don't exist, go away!");

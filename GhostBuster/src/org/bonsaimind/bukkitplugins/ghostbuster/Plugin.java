@@ -23,6 +23,7 @@
  */
 package org.bonsaimind.bukkitplugins.ghostbuster;
 
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,7 +46,7 @@ public class Plugin extends JavaPlugin {
 
 	private Server server = null;
 	private BukkitScheduler scheduler = null;
-	private PlayerLoginListener playerListener = new PlayerLoginListener(this);
+	private PlayerLoginRespawnListener playerListener = new PlayerLoginRespawnListener(this);
 	private EntityDeathListener entityListener = new EntityDeathListener(this);
 	private Winston winston;
 
@@ -64,6 +66,7 @@ public class Plugin extends JavaPlugin {
 
 		PluginManager pm = server.getPluginManager();
 		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Highest, this);
+		pm.registerEvent(Type.PLAYER_RESPAWN, playerListener, Priority.Highest, this);
 		pm.registerEvent(Type.ENTITY_DEATH, entityListener, Priority.Monitor, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -95,9 +98,21 @@ public class Plugin extends JavaPlugin {
 
 	protected void checkPlayer(PlayerLoginEvent event) {
 		// Check if the player is allowed to join
-		if (winston.isBanned(event.getPlayer().getName())) {
+		if (!winston.hasHellWorld() && winston.isBanned(event.getPlayer().getName())) {
 			// Nope, it's not...
 			event.disallow(PlayerLoginEvent.Result.KICK_OTHER, prepareMessage(winston.getStillDeadMessage(), winston.getBanExpiration(event.getPlayer().getName())));
+		}
+	}
+
+	protected void checkPlayer(PlayerRespawnEvent event) {
+		if (winston.hasHellWorld()) {
+			if (winston.isBanned(event.getPlayer().getName())) {
+				// Send the player to hell!
+				event.setRespawnLocation(new Location(server.getWorld(winston.getHellWorld()), 0, 0, 0));
+			} else if (event.getRespawnLocation().getWorld().getName().equals(winston.getHellWorld())) {
+				// Get the player out of hell...sadly...
+				event.setRespawnLocation(server.getWorld(winston.getSpawnWorld()).getSpawnLocation());
+			}
 		}
 	}
 
