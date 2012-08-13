@@ -1,3 +1,10 @@
+Version 0.6
+
+ > 2e4a3abd0b
+
+ * Fixed compatibility with 1.3.1-R1 (admalled/Eric Driggers)
+
+
 Version 0.5
 
  > 280676a6e9
