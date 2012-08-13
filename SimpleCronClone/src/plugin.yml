@@ -2,7 +2,7 @@ name: SimpleCronClone
 author: Robert 'Bobby' Zenz
 
 main: org.bonsaimind.bukkitplugins.simplecronclone.Plugin
-version: 0.5
+version: 0.6
 
 commands:
   simplecronclone:
