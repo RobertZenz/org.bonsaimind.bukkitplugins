@@ -116,7 +116,7 @@ public final class Engine {
 
 	protected void parseTabLine(String line) {
 		line = line.trim();
-		
+
 		String timerPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
