@@ -8,8 +8,8 @@ package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.lang.reflect.Field;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.CraftServer;
-import net.minecraft.server.DedicatedServer;
+import org.bukkit.craftbukkit.v1_4_6.CraftServer;
+import net.minecraft.server.v1_4_6.DedicatedServer;
 
 public class CommandHelper {
 
