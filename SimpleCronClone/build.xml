@@ -1,0 +1,39 @@
+<project name="SimpleCronClone" default="dist" basedir=".">
+	<description>
+		A simple cron-like system, utilizing the cron4j-system.
+	</description>
+
+	<property name="src" value="src" />
+	<property name="build" value="build" />
+	<property name="dist" value="dist" />
+
+	<property name="craftbukkit" value="../lib/craftbukkit.jar" />
+	<property name="cron4j" value="./lib/cron4j.jar" />
+
+	<target name="clean"
+		description="Cleans the working directory from everything build related.">
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+	
+	<target name="init"
+		description="Sets up the current working directory.">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>
+	
+	<target name="compile" depends="init"
+		description="Compiles all source files.">
+		<javac srcdir="${src}" destdir="${build}"
+			classpath="${craftbukkit};${cron4j}" />
+		<manifest file="MANIFEST.MF" />
+	</target>
+	
+	<target name="dist" depends="compile"
+		description="Creates the jar.">
+		<jar jarfile="${dist}/SimpleCronClone.jar" basedir="${build}"
+			manifest="MANIFEST.MF">
+			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
+		</jar>
+	</target>
+</project>
