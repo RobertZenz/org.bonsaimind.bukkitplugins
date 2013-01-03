@@ -33,6 +33,7 @@
 		description="Creates the jar.">
 		<jar jarfile="${dist}/SimpleCronClone.jar" basedir="${build}"
 			manifest="MANIFEST.MF">
+			<zipfileset dir="${src}" includes="plugin.yml" />
 			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
 		</jar>
 	</target>
