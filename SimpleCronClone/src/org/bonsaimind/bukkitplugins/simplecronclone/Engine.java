@@ -169,7 +169,7 @@ public final class Engine {
 		String command = line.substring(line.indexOf(" ") + 1).trim();
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) { // Server command
-			CommandHelper.queueConsoleCommand(server, command);
+			server.dispatchCommand(server.getConsoleSender(), command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) { // Kick off a process
 			try {
 				Process proc = Runtime.getRuntime().exec(command);
