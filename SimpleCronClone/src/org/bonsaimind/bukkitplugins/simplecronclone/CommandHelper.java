@@ -1,15 +1,23 @@
 /*
- * Unknown License, courtesy of Redecouverte
- * http://forums.bukkit.org/threads/send-commands-to-console.3241/
+ * This file is part of SimpleCronClone.
  *
- * Modified by me
+ * SimpleCronClone is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SimpleCronClone is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SimpleCronClone.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
-//import java.lang.reflect.Field;
 import org.bukkit.Server;
-//import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
-//import net.minecraft.server.v1_4_R1.DedicatedServer;
 
 public class CommandHelper {
 
@@ -18,6 +26,6 @@ public class CommandHelper {
 			System.err.println("CommandHelper: server is null...is the plugin broken?");
 			return;
 		}
-			server.dispatchCommand(server.getConsoleSender(), command);
+		server.dispatchCommand(server.getConsoleSender(), command);
 	}
 }
