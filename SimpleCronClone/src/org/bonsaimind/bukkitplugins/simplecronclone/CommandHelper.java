@@ -6,10 +6,10 @@
  */
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
-import java.lang.reflect.Field;
+//import java.lang.reflect.Field;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_4_6.CraftServer;
-import net.minecraft.server.v1_4_6.DedicatedServer;
+//import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
+//import net.minecraft.server.v1_4_R1.DedicatedServer;
 
 public class CommandHelper {
 
@@ -18,12 +18,12 @@ public class CommandHelper {
 			System.err.println("CommandHelper: server is null...is the plugin broken?");
 			return;
 		}
-
+		/*
 		if (!(server instanceof CraftServer)) {
 			System.err.println("CommandHelper: server is not a server...is the plugin broken?");
 			return;
-		}
-
+		} */
+/*		
 		Field field;
 		try {
 			field = CraftServer.class.getDeclaredField("console");
@@ -46,9 +46,9 @@ public class CommandHelper {
 			System.err.println("CommandHelper: " + ex.getMessage());
 			return;
 		}
-
-		if ((!minecraftServer.isStopped()) && (minecraftServer.isRunning())) {
-			minecraftServer.issueCommand(command, minecraftServer);
-		}
+*/
+		//if ((!server.isStopped()) && (server.isRunning())) {
+			server.dispatchCommand(server.getConsoleSender(), command);
+		//}
 	}
 }
