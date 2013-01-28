@@ -15,12 +15,6 @@
  * along with Plugin.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Author: Robert 'Bobby' Zenz
- * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
- * E-Mail: bobby@bonsaimind.org
- */
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.io.File;
@@ -32,8 +26,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- *
- * @author Robert 'Bobby' Zenz
+ * The main Plugin class.
  */
 public class Plugin extends JavaPlugin {
 

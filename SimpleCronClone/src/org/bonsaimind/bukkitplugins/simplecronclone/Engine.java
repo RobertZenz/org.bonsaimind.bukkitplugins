@@ -15,12 +15,6 @@
  * along with SimpleCronClone.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Author: Robert 'Bobby' Zenz
- * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SimpleCronClone
- * E-Mail: bobby@bonsaimind.org
- */
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import it.sauronsoftware.cron4j.Scheduler;
@@ -36,8 +30,8 @@ import java.util.regex.Pattern;
 import org.bukkit.Server;
 
 /**
- *
- * @author Robert 'Bobby' Zenz
+ * This is the engine which does the heavy lifting and interfacing
+ * with cron4j.
  */
 public final class Engine {
 
