@@ -31,7 +31,7 @@
 	
 	<target name="dist" depends="compile"
 		description="Creates the jar.">
-		<jar jarfile="${dist}/SimpleCronClone.jar" basedir="${build}"
+		<jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"
 			manifest="MANIFEST.MF">
 			<zipfileset dir="${src}" includes="plugin.yml" />
 			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
