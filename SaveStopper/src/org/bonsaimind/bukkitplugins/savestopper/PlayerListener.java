@@ -15,21 +15,11 @@
  * along with SaveStopper.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Author: Robert 'Bobby' Zenz
- * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/SaveStopper
- * E-Mail: bobby@bonsaimind.org
- */
 package org.bonsaimind.bukkitplugins.savestopper;
 
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-/**
- *
- * @author Robert 'Bobby' Zenz
- */
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
 	private Plugin parent = null;

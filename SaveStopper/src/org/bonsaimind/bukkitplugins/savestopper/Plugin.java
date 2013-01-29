@@ -15,12 +15,6 @@
  * along with SaveStopper.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Author: Robert 'Bobby' Zenz
- * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
- * E-Mail: bobby@bonsaimind.org
- */
 package org.bonsaimind.bukkitplugins.savestopper;
 
 import java.util.Timer;
@@ -35,10 +29,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- * 
- * @author Robert 'Bobby' Zenz
- */
 public class Plugin extends JavaPlugin {
 
 	private static final String CONFIG_FILE = "./plugins/SaveStopper/config.yml";
