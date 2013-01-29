@@ -63,7 +63,6 @@ The plugin is separated into four files:
 
  * Plugin.java
  * PlayerListener.java
- * CommandHelper.java
  * Settings.java
 
 The heavy lifting is done inside the Plugin-Class, especially in the `saveOn()`, `saveOff()` and `saveOffScheduled()` functions. The `PlayerListener` is only calling `Plugin.check()`.
