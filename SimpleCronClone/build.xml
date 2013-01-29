@@ -24,7 +24,8 @@
 	
 	<target name="compile" depends="init"
 		description="Compiles all source files.">
-		<javac srcdir="${src}" destdir="${build}"
+		<javac srcdir="${src}" destdir="${build}" 
+			includeantruntime="false"
 			classpath="${craftbukkit};${cron4j}" />
 		<manifest file="MANIFEST.MF" />
 	</target>
