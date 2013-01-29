@@ -38,7 +38,6 @@ The Plugin is divided into three files:
 
  * Plugin.java
  * Engine.java
- * CommandHelper.java
 
 The heavy-lifting is done inside the `Engine` class. It will read the `tab.scc`, parse it and set up the cron4j scheduler.
 
