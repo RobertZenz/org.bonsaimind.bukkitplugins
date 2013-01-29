@@ -109,6 +109,10 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
+	private void dispatchCommand(String command) {
+		server.dispatchCommand(server.getConsoleSender(), command);
+	}
+
 	private void println(String text) {
 		System.out.println("SaveStopper: " + text);
 	}
@@ -125,10 +129,10 @@ public class Plugin extends JavaPlugin {
 		println("Disabling saving.");
 
 		if (settings.getSaveAll()) {
-			CommandHelper.queueConsoleCommand(server, "save-all");
+			dispatchCommand("save-all");
 		}
 
-		CommandHelper.queueConsoleCommand(server, "save-off");
+		dispatchCommand("save-off");
 	}
 
 	private void saveOffScheduled() {
@@ -152,7 +156,7 @@ public class Plugin extends JavaPlugin {
 	private void saveOn() {
 		println("Enabling saving.");
 
-		CommandHelper.queueConsoleCommand(server, "save-on");
+		dispatchCommand("save-on");
 	}
 
 	private void setCommand() {
