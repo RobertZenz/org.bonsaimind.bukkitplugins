@@ -24,13 +24,13 @@ Commands
 
     savestopper
     
-    	check		Check if saving should be enabled or disabled.
-    			Be warned, this command really enables or disables it.
-    	save-off	Disable saving (not scheduled, does save-all (if configured)).
-    	save-on		Enables saving.
-    	start		Starts monitoring Login/Quit-Events (default on).
-    	status		Prints status of the plugin.
-    	stop		Stops monitoring Login/Quit-Events.
+        check       Check if saving should be enabled or disabled.
+                    Be warned, this command really enables or disables it.
+        save-off    Disable saving (not scheduled, does save-all (if configured)).
+        save-on     Enables saving.
+        start       Starts monitoring Login/Quit-Events (default on).
+        status      Prints status of the plugin.
+        stop        Stops monitoring Login/Quit-Events.
 
 
 `save-on` and `save-off` are doing basically the same as the default server commands. Except that `save-off` does an additional `save-all` if configured to do so, otherwise they work exactly the same.
