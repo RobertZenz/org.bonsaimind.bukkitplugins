@@ -18,6 +18,8 @@
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.io.File;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -75,12 +77,37 @@ public class Plugin extends JavaPlugin {
 							if (!script.endsWith(".scc")) {
 								script += ".scc";
 							}
-
-							if (engine.executeScript(new File("plugins/SimpleCronClone/" + script))) {
-								sender.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script + "\".");
-							} else {
-								sender.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script + "\".");
-							}
+							//create threaded execution environment so that we don't block the main thread.
+							//this basically replicates how it would work from cron4j.
+							
+							final String script_ = script;
+							final CommandSender sender_ = sender;
+							Thread t = new Thread(new Runnable() {
+								String script__ = script_;
+								CommandSender snder = sender_;
+				    		    public void run() {
+				    		    	if (engine.executeScript(new File("plugins/SimpleCronClone/" + script__))) {
+				    		    		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+				    		    				Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+				    		    		    public void run() {
+				    		    		    	snder.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script__ + "\".");
+				    		    		    }
+				    		    		});
+				    		    		
+									} else {
+										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+				    		    		    public void run() {
+				    		    		    	snder.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script__ + "\".");
+				    		    		    }
+				    		    		});
+										
+									}
+				    		    }
+				    		});
+				    		t.start();
+				    		
+							
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
 						engine.stop();

@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 
 /**
@@ -166,13 +168,19 @@ public final class Engine {
 
 	protected String parseScriptLine(String line) {
 		String type = line.substring(0, line.indexOf(" ")).trim();
-		String command = line.substring(line.indexOf(" ") + 1).trim();
+		final String command = line.substring(line.indexOf(" ") + 1).trim();
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) { // Server command
-			server.dispatchCommand(server.getConsoleSender(), command);
+			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+    				Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+    					public void run() {
+    						server.dispatchCommand(server.getConsoleSender(), command);
+    		    }
+    		});
+			
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) { // Kick off a process
 			try {
-				Process proc = Runtime.getRuntime().exec(command);
+				Runtime.getRuntime().exec(command);
 			} catch (IOException ex) {
 				System.err.println(ex);
 			}
