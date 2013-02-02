@@ -15,12 +15,6 @@
  * along with SaveStopper.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Author: Robert 'Bobby' Zenz
- * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
- * E-Mail: bobby@bonsaimind.org
- */
 package org.bonsaimind.bukkitplugins.savestopper;
 
 import java.util.Timer;
@@ -35,10 +29,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- * 
- * @author Robert 'Bobby' Zenz
- */
 public class Plugin extends JavaPlugin {
 
 	private static final String CONFIG_FILE = "./plugins/SaveStopper/config.yml";
@@ -109,6 +99,10 @@ public class Plugin extends JavaPlugin {
 		}
 	}
 
+	private void dispatchCommand(String command) {
+		server.dispatchCommand(server.getConsoleSender(), command);
+	}
+
 	private void println(String text) {
 		System.out.println("SaveStopper: " + text);
 	}
@@ -125,10 +119,10 @@ public class Plugin extends JavaPlugin {
 		println("Disabling saving.");
 
 		if (settings.getSaveAll()) {
-			CommandHelper.queueConsoleCommand(server, "save-all");
+			dispatchCommand("save-all");
 		}
 
-		CommandHelper.queueConsoleCommand(server, "save-off");
+		dispatchCommand("save-off");
 	}
 
 	private void saveOffScheduled() {
@@ -152,7 +146,7 @@ public class Plugin extends JavaPlugin {
 	private void saveOn() {
 		println("Enabling saving.");
 
-		CommandHelper.queueConsoleCommand(server, "save-on");
+		dispatchCommand("save-on");
 	}
 
 	private void setCommand() {

@@ -1,6 +1,6 @@
-<project name="SimpleCronClone" default="dist" basedir=".">
+<project name="SaveStopper" default="dist" basedir=".">
 	<description>
-		A simple cron-like system, utilizing the cron4j-system.
+		Stops the automatic saving of the world if no one is online.
 	</description>
 
 	<property name="src" value="src" />
@@ -8,7 +8,6 @@
 	<property name="dist" value="dist" />
 
 	<property name="craftbukkit" value="../lib/craftbukkit.jar" />
-	<property name="cron4j" value="./lib/cron4j.jar" />
 
 	<target name="clean"
 		description="Cleans the working directory from everything build related.">
@@ -24,18 +23,15 @@
 	
 	<target name="compile" depends="init"
 		description="Compiles all source files.">
-		<javac srcdir="${src}" destdir="${build}" 
+		<javac srcdir="${src}" destdir="${build}"
 			includeantruntime="false"
-			classpath="${craftbukkit};${cron4j}" />
+			classpath="${craftbukkit}" />
 		<manifest file="MANIFEST.MF" />
 	</target>
 	
 	<target name="dist" depends="compile"
 		description="Creates the jar.">
 		<jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"
-			manifest="MANIFEST.MF">
-			<zipfileset dir="${src}" includes="plugin.yml" />
-			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
-		</jar>
+			manifest="MANIFEST.MF" />
 	</target>
 </project>

@@ -24,13 +24,13 @@ Commands
 
     savestopper
     
-    	check		Check if saving should be enabled or disabled.
-    			Be warned, this command really enables or disables it.
-    	save-off	Disable saving (not scheduled, does save-all (if configured)).
-    	save-on		Enables saving.
-    	start		Starts monitoring Login/Quit-Events (default on).
-    	status		Prints status of the plugin.
-    	stop		Stops monitoring Login/Quit-Events.
+        check       Check if saving should be enabled or disabled.
+                    Be warned, this command really enables or disables it.
+        save-off    Disable saving (not scheduled, does save-all (if configured)).
+        save-on     Enables saving.
+        start       Starts monitoring Login/Quit-Events (default on).
+        status      Prints status of the plugin.
+        stop        Stops monitoring Login/Quit-Events.
 
 
 `save-on` and `save-off` are doing basically the same as the default server commands. Except that `save-off` does an additional `save-all` if configured to do so, otherwise they work exactly the same.
@@ -63,7 +63,6 @@ The plugin is separated into four files:
 
  * Plugin.java
  * PlayerListener.java
- * CommandHelper.java
  * Settings.java
 
 The heavy lifting is done inside the Plugin-Class, especially in the `saveOn()`, `saveOff()` and `saveOffScheduled()` functions. The `PlayerListener` is only calling `Plugin.check()`.

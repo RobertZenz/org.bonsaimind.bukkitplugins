@@ -15,12 +15,6 @@
  * along with SaveStopper.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Author: Robert 'Bobby' Zenz
- * Website: http://www.bonsaimind.org
- * GitHub: https://github.com/RobertZenz/org.bonsaimind.bukkitplugins/tree/master/Plugin
- * E-Mail: bobby@bonsaimind.org
- */
 package org.bonsaimind.bukkitplugins.savestopper;
 
 import java.io.File;
@@ -33,10 +27,6 @@ import java.util.Map;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-/**
- * Settings class.
- * @author Robert 'Bobby' Zenz
- */
 public class Settings {
 
 	private static final String DISABLE_ON_START = "disableOnStart";
