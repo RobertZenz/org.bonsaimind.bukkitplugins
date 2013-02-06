@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with SimpleCronClone.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import it.sauronsoftware.cron4j.Scheduler;
@@ -172,12 +171,13 @@ public final class Engine {
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) { // Server command
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-    				Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
-    					public void run() {
-    						server.dispatchCommand(server.getConsoleSender(), command);
-    		    }
-    		});
-			
+					Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+
+				public void run() {
+					server.dispatchCommand(server.getConsoleSender(), command);
+				}
+			});
+
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) { // Kick off a process
 			try {
 				Runtime.getRuntime().exec(command);
