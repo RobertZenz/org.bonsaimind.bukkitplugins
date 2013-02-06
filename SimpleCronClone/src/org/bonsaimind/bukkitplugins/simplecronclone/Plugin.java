@@ -52,6 +52,7 @@ public class Plugin extends JavaPlugin {
 		engine.start();
 
 		setCommands();
+
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
@@ -63,7 +64,8 @@ public class Plugin extends JavaPlugin {
 	private void setCommands() {
 		getCommand("simplecronclone").setExecutor(new CommandExecutor() {
 
-			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+			@Override
+			public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
 				if (!sender.isOp()) {
 					sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
 					return true;
@@ -83,23 +85,20 @@ public class Plugin extends JavaPlugin {
 							if (!script.endsWith(".scc")) {
 								script += ".scc";
 							}
-							//create threaded execution environment so that we don't block the main thread.
-							//this basically replicates how it would work from cron4j.
+							
+							// Create threaded execution environment so that we don't block the main thread.
+							// This basically replicates how it would work from cron4j.
 
-							final String script_ = script;
-							final CommandSender sender_ = sender;
+							final String finalScript = script;
 							Thread t = new Thread(new Runnable() {
 
-								String script__ = script_;
-								CommandSender snder = sender_;
-
 								public void run() {
-									if (engine.executeScript(new File("plugins/SimpleCronClone/" + script__))) {
+									if (engine.executeScript(new File("plugins/SimpleCronClone/" + finalScript))) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
 											public void run() {
-												snder.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script__ + "\".");
+												sender.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + finalScript + "\".");
 											}
 										});
 
@@ -108,7 +107,7 @@ public class Plugin extends JavaPlugin {
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
 											public void run() {
-												snder.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script__ + "\".");
+												sender.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + finalScript + "\".");
 											}
 										});
 
