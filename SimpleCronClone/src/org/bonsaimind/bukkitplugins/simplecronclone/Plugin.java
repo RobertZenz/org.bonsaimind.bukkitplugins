@@ -18,6 +18,7 @@
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -52,6 +53,12 @@ public class Plugin extends JavaPlugin {
 		engine.start();
 
 		setCommands();
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
 	}
 
 	private void setCommands() {
