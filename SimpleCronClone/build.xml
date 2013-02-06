@@ -16,7 +16,7 @@
 		<delete dir="${dist}" />
 	</target>
 	
-	<target name="init"
+	<target name="init" depends="clean"
 		description="Sets up the current working directory.">
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
@@ -37,5 +37,10 @@
 			<zipfileset dir="${src}" includes="plugin.yml" />
 			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
 		</jar>
+		<zip destfile="${dist}/${ant.project.name}.zip">
+			<zipfileset dir="examples/" prefix="${ant.project.name}/"/>
+			<zipfileset dir="." includes="README.md" fullpath="README.md"/>
+			<zipfileset dir="." includes="${dist}/${ant.project.name}.jar" fullpath="${ant.project.name}.jar"/>
+		</zip>
 	</target>
 </project>

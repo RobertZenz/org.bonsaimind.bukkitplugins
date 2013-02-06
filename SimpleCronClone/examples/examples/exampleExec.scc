@@ -1,0 +1,12 @@
+# to start, lets say externalScript.sh was some sort of program that auto added players to the whitelist
+# based on some other tools (eg, your website adds users to SQL, this script checks them then adds them)
+# in the end, think that we need to reload the whitelist
+
+#using absolute paths
+exec /path/to/external/script.sh
+#or relative paths, note that for relative paths, the path starts from wherever the server root is (normally where the craftbukkit.jar is)
+exec plugins/SimpleCronClone/examples/script.sh
+
+# so now reload the whitelist
+do whitelist reload
+

@@ -1,0 +1,5 @@
+# Let's be polite, explain that the user needs to configure SCC
+do say Hello there! This is the example script showing that the plugin works.
+do say However you might want to change the plugins/SimpleCronClone/tab.scc file to point to your own scripts
+do say Or change what this one itself says inside of plugins/SimpleCronClone/sayHello.scc
+do say for examples on how to use SimpleCronClone see the examples in plugins/SimpleCronClone/examples/

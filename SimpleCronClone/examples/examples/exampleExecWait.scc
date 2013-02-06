@@ -1,0 +1,19 @@
+# execWait is probably the most useful aside from the `do` command. It allows getting of data from an external program
+# and using it inside of SimpleCronClone.
+
+# Note that for relative paths, the path starts from wherever the server root is (normally where the craftbukkit.jar is)
+
+# our first example: lets say we have a script called `get-saying.py` that returns a random line of text
+# eg, "donate here: ..." or "read the rules here:..." basically random reminders.
+
+execWait plugins/SimpleCronClone/examples/get-saying.py
+
+# then it is simple to return the saying to the server with the special string "$?"
+# $? is replaced with the returned text of the previus execution.
+
+do say $?
+
+# Of course it is simple to share the current sytem status as well, here we broadcast what the kernel and such is (on linux)
+execWait uname -a
+
+do say This server runs on: $?

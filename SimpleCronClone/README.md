@@ -4,20 +4,6 @@ SimpleCronClone
 A simple cron-like system, utilizing the cron4j-system.
 
 
-Bukkit Updates
---------------
-
-If you want to run the plugin, but you're not sure if it still works, do the following check list:
-
- * Does it load without an error?
- * Create a simple test-case:
-   * Create the script `HelloWorld.scc`, with `do say Hello World!` as content.
-   * Schedule it to run every 3 minutes.
-   * Does it execute without an error?
-
-If you can answer both questions with **yes**, it works.
-
-
 Commands
 --------
 
@@ -34,7 +20,7 @@ Be aware that `exec` assumes that the given script can be found under `plugins/S
 Internal Structure
 ------------------
 
-The Plugin is divided into three files:
+The Plugin is divided into two files:
 
  * Plugin.java
  * Engine.java
@@ -42,7 +28,34 @@ The Plugin is divided into three files:
 The heavy-lifting is done inside the `Engine` class. It will read the `tab.scc`, parse it and set up the cron4j scheduler.
 
 
-Bukkit Forum
+Bukkit Dev
 ------------
 
-There's a thread at the Bukkit Forum: http://forums.bukkit.org/threads/admn-simplecronclone-v0-5-a-cron-like-scheduling-system-1337.6331/
+This plugin can be found on http://dev.bukkit.org/server-mods/SimpleCronClone
+
+
+CronTab format
+--------------
+
+Borrowed from the default tab.scc:
+
+    # +----------------> Minute
+    # | +--------------> Hour
+    # | | +------------> Day of month
+    # | | | +----------> Month
+    # | | | | +--------> Day of week
+    # | | | | |     +--> Script/File
+    # | | | | |     | 
+      * * * * * sayHello.scc
+
+Script Format
+-------------
+
+There are three basic commands: `do` `exec` and `execwait`.
+
+ * `do` executes a command as the console, eg: `do say hello world!` is like typing in `say hello world!` at the console. see `exampleDo.scc` for some basic uses, other examples show more advanced fun stuff you can do.
+ 
+ * `exec` executes a program in the background, this is useful if you for example want to run a external map rendering program every once in a while, or some script to update your site. see `exampleExec.scc` for some more uses.
+ 
+ * `execwait` is much like `exec` except it executes your program and waits for it to close. this is useful for back up scripts. because you can do a `save-all` just before and just after, or even have a `say warning: backup in progress, beware lag`. It also captures the output so that you can use it in script for something else. see `exampleExecWait.scc` for some uses.  
+
