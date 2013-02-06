@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with SimpleCronClone.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.io.File;
@@ -54,10 +53,10 @@ public class Plugin extends JavaPlugin {
 
 		setCommands();
 		try {
-		    Metrics metrics = new Metrics(this);
-		    metrics.start();
+			Metrics metrics = new Metrics(this);
+			metrics.start();
 		} catch (IOException e) {
-		    // Failed to submit the stats :-(
+			// Failed to submit the stats :-(
 		}
 	}
 
@@ -86,35 +85,39 @@ public class Plugin extends JavaPlugin {
 							}
 							//create threaded execution environment so that we don't block the main thread.
 							//this basically replicates how it would work from cron4j.
-							
+
 							final String script_ = script;
 							final CommandSender sender_ = sender;
 							Thread t = new Thread(new Runnable() {
+
 								String script__ = script_;
 								CommandSender snder = sender_;
-				    		    public void run() {
-				    		    	if (engine.executeScript(new File("plugins/SimpleCronClone/" + script__))) {
-				    		    		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-				    		    				Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
-				    		    		    public void run() {
-				    		    		    	snder.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script__ + "\".");
-				    		    		    }
-				    		    		});
-				    		    		
+
+								public void run() {
+									if (engine.executeScript(new File("plugins/SimpleCronClone/" + script__))) {
+										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+
+											public void run() {
+												snder.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + script__ + "\".");
+											}
+										});
+
 									} else {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
-				    		    		    public void run() {
-				    		    		    	snder.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script__ + "\".");
-				    		    		    }
-				    		    		});
-										
+
+											public void run() {
+												snder.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + script__ + "\".");
+											}
+										});
+
 									}
-				    		    }
-				    		});
-				    		t.start();
-				    		
-							
+								}
+							});
+							t.start();
+
+
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
 						engine.stop();
