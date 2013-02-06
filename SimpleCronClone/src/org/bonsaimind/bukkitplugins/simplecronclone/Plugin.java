@@ -85,7 +85,7 @@ public class Plugin extends JavaPlugin {
 							if (!script.endsWith(".scc")) {
 								script += ".scc";
 							}
-							
+
 							// Create threaded execution environment so that we don't block the main thread.
 							// This basically replicates how it would work from cron4j.
 
@@ -115,8 +115,6 @@ public class Plugin extends JavaPlugin {
 								}
 							});
 							t.start();
-
-
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
 						engine.stop();
