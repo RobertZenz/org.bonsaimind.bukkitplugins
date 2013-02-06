@@ -56,8 +56,9 @@ public class Plugin extends JavaPlugin {
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
-		} catch (IOException e) {
-			// Failed to submit the stats :-(
+		} catch (IOException ex) {
+			System.err.println("Failed to submit the stats. :-(");
+			System.err.println(ex);
 		}
 	}
 
