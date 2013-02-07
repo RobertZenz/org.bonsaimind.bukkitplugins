@@ -112,6 +112,10 @@ public final class Engine {
 		return false;
 	}
 
+	/**
+	 * Parse the given line and add it to the scheduler.
+	 * @param line 
+	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
 
@@ -127,6 +131,11 @@ public final class Engine {
 		});
 	}
 
+	/**
+	 * Parses and executes the given script.
+	 * @param script
+	 * @return 
+	 */
 	protected boolean executeScript(File script) {
 		logger.log(Level.INFO, "SimpleCronClone: Executing: {0}", script.getPath());
 		if (!script.exists() || !script.canRead()) {
