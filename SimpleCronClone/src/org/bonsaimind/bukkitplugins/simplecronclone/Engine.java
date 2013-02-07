@@ -37,11 +37,11 @@ import org.bukkit.Server;
  */
 public final class Engine {
 
-	private static String COMMAND_DO = "do";
-	private static String COMMAND_EXEC = "exec";
-	private static String COMMAND_EXECWAIT = "execWait";
-	private static String COMMENT_START = "#";
-	private static String OUTPUT_TOKEN = "$?";
+	private static final String COMMAND_DO = "do";
+	private static final String COMMAND_EXEC = "exec";
+	private static final String COMMAND_EXECWAIT = "execWait";
+	private static final String COMMENT_START = "#";
+	private static final String OUTPUT_TOKEN = "$?";
 	private File workingDir;
 	private Server server;
 	private Scheduler scheduler;
