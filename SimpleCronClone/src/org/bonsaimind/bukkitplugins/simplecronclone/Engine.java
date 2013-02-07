@@ -105,9 +105,9 @@ public final class Engine {
 
 			return true;
 		} catch (FileNotFoundException ex) {
-			logger.log(Level.WARNING, "FileNotFound Error :-(\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "SimpleCronClone: tab.scc does not exists!");
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "SimpleCronClone: Failed to read tab.scc:\n{0}", ex.getMessage());
 		}
 
 		return false;
@@ -159,10 +159,10 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (FileNotFoundException ex) {
-			logger.log(Level.WARNING, "FileNotFound Error :-(\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "SimpleCronClone: Could not find script: \"{0}\"", script);
 			return false;
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "SimpleCronClone: Failed to read from \"{0}\"\n{1}", new Object[]{script, ex.getMessage()});
 			return false;
 		}
 
@@ -186,7 +186,7 @@ public final class Engine {
 			try {
 				Runtime.getRuntime().exec(command);
 			} catch (IOException ex) {
-				logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
+				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[] {command, ex.getMessage()});
 			}
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) { // Execute a process
 			try {
@@ -202,14 +202,14 @@ public final class Engine {
 
 				String errOutput = getStreamOutput(proc.getErrorStream());
 				if (errOutput.length() > 0) {
-					logger.log(Level.WARNING, "Command returned with an error: {0}", errOutput);
+					logger.log(Level.WARNING, "SimpleCronClone: Command returned with an error: {0}", errOutput);
 				}
 
 				return getStreamOutput(proc.getInputStream());
 			} catch (IOException ex) {
-				logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
+				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[] {command, ex.getMessage()});
 			} catch (InterruptedException ex) {
-				logger.log(Level.WARNING, "Interrupted Error :-(\n{0}", ex.getMessage());
+				logger.log(Level.WARNING, "SimpleCronClone: Interrupted Error :-(\n{0}", ex.getMessage());
 			}
 		}
 
@@ -231,7 +231,7 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "SimpleCronClone: Failed to read from stream:\n{0}", ex.getMessage());
 		}
 
 		return builder.toString();
