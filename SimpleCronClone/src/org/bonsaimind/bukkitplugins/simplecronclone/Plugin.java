@@ -19,7 +19,6 @@ package org.bonsaimind.bukkitplugins.simplecronclone;
 import java.io.File;
 import java.io.IOException;
 
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -47,9 +46,9 @@ public class Plugin extends JavaPlugin {
 		server = getServer();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
+		getLogger().info(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 
-		engine = new Engine(server, new File("plugins/SimpleCronClone/"));
+		engine = new Engine(server, new File("plugins/SimpleCronClone/"), getLogger());
 		engine.start();
 
 		setCommands();
@@ -58,7 +57,8 @@ public class Plugin extends JavaPlugin {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
 		} catch (IOException ex) {
-			server.getLogger().log(Level.WARNING, "SimpleCronClone: Failed to submit the stats. :-(\n{0}", ex.getMessage());
+			//we don't want to complain loudly if we can't submit stats, just the one line is enough.
+			getLogger().info("SimpleCronClone: Failed to submit the stats. :-(");
 		}
 	}
 

@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -44,6 +46,7 @@ public final class Engine {
 	private File workingDir;
 	private Server server;
 	private Scheduler scheduler;
+	private static Logger logger;
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -53,9 +56,10 @@ public final class Engine {
 	 */
 	Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
 
-	public Engine(Server server, File workingDir) {
+	public Engine(Server server, File workingDir, Logger logger) {
 		this.server = server;
 		this.workingDir = workingDir;
+		this.logger = logger;
 	}
 
 	public void start() {
@@ -81,7 +85,7 @@ public final class Engine {
 		File tab = new File(workingDir, "tab.scc");
 
 		if (!tab.exists() || !tab.canRead()) {
-			System.out.println("SimpleCronClone: " + tab.getPath() + " does not exist or is not accessible.");
+			logger.warning("SimpleCronClone: " + tab.getPath() + " does not exist or is not accessible.");
 			return false;
 		}
 
@@ -101,9 +105,9 @@ public final class Engine {
 
 			return true;
 		} catch (FileNotFoundException ex) {
-			System.err.println(ex);
+			logger.log(Level.WARNING, "FileNotFound Error :-(\n{0}", ex.getMessage());
 		} catch (IOException ex) {
-			System.err.println(ex);
+			logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
 		}
 
 		return false;
@@ -115,7 +119,7 @@ public final class Engine {
 		String timerPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
-		System.out.println("SimpleCronClone: Scheduling: " + commandPart);
+		logger.info("SimpleCronClone: Scheduling: " + commandPart);
 		scheduler.schedule(timerPart, new Runnable() {
 
 			public void run() {
@@ -125,9 +129,9 @@ public final class Engine {
 	}
 
 	protected boolean executeScript(File script) {
-		System.out.println("SimpleCronClone: Executing: " + script.getPath());
+		logger.info("SimpleCronClone: Executing: " + script.getPath());
 		if (!script.exists() || !script.canRead()) {
-			System.out.println("SimpleCronClone: " + script.getPath() + " does not exist or is not accessible.");
+			logger.warning("SimpleCronClone: " + script.getPath() + " does not exist or is not accessible.");
 			return false;
 		}
 
@@ -155,10 +159,10 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (FileNotFoundException ex) {
-			System.err.println(ex);
+			logger.log(Level.WARNING, "FileNotFound Error :-(\n{0}", ex.getMessage());
 			return false;
 		} catch (IOException ex) {
-			System.err.println(ex);
+			logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
 			return false;
 		}
 
@@ -182,7 +186,7 @@ public final class Engine {
 			try {
 				Runtime.getRuntime().exec(command);
 			} catch (IOException ex) {
-				System.err.println(ex);
+				logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
 			}
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) { // Execute a process
 			try {
@@ -198,14 +202,14 @@ public final class Engine {
 
 				String errOutput = getStreamOutput(proc.getErrorStream());
 				if (errOutput.length() > 0) {
-					System.err.println("Command returned with an error: " + errOutput);
+					logger.warning("Command returned with an error: " + errOutput);
 				}
 
 				return getStreamOutput(proc.getInputStream());
 			} catch (IOException ex) {
-				System.err.println(ex);
+				logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
 			} catch (InterruptedException ex) {
-				System.err.println(ex);
+				logger.log(Level.WARNING, "Interrupted Error :-(\n{0}", ex.getMessage());
 			}
 		}
 
@@ -227,7 +231,7 @@ public final class Engine {
 			bufReader.close();
 			reader.close();
 		} catch (IOException ex) {
-			System.err.println(ex);
+			logger.log(Level.WARNING, "IO Error :-(\n{0}", ex.getMessage());
 		}
 
 		return builder.toString();
