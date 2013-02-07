@@ -19,6 +19,7 @@ package org.bonsaimind.bukkitplugins.simplecronclone;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -57,8 +58,7 @@ public class Plugin extends JavaPlugin {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
 		} catch (IOException ex) {
-			System.err.println("Failed to submit the stats. :-(");
-			System.err.println(ex);
+			server.getLogger().log(Level.WARNING, "SimpleCronClone: Failed to submit the stats. :-(\n{0}", ex.getMessage());
 		}
 	}
 
