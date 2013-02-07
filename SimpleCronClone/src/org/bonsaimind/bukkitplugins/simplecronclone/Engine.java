@@ -173,7 +173,8 @@ public final class Engine {
 		String type = line.substring(0, line.indexOf(" ")).trim();
 		final String command = line.substring(line.indexOf(" ") + 1).trim();
 
-		if (type.equalsIgnoreCase(COMMAND_DO)) { // Server command
+		if (type.equalsIgnoreCase(COMMAND_DO)) {
+			// Server command
 			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 					Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
@@ -182,13 +183,16 @@ public final class Engine {
 				}
 			});
 
-		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) { // Kick off a process
+		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
+			// Kick off a process
 			try {
 				Runtime.getRuntime().exec(command);
 			} catch (IOException ex) {
-				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[] {command, ex.getMessage()});
+				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
 			}
-		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) { // Execute a process
+			
+		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
+			// Execute a process
 			try {
 				// We need to split the string to pass it to the system
 				String[] splittedCommand = preparePattern.split(command);
@@ -207,7 +211,7 @@ public final class Engine {
 
 				return getStreamOutput(proc.getInputStream());
 			} catch (IOException ex) {
-				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[] {command, ex.getMessage()});
+				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
 			} catch (InterruptedException ex) {
 				logger.log(Level.WARNING, "SimpleCronClone: Interrupted Error :-(\n{0}", ex.getMessage());
 			}
