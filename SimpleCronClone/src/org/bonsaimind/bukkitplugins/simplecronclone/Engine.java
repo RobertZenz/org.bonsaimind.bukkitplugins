@@ -230,12 +230,12 @@ public final class Engine {
 			Process proc = Runtime.getRuntime().exec(splittedCommand);
 			proc.waitFor();
 
-			String errOutput = getStreamOutput(proc.getErrorStream());
+			String errOutput = readFromStream(proc.getErrorStream());
 			if (errOutput.length() > 0) {
 				logger.log(Level.WARNING, "SimpleCronClone: Command returned with an error: {0}", errOutput);
 			}
 
-			return getStreamOutput(proc.getInputStream());
+			return readFromStream(proc.getInputStream());
 		} catch (IOException ex) {
 			logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
 		} catch (InterruptedException ex) {
@@ -250,7 +250,7 @@ public final class Engine {
 	 * @param strm
 	 * @return 
 	 */
-	private static String getStreamOutput(InputStream strm) {
+	private static String readFromStream(InputStream strm) {
 		StringBuilder builder = new StringBuilder();
 
 		String line;
