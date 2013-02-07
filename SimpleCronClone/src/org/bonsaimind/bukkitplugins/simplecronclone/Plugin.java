@@ -19,6 +19,7 @@ package org.bonsaimind.bukkitplugins.simplecronclone;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -46,7 +47,7 @@ public class Plugin extends JavaPlugin {
 		server = getServer();
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		getLogger().info(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
+		getLogger().log(Level.INFO, "{0} {1} is enabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 
 		engine = new Engine(server, new File("plugins/SimpleCronClone/"), getLogger());
 		engine.start();
