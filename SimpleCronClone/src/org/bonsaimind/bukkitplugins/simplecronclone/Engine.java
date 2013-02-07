@@ -59,7 +59,7 @@ public final class Engine {
 	public Engine(Server server, File workingDir, Logger logger) {
 		this.server = server;
 		this.workingDir = workingDir;
-		this.logger = logger;
+		Engine.logger = logger;
 	}
 
 	public void start() {
