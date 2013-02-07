@@ -192,8 +192,8 @@ public final class Engine {
 	 * @param command 
 	 */
 	protected void runDo(final String command) {
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-				Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+		server.getScheduler().scheduleSyncDelayedTask(
+				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
 			public void run() {
 				server.dispatchCommand(server.getConsoleSender(), command);
