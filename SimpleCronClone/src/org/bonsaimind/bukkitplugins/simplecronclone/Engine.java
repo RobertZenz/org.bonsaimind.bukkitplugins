@@ -170,56 +170,86 @@ public final class Engine {
 	}
 
 	protected String parseScriptLine(String line) {
-		String type = line.substring(0, line.indexOf(" ")).trim();
+		final String type = line.substring(0, line.indexOf(" ")).trim();
 		final String command = line.substring(line.indexOf(" ") + 1).trim();
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
-					Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
-
-				public void run() {
-					server.dispatchCommand(server.getConsoleSender(), command);
-				}
-			});
-
+			runDo(command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
-			try {
-				Runtime.getRuntime().exec(command);
-			} catch (IOException ex) {
-				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
-			}
-			
+			runExec(command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
-			try {
-				// We need to split the string to pass it to the system
-				String[] splittedCommand = preparePattern.split(command);
-				for (int idx = 0; idx < splittedCommand.length; idx++) {
-					// Strip single quotes from the commands
-					splittedCommand[idx] = splittedCommand[idx].replaceAll("^'|'$", "");
-				}
-
-				Process proc = Runtime.getRuntime().exec(splittedCommand);
-				proc.waitFor();
-
-				String errOutput = getStreamOutput(proc.getErrorStream());
-				if (errOutput.length() > 0) {
-					logger.log(Level.WARNING, "SimpleCronClone: Command returned with an error: {0}", errOutput);
-				}
-
-				return getStreamOutput(proc.getInputStream());
-			} catch (IOException ex) {
-				logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
-			} catch (InterruptedException ex) {
-				logger.log(Level.WARNING, "SimpleCronClone: Interrupted Error :-(\n{0}", ex.getMessage());
-			}
+			return runExecWait(command);
 		}
 
 		return "";
 	}
 
+	/**
+	 * Runs the given command via the Bukkit/InGame-Console.
+	 * @param command 
+	 */
+	protected void runDo(final String command) {
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
+				Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+
+			public void run() {
+				server.dispatchCommand(server.getConsoleSender(), command);
+			}
+		});
+	}
+
+	/**
+	 * Executes an external command.
+	 * @param command 
+	 */
+	protected void runExec(final String command) {
+		try {
+			Runtime.getRuntime().exec(command);
+		} catch (IOException ex) {
+			logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+		}
+	}
+
+	/**
+	 * Executes an external command and returns its output.
+	 * @param command
+	 * @return 
+	 */
+	protected String runExecWait(final String command) {
+		try {
+			// We need to split the string to pass it to the system
+			String[] splittedCommand = preparePattern.split(command);
+			for (int idx = 0; idx < splittedCommand.length; idx++) {
+				// Strip single quotes from the commands
+				splittedCommand[idx] = splittedCommand[idx].replaceAll("^'|'$", "");
+			}
+
+			Process proc = Runtime.getRuntime().exec(splittedCommand);
+			proc.waitFor();
+
+			String errOutput = getStreamOutput(proc.getErrorStream());
+			if (errOutput.length() > 0) {
+				logger.log(Level.WARNING, "SimpleCronClone: Command returned with an error: {0}", errOutput);
+			}
+
+			return getStreamOutput(proc.getInputStream());
+		} catch (IOException ex) {
+			logger.log(Level.WARNING, "SimpleCronClone: Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+		} catch (InterruptedException ex) {
+			logger.log(Level.WARNING, "SimpleCronClone: Interrupted Error :-(\n{0}", ex.getMessage());
+		}
+
+		return "";
+	}
+
+	/**
+	 * Reads from the stream and returns what was read.
+	 * @param strm
+	 * @return 
+	 */
 	private static String getStreamOutput(InputStream strm) {
 		StringBuilder builder = new StringBuilder();
 
