@@ -85,7 +85,7 @@ public final class Engine {
 		File tab = new File(workingDir, "tab.scc");
 
 		if (!tab.exists() || !tab.canRead()) {
-			logger.warning("SimpleCronClone: " + tab.getPath() + " does not exist or is not accessible.");
+			logger.log(Level.WARNING, "SimpleCronClone: {0} does not exist or is not accessible.", tab.getPath());
 			return false;
 		}
 
@@ -119,7 +119,7 @@ public final class Engine {
 		String timerPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
-		logger.info("SimpleCronClone: Scheduling: " + commandPart);
+		logger.log(Level.INFO, "SimpleCronClone: Scheduling: {0}", commandPart);
 		scheduler.schedule(timerPart, new Runnable() {
 
 			public void run() {
@@ -129,9 +129,9 @@ public final class Engine {
 	}
 
 	protected boolean executeScript(File script) {
-		logger.info("SimpleCronClone: Executing: " + script.getPath());
+		logger.log(Level.INFO, "SimpleCronClone: Executing: {0}", script.getPath());
 		if (!script.exists() || !script.canRead()) {
-			logger.warning("SimpleCronClone: " + script.getPath() + " does not exist or is not accessible.");
+			logger.log(Level.WARNING, "SimpleCronClone: {0} does not exist or is not accessible.", script.getPath());
 			return false;
 		}
 
@@ -202,7 +202,7 @@ public final class Engine {
 
 				String errOutput = getStreamOutput(proc.getErrorStream());
 				if (errOutput.length() > 0) {
-					logger.warning("Command returned with an error: " + errOutput);
+					logger.log(Level.WARNING, "Command returned with an error: {0}", errOutput);
 				}
 
 				return getStreamOutput(proc.getInputStream());
