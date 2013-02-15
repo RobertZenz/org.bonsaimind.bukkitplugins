@@ -1,3 +1,20 @@
+Version 0.8
+
+ > e877b3d973
+
+ * Added MCStats  (admalled/Eric Driggers)
+ * Executing a script from the console is now asynchronous  (admalled/Eric Driggers)
+ * Every output is now send through the logger of Bukkit
+
+
+Version 0.7
+
+ > fc05d7bea5
+ 
+ * Fixed compatibility with 1.4.*-* (admalled/Eric Driggers)
+ * Fixed possible exceptions when executing server commands (admalled/Eric Driggers)
+
+
 Version 0.6
 
  > 2e4a3abd0b
@@ -24,8 +41,8 @@ Version 0.3
 
 Version 0.2
 
- * Added commands (cron_reinit, cron_stop, cron_exec.
- * Added support for inlined comments in scripts.
+ * Added commands (cron_reinit, cron_stop, cron_exec
+ * Added support for inlined comments in scripts
 
 
 Version 0.1
