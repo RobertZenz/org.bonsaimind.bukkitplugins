@@ -75,6 +75,10 @@ public final class Engine {
 		scheduler = null;
 	}
 
+	/**
+	 * Reads the tab.scc (from the default location) and parses it.
+	 * @return Returns true if reading and parsing was without incident.
+	 */
 	protected boolean readTab() {
 		if (scheduler == null) {
 			scheduler = new Scheduler();
@@ -114,7 +118,7 @@ public final class Engine {
 
 	/**
 	 * Parse the given line and add it to the scheduler.
-	 * @param line 
+	 * @param line THe line form the tab.scc.
 	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
@@ -133,8 +137,8 @@ public final class Engine {
 
 	/**
 	 * Parses and executes the given script.
-	 * @param script
-	 * @return 
+	 * @param script THe file which represents the script.
+	 * @return Returns true of the execution was without incident.
 	 */
 	protected boolean executeScript(File script) {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
@@ -197,7 +201,7 @@ public final class Engine {
 
 	/**
 	 * Runs the given command via the Bukkit/InGame-Console.
-	 * @param command 
+	 * @param command The command to execute.
 	 */
 	protected void runDo(final String command) {
 		server.getScheduler().scheduleSyncDelayedTask(
@@ -211,7 +215,7 @@ public final class Engine {
 
 	/**
 	 * Executes an external command.
-	 * @param command 
+	 * @param command The command to execute.
 	 */
 	protected void runExec(final String command) {
 		try {
@@ -222,9 +226,9 @@ public final class Engine {
 	}
 
 	/**
-	 * Executes an external command and returns its output.
-	 * @param command
-	 * @return 
+	 * Executes an external command and returns its output (stdout).
+	 * @param command The command to execute.
+	 * @return The output (stdout) of the executed command.
 	 */
 	protected String runExecWait(final String command) {
 		try {
@@ -255,8 +259,8 @@ public final class Engine {
 
 	/**
 	 * Reads from the stream and returns what was read.
-	 * @param strm
-	 * @return 
+	 * @param strm The input stream.
+	 * @return The content which could be read from the stream. 
 	 */
 	private static String readFromStream(InputStream strm) {
 		StringBuilder builder = new StringBuilder();
