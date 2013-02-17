@@ -137,7 +137,7 @@ public final class Engine {
 	 * @return 
 	 */
 	protected boolean executeScript(File script) {
-		logger.log(Level.INFO, "SimpleCronClone: Executing: {0}", script.getPath());
+		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 		if (!script.exists() || !script.canRead()) {
 			logger.log(Level.WARNING, "{0} does not exist or is not accessible.", script.getPath());
 			return false;
