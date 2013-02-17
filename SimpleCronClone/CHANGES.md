@@ -1,3 +1,8 @@
+Version 0.9 (in development)
+
+ > ??????????
+
+
 Version 0.8
 
  > e877b3d973
@@ -5,6 +10,7 @@ Version 0.8
  * Added MCStats  (admalled/Eric Driggers)
  * Executing a script from the console is now asynchronous  (admalled/Eric Driggers)
  * Every output is now send through the logger of Bukkit
+ * Updated cron4j to 2.2.5
 
 
 Version 0.7
