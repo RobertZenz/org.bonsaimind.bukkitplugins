@@ -25,11 +25,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.bukkit.Server;
+import org.bukkit.scheduler.BukkitScheduler;
 
 /**
  * This is the engine which does the heavy lifting and interfacing
@@ -69,7 +72,7 @@ public final class Engine {
 			scheduler = new Scheduler();
 			scheduler.setDaemon(true);
 		}
-				
+
 		if (readTab()) {
 			scheduler.start();
 		}
@@ -208,14 +211,21 @@ public final class Engine {
 	 * @param command The command to execute.
 	 */
 	protected void runDo(final String command) {
-		server.getScheduler().scheduleSyncDelayedTask(
-				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+		try {
+			BukkitScheduler bscheduler = server.getScheduler();
+			bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
 
-			@Override
-			public void run() {
-				server.dispatchCommand(server.getConsoleSender(), command);
-			}
-		});
+				@Override
+				public Boolean call() throws Exception {
+					server.dispatchCommand(server.getConsoleSender(), command);
+					return true;
+				}
+			}).get();
+		} catch (InterruptedException ex) {
+			logger.log(Level.WARNING, "Interrupted: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+		} catch (ExecutionException ex) {
+			logger.log(Level.WARNING, "Execution exception: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+		}
 	}
 
 	/**
@@ -224,9 +234,11 @@ public final class Engine {
 	 */
 	protected void runExec(final String command) {
 		try {
-			Runtime.getRuntime().exec(command);
+			Runtime.getRuntime().exec(command).waitFor();
 		} catch (IOException ex) {
 			logger.log(Level.WARNING, "Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+		} catch (InterruptedException ex) {
+			logger.log(Level.WARNING, "Interrupted: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
 		}
 	}
 
