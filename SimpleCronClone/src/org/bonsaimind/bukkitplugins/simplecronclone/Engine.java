@@ -238,10 +238,8 @@ public final class Engine {
 	 */
 	protected void runExec(final String command) throws ScriptExecutionException {
 		try {
-			Runtime.getRuntime().exec(command).waitFor();
+			Runtime.getRuntime().exec(command);
 		} catch (IOException ex) {
-			throw new ScriptExecutionException(command, ex);
-		} catch (InterruptedException ex) {
 			throw new ScriptExecutionException(command, ex);
 		}
 	}
