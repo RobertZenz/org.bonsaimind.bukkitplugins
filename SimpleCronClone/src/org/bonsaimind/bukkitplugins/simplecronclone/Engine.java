@@ -268,7 +268,7 @@ public final class Engine {
 		} catch (IOException ex) {
 			logger.log(Level.WARNING, "Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
 		} catch (InterruptedException ex) {
-			logger.log(Level.WARNING, "Interrupted Error :-(\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "Interrupted Error :-( \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
 		}
 
 		return "";
