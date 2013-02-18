@@ -45,7 +45,7 @@ public final class Engine {
 	private File workingDir;
 	private Server server;
 	private Scheduler scheduler;
-	private static Logger logger;
+	private Logger logger;
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -58,7 +58,7 @@ public final class Engine {
 	public Engine(Server server, File workingDir, Logger logger) {
 		this.server = server;
 		this.workingDir = workingDir;
-		Engine.logger = logger;
+		this.logger = logger;
 	}
 
 	public void start() {
@@ -264,7 +264,7 @@ public final class Engine {
 	 * @param strm The input stream.
 	 * @return The content which could be read from the stream. 
 	 */
-	private static String readFromStream(InputStream strm) {
+	private String readFromStream(InputStream strm) {
 		StringBuilder builder = new StringBuilder();
 
 		String line;
