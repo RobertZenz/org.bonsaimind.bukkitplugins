@@ -121,7 +121,7 @@ public final class Engine {
 
 	/**
 	 * Parse the given line and add it to the scheduler.
-	 * @param line THe line form the tab.scc.
+	 * @param line The line form the tab.scc.
 	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
@@ -141,7 +141,7 @@ public final class Engine {
 
 	/**
 	 * Parses and executes the given script.
-	 * @param script THe file which represents the script.
+	 * @param script The file which represents the script.
 	 * @return Returns true of the execution was without incident.
 	 */
 	protected boolean executeScript(File script) {
