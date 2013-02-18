@@ -65,6 +65,11 @@ public final class Engine {
 	}
 
 	public void start() {
+		if (scheduler == null) {
+			scheduler = new Scheduler();
+			scheduler.setDaemon(true);
+		}
+				
 		if (readTab()) {
 			scheduler.start();
 		}
@@ -83,11 +88,6 @@ public final class Engine {
 	 * @return Returns true if reading and parsing was without incident.
 	 */
 	protected boolean readTab() {
-		if (scheduler == null) {
-			scheduler = new Scheduler();
-			scheduler.setDaemon(true);
-		}
-
 		File tab = new File(workingDir, "tab.scc");
 
 		if (!tab.exists() || !tab.canRead()) {
