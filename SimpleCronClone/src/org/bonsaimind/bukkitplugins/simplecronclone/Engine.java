@@ -183,12 +183,16 @@ public final class Engine {
 		} catch (IOException ex) {
 			logger.log(Level.WARNING, "Failed to read from \"{0}\"\n{1}", new Object[]{script, ex.getMessage()});
 			return false;
+		} catch (ScriptExecutionException ex) {
+			logger.log(Level.WARNING, "Failed to execute script \"{0}\" at \"{1}\"\n{2}", new Object[]{script, ex.getMessage(), ex.getCause().getMessage()});
+			return false;
 		}
+
 
 		return true;
 	}
 
-	protected String parseScriptLine(String line) {
+	protected String parseScriptLine(String line) throws ScriptExecutionException {
 		final String type = line.substring(0, line.indexOf(" ")).trim();
 		final String command = line.substring(line.indexOf(" ") + 1).trim();
 
@@ -210,7 +214,7 @@ public final class Engine {
 	 * Runs the given command via the Bukkit/InGame-Console.
 	 * @param command The command to execute.
 	 */
-	protected void runDo(final String command) {
+	protected void runDo(final String command) throws ScriptExecutionException {
 		try {
 			BukkitScheduler bscheduler = server.getScheduler();
 			bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
@@ -222,9 +226,9 @@ public final class Engine {
 				}
 			}).get();
 		} catch (InterruptedException ex) {
-			logger.log(Level.WARNING, "Interrupted: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+			throw new ScriptExecutionException(command, ex);
 		} catch (ExecutionException ex) {
-			logger.log(Level.WARNING, "Execution exception: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+			throw new ScriptExecutionException(command, ex);
 		}
 	}
 
@@ -232,13 +236,13 @@ public final class Engine {
 	 * Executes an external command.
 	 * @param command The command to execute.
 	 */
-	protected void runExec(final String command) {
+	protected void runExec(final String command) throws ScriptExecutionException {
 		try {
 			Runtime.getRuntime().exec(command).waitFor();
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, "Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+			throw new ScriptExecutionException(command, ex);
 		} catch (InterruptedException ex) {
-			logger.log(Level.WARNING, "Interrupted: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+			throw new ScriptExecutionException(command, ex);
 		}
 	}
 
@@ -247,7 +251,7 @@ public final class Engine {
 	 * @param command The command to execute.
 	 * @return The output (stdout) of the executed command.
 	 */
-	protected String runExecWait(final String command) {
+	protected String runExecWait(final String command) throws ScriptExecutionException {
 		try {
 			// We need to split the string to pass it to the system
 			String[] splittedCommand = preparePattern.split(command);
@@ -266,12 +270,10 @@ public final class Engine {
 
 			return readFromStream(proc.getInputStream());
 		} catch (IOException ex) {
-			logger.log(Level.WARNING, "Can not access/execute: \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+			throw new ScriptExecutionException(command, ex);
 		} catch (InterruptedException ex) {
-			logger.log(Level.WARNING, "Interrupted Error :-( \"{0}\"\n{1}", new Object[]{command, ex.getMessage()});
+			throw new ScriptExecutionException(command, ex);
 		}
-
-		return "";
 	}
 
 	/**
