@@ -51,7 +51,7 @@ Borrowed from the default tab.scc:
 Script Format
 -------------
 
-There are three basic commands: `do` `exec` and `execWait`.
+There are three basic commands: `do` `exec` and `execWait`. All three commands execute synchronous, that means that the system will wait for the completion before continuing.
 
  * `do` executes a command as the console, eg: `do say hello world!` is like typing in `say hello world!` at the console. see `exampleDo.scc` for some basic uses, other examples show more advanced fun stuff you can do.
  
