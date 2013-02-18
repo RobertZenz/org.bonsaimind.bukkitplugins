@@ -51,6 +51,9 @@ public final class Engine {
 	 * This is some awesome RegEx written by Tim Pietzcker
 	 * http://stackoverflow.com/questions/4780728/regex-split-string-preserving-quotes
 	 *
+	 * This is a RegEx which allows you to split a string by single-quotes
+	 * and preserving the quotes.
+	 * 
 	 * Go and vote that awesome guy up!
 	 */
 	Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
