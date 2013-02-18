@@ -129,6 +129,7 @@ public final class Engine {
 		logger.log(Level.INFO, "Scheduling: {0}", commandPart);
 		scheduler.schedule(timerPart, new Runnable() {
 
+			@Override
 			public void run() {
 				executeScript(new File(workingDir, commandPart));
 			}
@@ -207,6 +208,7 @@ public final class Engine {
 		server.getScheduler().scheduleSyncDelayedTask(
 				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
+			@Override
 			public void run() {
 				server.dispatchCommand(server.getConsoleSender(), command);
 			}
