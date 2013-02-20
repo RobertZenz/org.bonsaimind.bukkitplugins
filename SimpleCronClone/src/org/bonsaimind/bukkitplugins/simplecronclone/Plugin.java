@@ -94,11 +94,13 @@ public class Plugin extends JavaPlugin {
 							final String finalScript = script;
 							Thread t = new Thread(new Runnable() {
 
+								@Override
 								public void run() {
 									if (engine.executeScript(new File("plugins/SimpleCronClone/" + finalScript))) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
+											@Override
 											public void run() {
 												sender.sendMessage("SimpleCronClone: Executed \"plugins/SimpleCronClone/" + finalScript + "\".");
 											}
@@ -108,6 +110,7 @@ public class Plugin extends JavaPlugin {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
+											@Override
 											public void run() {
 												sender.sendMessage("SimpleCronClone: Error while executing \"plugins/SimpleCronClone/" + finalScript + "\".");
 											}
