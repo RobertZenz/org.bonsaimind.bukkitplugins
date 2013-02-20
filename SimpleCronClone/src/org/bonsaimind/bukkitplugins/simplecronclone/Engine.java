@@ -61,10 +61,10 @@ public final class Engine {
 	 */
 	Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
 
-	public Engine(Server server, File workingDir, Logger logger) {
+	public Engine(Server server, File workingDir) {
 		this.server = server;
 		this.workingDir = workingDir;
-		this.logger = logger;
+		this.logger = server.getLogger();
 	}
 
 	public void start() {

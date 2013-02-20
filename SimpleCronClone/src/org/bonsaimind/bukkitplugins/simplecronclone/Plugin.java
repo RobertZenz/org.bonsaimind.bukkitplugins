@@ -49,7 +49,7 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		getLogger().log(Level.INFO, "{0} {1} is enabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 
-		engine = new Engine(server, new File("plugins/SimpleCronClone/"), getLogger());
+		engine = new Engine(server, new File("plugins/SimpleCronClone/"));
 		engine.start();
 
 		setCommands();
