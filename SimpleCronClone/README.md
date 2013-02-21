@@ -22,7 +22,7 @@ Bukkit Dev
 
 This plugin can be found on [Bukkit Dev](http://dev.bukkit.org/server-mods/SimpleCronClone).
 
-You can also check out [the usage stats](http://mcstats.org/plugin/SimpleCronClone].
+You can also check out [the usage stats](http://mcstats.org/plugin/SimpleCronClone).
 
 
 CronTab format
