@@ -65,10 +65,6 @@ public final class ScriptParser {
 	 */
 	public static boolean executeScript(final Server server, final Logger logger, File script) {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
-		if (!script.exists() || !script.canRead()) {
-			logger.log(Level.WARNING, "{0} does not exist or is not accessible.", script.getPath());
-			return false;
-		}
 
 		try {
 			Reader reader = new FileReader(script);
