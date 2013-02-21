@@ -38,6 +38,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 public final class ScriptParser {
 
 	private static final String COMMAND_DO = "do";
+	private static final String COMMAND_DO_ASYNC = "doasync";
 	private static final String COMMAND_EXEC = "exec";
 	private static final String COMMAND_EXECWAIT = "execWait";
 	private static final String COMMENT_START = "#";
@@ -111,6 +112,9 @@ public final class ScriptParser {
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
 			runDo(server, command);
+		} else if (type.equalsIgnoreCase(COMMAND_DO_ASYNC)) {
+			// Server command
+			runDoAsync(server, command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
 			runExec(server, command);
@@ -123,7 +127,22 @@ public final class ScriptParser {
 	}
 
 	/**
-	 * Runs the given command via the Bukkit/InGame-Console.
+	 * Runs the given command via the Bukkit/InGame-Console. Does not wait for the command to be completed before
+	 * returning.
+	 * @param command The command to execute.
+	 */
+	private static void runDoAsync(final Server server, final String command) throws ScriptExecutionException {
+		server.getScheduler().scheduleSyncDelayedTask(
+				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+
+				public void run() {
+					server.dispatchCommand(server.getConsoleSender(), command);
+				}
+		});
+	}
+
+	/**
+	 * Runs the given command via the Bukkit/InGame-Console. Waits for the command to complete before returning.
 	 * @param command The command to execute.
 	 */
 	public static void runDo(final Server server, final String command) throws ScriptExecutionException {

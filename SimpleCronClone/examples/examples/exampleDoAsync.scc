@@ -1,0 +1,24 @@
+# Let's be polite first, say hello.
+do say Hello there!
+do say These commands are run one after the other.
+do say However there are ways to run a command that is "in the background" so to speak.
+
+doAsync say this is run after the last command returns, but will run the command after without waiting for this one to finish
+
+# so for example lets say we have a plugin that sleeps for .5 seconds via the `/adm_debug_sleep`
+# then also tells the console it ran:
+
+do say start of command
+do adm_debug_sleep
+do say end of command
+# should see "start..." then "command run" then "end..."
+
+
+doAsync say start of async command
+doAsync adm_debug_sleep
+doAsync say end of async command
+# might see something like "start...", "end...", "command run"
+
+
+# depending on your server and what else you have it may be in a diffrent order
+# or even the order that it was when it was run syncronusly. 
