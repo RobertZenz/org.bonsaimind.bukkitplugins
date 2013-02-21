@@ -136,9 +136,10 @@ public final class ScriptParser {
 		server.getScheduler().scheduleSyncDelayedTask(
 				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
-				public void run() {
-					server.dispatchCommand(server.getConsoleSender(), command);
-				}
+			@Override
+			public void run() {
+				server.dispatchCommand(server.getConsoleSender(), command);
+			}
 		});
 	}
 
