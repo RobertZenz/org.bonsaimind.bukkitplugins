@@ -100,6 +100,13 @@ public final class ScriptParser {
 		return true;
 	}
 
+	/**
+	 * Reads all lines from the given file and returns it as String-Array.
+	 * @param file The file to read from.
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException 
+	 */
 	public static String[] getLines(File file) throws FileNotFoundException, IOException {
 		List<String> lines = new ArrayList<String>();
 
