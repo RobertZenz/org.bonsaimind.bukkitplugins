@@ -40,10 +40,10 @@ public final class Engine {
 	private Scheduler scheduler;
 	private Logger logger;
 
-	public Engine(Server server, File workingDir) {
+	public Engine(Server server, Logger logger, File workingDir) {
 		this.server = server;
 		this.workingDir = workingDir;
-		this.logger = server.getLogger();
+		this.logger = logger;
 	}
 
 	public void start() {
@@ -116,7 +116,7 @@ public final class Engine {
 
 			@Override
 			public void run() {
-				ScriptParser.executeScript(server, new File(workingDir, commandPart));
+				ScriptParser.executeScript(server, logger, new File(workingDir, commandPart));
 			}
 		});
 	}

@@ -49,7 +49,7 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		getLogger().log(Level.INFO, "{0} {1} is enabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 
-		engine = new Engine(server, new File("plugins/SimpleCronClone/"));
+		engine = new Engine(server, getLogger(), new File("plugins/SimpleCronClone/"));
 		engine.start();
 
 		setCommands();
@@ -96,7 +96,7 @@ public class Plugin extends JavaPlugin {
 
 								@Override
 								public void run() {
-									if (ScriptParser.executeScript(server, new File("plugins/SimpleCronClone/" + finalScript))) {
+									if (ScriptParser.executeScript(server, getLogger(), new File("plugins/SimpleCronClone/" + finalScript))) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 

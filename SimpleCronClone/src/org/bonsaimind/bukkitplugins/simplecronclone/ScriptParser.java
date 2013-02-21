@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -60,10 +61,10 @@ public final class ScriptParser {
 	 * @param script The file which represents the script.
 	 * @return Returns true of the execution was without incident.
 	 */
-	public static boolean executeScript(final Server server, File script) {
-		server.getLogger().log(Level.INFO, "Executing: {0}", script.getPath());
+	public static boolean executeScript(final Server server, final Logger logger, File script) {
+		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 		if (!script.exists() || !script.canRead()) {
-			server.getLogger().log(Level.WARNING, "{0} does not exist or is not accessible.", script.getPath());
+			logger.log(Level.WARNING, "{0} does not exist or is not accessible.", script.getPath());
 			return false;
 		}
 
@@ -83,7 +84,7 @@ public final class ScriptParser {
 					line = line.trim();
 
 					if (!line.isEmpty() && line.indexOf(' ') > 0) {
-						lastOutput = parseScriptLine(server, line.trim().replace(OUTPUT_TOKEN, lastOutput));
+						lastOutput = parseScriptLine(server, logger, line.trim().replace(OUTPUT_TOKEN, lastOutput));
 					}
 				}
 			}
@@ -91,13 +92,13 @@ public final class ScriptParser {
 			bufReader.close();
 			reader.close();
 		} catch (FileNotFoundException ex) {
-			server.getLogger().log(Level.WARNING, "Could not find script: \"{0}\"", script);
+			logger.log(Level.WARNING, "Could not find script: \"{0}\"", script);
 			return false;
 		} catch (IOException ex) {
-			server.getLogger().log(Level.WARNING, "Failed to read from \"{0}\"\n{1}", new Object[]{script, ex.getMessage()});
+			logger.log(Level.WARNING, "Failed to read from \"{0}\"\n{1}", new Object[]{script, ex.getMessage()});
 			return false;
 		} catch (ScriptExecutionException ex) {
-			server.getLogger().log(Level.WARNING, "Failed to execute script \"{0}\" at \"{1}\"\n{2}", new Object[]{script, ex.getMessage(), ex.getCause().getMessage()});
+			logger.log(Level.WARNING, "Failed to execute script \"{0}\" at \"{1}\"\n{2}", new Object[]{script, ex.getMessage(), ex.getCause().getMessage()});
 			return false;
 		}
 
@@ -105,22 +106,22 @@ public final class ScriptParser {
 		return true;
 	}
 
-	public static String parseScriptLine(final Server server, String line) throws ScriptExecutionException {
+	public static String parseScriptLine(final Server server, final Logger logger, String line) throws ScriptExecutionException {
 		final String type = line.substring(0, line.indexOf(" ")).trim();
 		final String command = line.substring(line.indexOf(" ") + 1).trim();
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
-			runDo(server, command);
+			runDo(server, logger, command);
 		} else if (type.equalsIgnoreCase(COMMAND_DO_ASYNC)) {
 			// Server command
-			runDoAsync(server, command);
+			runDoAsync(server, logger, command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
-			runExec(server, command);
+			runExec(server, logger, command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
-			return runExecWait(server, command);
+			return runExecWait(server, logger, command);
 		}
 
 		return "";
@@ -131,7 +132,7 @@ public final class ScriptParser {
 	 * returning.
 	 * @param command The command to execute.
 	 */
-	private static void runDoAsync(final Server server, final String command) throws ScriptExecutionException {
+	private static void runDoAsync(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
 		server.getScheduler().scheduleSyncDelayedTask(
 				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
@@ -145,7 +146,7 @@ public final class ScriptParser {
 	 * Runs the given command via the Bukkit/InGame-Console. Waits for the command to complete before returning.
 	 * @param command The command to execute.
 	 */
-	public static void runDo(final Server server, final String command) throws ScriptExecutionException {
+	public static void runDo(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
 		try {
 			BukkitScheduler bscheduler = server.getScheduler();
 			bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
@@ -167,7 +168,7 @@ public final class ScriptParser {
 	 * Executes an external command.
 	 * @param command The command to execute.
 	 */
-	public static void runExec(final Server server, final String command) throws ScriptExecutionException {
+	public static void runExec(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
 		try {
 			Runtime.getRuntime().exec(command);
 		} catch (IOException ex) {
@@ -180,7 +181,7 @@ public final class ScriptParser {
 	 * @param command The command to execute.
 	 * @return The output (stdout) of the executed command.
 	 */
-	public static String runExecWait(final Server server, final String command) throws ScriptExecutionException {
+	public static String runExecWait(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
 		try {
 			// We need to split the string to pass it to the system
 			String[] splittedCommand = preparePattern.split(command);
@@ -192,12 +193,12 @@ public final class ScriptParser {
 			Process proc = Runtime.getRuntime().exec(splittedCommand);
 			proc.waitFor();
 
-			String errOutput = readFromStream(server, proc.getErrorStream());
+			String errOutput = readFromStream(server, logger, proc.getErrorStream());
 			if (errOutput.length() > 0) {
-				server.getLogger().log(Level.WARNING, "Command returned with an error: {0}", errOutput);
+				logger.log(Level.WARNING, "Command returned with an error: {0}", errOutput);
 			}
 
-			return readFromStream(server, proc.getInputStream());
+			return readFromStream(server, logger, proc.getInputStream());
 		} catch (IOException ex) {
 			throw new ScriptExecutionException(command, ex);
 		} catch (InterruptedException ex) {
@@ -210,7 +211,7 @@ public final class ScriptParser {
 	 * @param strm The input stream.
 	 * @return The content which could be read from the stream. 
 	 */
-	private static String readFromStream(final Server server, InputStream strm) {
+	private static String readFromStream(final Server server, final Logger logger, InputStream strm) {
 		StringBuilder builder = new StringBuilder();
 
 		String line;
@@ -225,7 +226,7 @@ public final class ScriptParser {
 			bufReader.close();
 			reader.close();
 		} catch (IOException ex) {
-			server.getLogger().log(Level.WARNING, "Failed to read from stream:\n{0}", ex.getMessage());
+			logger.log(Level.WARNING, "Failed to read from stream:\n{0}", ex.getMessage());
 		}
 
 		return builder.toString();
