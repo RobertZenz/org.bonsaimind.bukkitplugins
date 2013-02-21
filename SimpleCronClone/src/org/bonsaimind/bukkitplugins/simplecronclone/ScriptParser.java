@@ -58,6 +58,8 @@ public final class ScriptParser {
 
 	/**
 	 * Parses and executes the given script.
+	 * @param server
+	 * @param logger
 	 * @param script The file which represents the script.
 	 * @return Returns true of the execution was without incident.
 	 */
@@ -106,6 +108,14 @@ public final class ScriptParser {
 		return true;
 	}
 
+	/**
+	 * Parses the given lines and executes whatever was within.
+	 * @param server
+	 * @param logger
+	 * @param line a well-formed line would look like this: command parameter parameter ...
+	 * @return
+	 * @throws ScriptExecutionException 
+	 */
 	public static String parseScriptLine(final Server server, final Logger logger, String line) throws ScriptExecutionException {
 		final String type = line.substring(0, line.indexOf(" ")).trim();
 		final String command = line.substring(line.indexOf(" ") + 1).trim();
@@ -128,23 +138,8 @@ public final class ScriptParser {
 	}
 
 	/**
-	 * Runs the given command via the Bukkit/InGame-Console. Does not wait for the command to be completed before
-	 * returning.
-	 * @param command The command to execute.
-	 */
-	private static void runDoAsync(final Server server, final String command) throws ScriptExecutionException {
-		server.getScheduler().scheduleSyncDelayedTask(
-				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
-
-			@Override
-			public void run() {
-				server.dispatchCommand(server.getConsoleSender(), command);
-			}
-		});
-	}
-
-	/**
 	 * Runs the given command via the Bukkit/InGame-Console. Waits for the command to complete before returning.
+	 * @param server
 	 * @param command The command to execute.
 	 */
 	public static void runDo(final Server server, final String command) throws ScriptExecutionException {
@@ -166,7 +161,25 @@ public final class ScriptParser {
 	}
 
 	/**
-	 * Executes an external command.
+	 * Runs the given command via the Bukkit/InGame-Console. Does not wait for the command to be completed before
+	 * returning.
+	 * @param server
+	 * @param command The command to execute.
+	 */
+	private static void runDoAsync(final Server server, final String command) throws ScriptExecutionException {
+		server.getScheduler().scheduleSyncDelayedTask(
+				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+
+			@Override
+			public void run() {
+				server.dispatchCommand(server.getConsoleSender(), command);
+			}
+		});
+	}
+	
+	/**
+	 * Executes an external command
+	 * @param server
 	 * @param command The command to execute.
 	 */
 	public static void runExec(final Server server, final String command) throws ScriptExecutionException {
@@ -179,6 +192,8 @@ public final class ScriptParser {
 
 	/**
 	 * Executes an external command and returns its output (stdout).
+	 * @param server
+	 * @param logger
 	 * @param command The command to execute.
 	 * @return The output (stdout) of the executed command.
 	 */
@@ -209,6 +224,8 @@ public final class ScriptParser {
 
 	/**
 	 * Reads from the stream and returns what was read.
+	 * @param server
+	 * @param logger
 	 * @param strm The input stream.
 	 * @return The content which could be read from the stream. 
 	 */
