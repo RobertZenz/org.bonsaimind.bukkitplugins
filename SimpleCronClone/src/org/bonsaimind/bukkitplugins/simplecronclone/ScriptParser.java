@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -66,13 +68,10 @@ public final class ScriptParser {
 	public static boolean executeScript(final Server server, final Logger logger, File script) {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 
-		try {
-			Reader reader = new FileReader(script);
-			BufferedReader bufReader = new BufferedReader(reader);
+		String lastOutput = "";
 
-			String line;
-			String lastOutput = "";
-			while ((line = bufReader.readLine()) != null) {
+		try {
+			for (String line : getLines(script)) {
 				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
 					// Remove inlined comments
 					if (line.contains(COMMENT_START)) {
@@ -86,9 +85,6 @@ public final class ScriptParser {
 					}
 				}
 			}
-
-			bufReader.close();
-			reader.close();
 		} catch (FileNotFoundException ex) {
 			logger.log(Level.WARNING, "Could not find script: \"{0}\"", script);
 			return false;
@@ -103,7 +99,24 @@ public final class ScriptParser {
 
 		return true;
 	}
-	
+
+	public static String[] getLines(File file) throws FileNotFoundException, IOException {
+		List<String> lines = new ArrayList<String>();
+
+		Reader reader = new FileReader(file);
+		BufferedReader bufReader = new BufferedReader(reader);
+
+		String line;
+		while ((line = bufReader.readLine()) != null) {
+			lines.add(line);
+		}
+
+		bufReader.close();
+		reader.close();
+
+		return lines.toArray(new String[lines.size() - 1]);
+	}
+
 	/**
 	 * Parses the given lines and executes whatever was within.
 	 * @param server
@@ -172,7 +185,7 @@ public final class ScriptParser {
 			}
 		});
 	}
-	
+
 	/**
 	 * Executes an external command
 	 * @param server

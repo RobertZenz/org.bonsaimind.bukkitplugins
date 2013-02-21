@@ -78,18 +78,11 @@ public final class CronEngine {
 		}
 
 		try {
-			Reader reader = new FileReader(tab);
-			BufferedReader bufReader = new BufferedReader(reader);
-
-			String line;
-			while ((line = bufReader.readLine()) != null) {
+			for (String line : ScriptParser.getLines(tab)) {
 				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
 					parseTabLine(line);
 				}
 			}
-
-			bufReader.close();
-			reader.close();
 
 			return true;
 		} catch (FileNotFoundException ex) {
