@@ -112,13 +112,13 @@ public final class ScriptParser {
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
-			runDo(server, logger, command);
+			runDo(server, command);
 		} else if (type.equalsIgnoreCase(COMMAND_DO_ASYNC)) {
 			// Server command
-			runDoAsync(server, logger, command);
+			runDoAsync(server, command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
-			runExec(server, logger, command);
+			runExec(server, command);
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
 			return runExecWait(server, logger, command);
@@ -132,7 +132,7 @@ public final class ScriptParser {
 	 * returning.
 	 * @param command The command to execute.
 	 */
-	private static void runDoAsync(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
+	private static void runDoAsync(final Server server, final String command) throws ScriptExecutionException {
 		server.getScheduler().scheduleSyncDelayedTask(
 				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
@@ -147,7 +147,7 @@ public final class ScriptParser {
 	 * Runs the given command via the Bukkit/InGame-Console. Waits for the command to complete before returning.
 	 * @param command The command to execute.
 	 */
-	public static void runDo(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
+	public static void runDo(final Server server, final String command) throws ScriptExecutionException {
 		try {
 			BukkitScheduler bscheduler = server.getScheduler();
 			bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
@@ -169,7 +169,7 @@ public final class ScriptParser {
 	 * Executes an external command.
 	 * @param command The command to execute.
 	 */
-	public static void runExec(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
+	public static void runExec(final Server server, final String command) throws ScriptExecutionException {
 		try {
 			Runtime.getRuntime().exec(command);
 		} catch (IOException ex) {
