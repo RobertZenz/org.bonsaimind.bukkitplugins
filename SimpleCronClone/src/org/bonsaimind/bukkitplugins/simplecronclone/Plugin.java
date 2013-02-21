@@ -34,7 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Plugin extends JavaPlugin {
 
 	private Server server;
-	private Engine engine;
+	private CronEngine engine;
 
 	@Override
 	public void onDisable() {
@@ -49,7 +49,7 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		getLogger().log(Level.INFO, "{0} {1} is enabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 
-		engine = new Engine(server, getLogger(), new File("plugins/SimpleCronClone/"));
+		engine = new CronEngine(server, getLogger(), new File("plugins/SimpleCronClone/"));
 		engine.start();
 
 		setCommands();

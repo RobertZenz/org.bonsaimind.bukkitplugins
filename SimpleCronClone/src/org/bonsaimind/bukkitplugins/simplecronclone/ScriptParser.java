@@ -103,7 +103,7 @@ public final class ScriptParser {
 
 		return true;
 	}
-
+	
 	/**
 	 * Parses the given lines and executes whatever was within.
 	 * @param server

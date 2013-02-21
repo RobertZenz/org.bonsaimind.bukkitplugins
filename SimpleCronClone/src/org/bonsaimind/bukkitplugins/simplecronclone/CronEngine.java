@@ -32,7 +32,7 @@ import org.bukkit.Server;
  * This is the engine which does the heavy lifting and interfacing
  * with cron4j.
  */
-public final class Engine {
+public final class CronEngine {
 
 	private static final String COMMENT_START = "#";
 	private File workingDir;
@@ -40,7 +40,7 @@ public final class Engine {
 	private Scheduler scheduler;
 	private Logger logger;
 
-	public Engine(Server server, Logger logger, File workingDir) {
+	public CronEngine(Server server, Logger logger, File workingDir) {
 		this.server = server;
 		this.workingDir = workingDir;
 		this.logger = logger;
