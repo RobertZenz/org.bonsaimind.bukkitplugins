@@ -53,6 +53,8 @@ SimpleCronClone
 
 A simple cron clone for bukkit, using the cron4j scheduler from Carlo Pelliccia.
 
+ * BukkitDev: http://dev.bukkit.org/server-mods/SimpleCronClone
+ * mcstats: http://mcstats.org/plugin/SimpleCronClone
  * cron4j: http://www.sauronsoftware.it/projects/cron4j/
- * Bukkit Forum: http://forums.bukkit.org/threads/6331/
+ * Bukkit Forum (old thread, use bukkitdev now): http://forums.bukkit.org/threads/6331/
  * Bukkit Forum (Request): http://forums.bukkit.org/threads/5843/
