@@ -1,0 +1,5 @@
+name: RedstoneSponge
+authors: [Eric 'admalledd' Driggers, Robert 'Bobby' Zenz]
+
+main: org.bonsaimind.bukkitplugins.redsponge.Plugin
+version: 0.1

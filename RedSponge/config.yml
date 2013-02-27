@@ -1,0 +1,8 @@
+
+options:
+    enabled: True
+    lava: True
+    water: True
+    raduis: 3
+    redstone: False
+    invert: False
