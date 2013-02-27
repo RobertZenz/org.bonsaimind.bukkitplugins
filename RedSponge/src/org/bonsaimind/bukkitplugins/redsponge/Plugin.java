@@ -268,8 +268,19 @@ public class Plugin extends JavaPlugin implements Listener
 					final Block block = center.getRelative(x,y,z);
 					if (isLiquid(block)){//only update the block if it is water/lava ect
 						int tempid = block.getTypeId();
+						if (tempid==Material.LAVA.getId() || tempid== Material.STATIONARY_LAVA.getId())
+						{ 
+							tempid = Material.LAVA.getId();
+						}
+						if (tempid==Material.WATER.getId() ||tempid == Material.STATIONARY_WATER.getId())
+						{ 
+							tempid = Material.WATER.getId();
+						}
+						
+						
 						byte tempdata = block.getData();
 						//TODO: for some reason when it is the last block of water only it fails to update?
+						getLogger().info(String.format("updating block / around: %s,%s / %d,%d,%d", tempid,tempdata,block.getX(),block.getY(),block.getZ()));
 						block.setType(Material.AIR);//force block update by changing it!
 						block.setTypeIdAndData(tempid, tempdata, true);//this now sets it to what it was, updates
 					}
