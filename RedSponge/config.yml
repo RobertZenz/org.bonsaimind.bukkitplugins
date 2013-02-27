@@ -3,6 +3,6 @@ options:
     enabled: True
     lava: True
     water: True
-    raduis: 3
+    radius: 3
     redstone: True
     invert: False

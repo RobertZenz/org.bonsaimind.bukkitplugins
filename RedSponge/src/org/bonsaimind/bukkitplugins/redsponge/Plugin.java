@@ -148,7 +148,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		getLogger().info(
 				String.format("clearing area around: %d,%d,%d", center.getX(),
 						center.getY(), center.getZ()));
-		int radius = getConfig().getInt("options.raduis");
+		int radius = getConfig().getInt("options.radius");
 		for (int radX = 0 - radius; radX <= radius; radX++) {
 			for (int radY = 0 - radius; radY <= radius; radY++) {
 				for (int radZ = 0 - radius; radZ <= radius; radZ++) {
@@ -166,7 +166,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 	public void cancelFlow(Block blockTo, BlockFromToEvent event) {
 		boolean blockWhenPowered = getConfig().getBoolean("options.invert");
-		int radius = getConfig().getInt("options.raduis");
+		int radius = getConfig().getInt("options.radius");
 
 		for (int radX = 0 - radius; radX <= radius; radX++) {
 			for (int radY = 0 - radius; radY <= radius; radY++) {
@@ -216,14 +216,14 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public void updateBlocks(Block center) {
-		int raduis = getConfig().getInt("options.raduis");
+		int radius = getConfig().getInt("options.radius");
 		// terrible debug code left in:
 		//getLogger().info(
 		//		String.format("updating area around: %d,%d,%d", center.getX(),
 		//				center.getY(), center.getZ()));
-		for (int x = -(raduis + 1); x <= (raduis + 1); x++) {
-			for (int y = -(raduis + 1); y <= (raduis + 1); y++) {
-				for (int z = -(raduis + 1); z <= (raduis + 1); z++) {
+		for (int x = -(radius + 1); x <= (radius + 1); x++) {
+			for (int y = -(radius + 1); y <= (radius + 1); y++) {
+				for (int z = -(radius + 1); z <= (radius + 1); z++) {
 
 					final Block block = center.getRelative(x, y, z);
 					// only update the block if it is water/lava ect
