@@ -17,12 +17,9 @@
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import it.sauronsoftware.cron4j.Scheduler;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

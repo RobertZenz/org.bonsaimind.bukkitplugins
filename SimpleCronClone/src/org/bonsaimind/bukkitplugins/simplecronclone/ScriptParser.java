@@ -45,7 +45,8 @@ public final class ScriptParser {
 	private static final String COMMAND_EXEC = "exec";
 	private static final String COMMAND_EXECWAIT = "execWait";
 	private static final String COMMENT_START = "#";
-	private static final String OUTPUT_TOKEN = "$?";
+	private static final String VARIABLE_START_TOKEN = "$";
+	private static final String OUTPUT_TOKEN = "?";
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -99,6 +100,56 @@ public final class ScriptParser {
 
 		return true;
 	}
+
+	/**
+	 * Parses and executes the given script.
+	 * @param server
+	 * @param logger
+	 * @param script The file which represents the script.
+	 * @param args array of arguments to replace within the script (eg replace "$1" with args[1]), arg[0] is event name
+	 * @return Returns true of the execution was without incident.
+	 */
+	public static boolean executeScript(final Server server, final Logger logger, File script, String[] args){
+		logger.log(Level.INFO, "Executing: {0}", script.getPath());
+
+		String lastOutput = "";
+
+		try {
+			for (String line : getLines(script)) {
+				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
+					// Remove inlined comments
+					if (line.contains(COMMENT_START)) {
+						line = line.substring(0, line.indexOf(COMMENT_START));
+					}
+
+					line = line.trim();
+
+					if (!line.isEmpty() && line.indexOf(' ') > 0) {
+						line = line.replace(VARIABLE_START_TOKEN+OUTPUT_TOKEN, lastOutput);
+						// replace $0,$1 ect... with what it actually is
+						//TODO: make it so that we ignore the VARIABLE_START_TOKEN if it is preceded with `\`
+						//or just do whatever string-escaping is needed, there should be a built-in for it right?
+						for (int i=0; i<args.length; i++){
+							line = line.replace(String.format("%s%d",VARIABLE_START_TOKEN,i),args[i]);
+						}
+						lastOutput = parseScriptLine(server, logger, line);
+					}
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			logger.log(Level.WARNING, "Could not find script: \"{0}\"", script);
+			return false;
+		} catch (IOException ex) {
+			logger.log(Level.WARNING, "Failed to read from \"{0}\"\n{1}", new Object[]{script, ex.getMessage()});
+			return false;
+		} catch (ScriptExecutionException ex) {
+			logger.log(Level.WARNING, "Failed to execute script \"{0}\" at \"{1}\"\n{2}", new Object[]{script, ex.getMessage(), ex.getCause().getMessage()});
+			return false;
+		}
+
+		return true;
+	}
+
 
 	/**
 	 * Reads all lines from the given file and returns it as String-Array.

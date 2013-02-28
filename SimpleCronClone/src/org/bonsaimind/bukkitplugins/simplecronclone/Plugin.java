@@ -35,11 +35,18 @@ public class Plugin extends JavaPlugin {
 
 	private Server server;
 	private CronEngine engine;
+	private EventListener eventListener;
+
+	//public so that eventListener calls into it via this.plugin.scriptEngine.$EVENT_NAME()
+	public EventEngine eventEngine;
 
 	@Override
 	public void onDisable() {
 		engine.stop();
 		engine = null;
+		eventListener = null;
+		eventEngine.stop();
+		eventEngine = null;
 	}
 
 	@Override
@@ -51,6 +58,12 @@ public class Plugin extends JavaPlugin {
 
 		engine = new CronEngine(server, getLogger(), new File("plugins/SimpleCronClone/"));
 		engine.start();
+
+		eventEngine = new EventEngine(this, server, new File("plugins/SimpleCronClone"));
+		eventEngine.start();
+
+		eventListener = new EventListener(this);
+		server.getPluginManager().registerEvents(eventListener, this);
 
 		setCommands();
 
