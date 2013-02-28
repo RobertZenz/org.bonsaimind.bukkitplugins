@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,14 +45,14 @@ public final class EventEngine {
 	private Plugin plugin;
 	private Logger logger;
 	//strings of the filePaths to the .sce files
-	private ArrayList<String> eventJoin;
-	private ArrayList<String> eventFirstJoin;
-	private ArrayList<String> eventQuit;
-	private ArrayList<String> eventServerEmpty;
-	private ArrayList<String> eventServerNotEmpty;
-	private ArrayList<String> eventPlayerWorldMove;
-	private ArrayList<String> eventWorldEmpty;
-	private ArrayList<String> eventWorldNotEmpty;
+	private List<String> eventJoin;
+	private List<String> eventFirstJoin;
+	private List<String> eventQuit;
+	private List<String> eventServerEmpty;
+	private List<String> eventServerNotEmpty;
+	private List<String> eventPlayerWorldMove;
+	private List<String> eventWorldEmpty;
+	private List<String> eventWorldNotEmpty;
 
 	public EventEngine(Plugin _plugin, Server server, File workingDir) {
 		this.server = server;
@@ -147,10 +148,10 @@ public final class EventEngine {
 
 	/**
 	 * Parse the given line and add it to the event runner.
-	 * @param ArrayList of the files that have been added to the event we are now calling
+	 * @param List of the files that have been added to the event we are now calling
 	 * @param "arguments" to replace inside of the .sce
 	 */
-	private void runEvents(ArrayList<String> filesToCall, final String[] args) {
+	private void runEvents(List<String> filesToCall, final String[] args) {
 		for (final String filePath : filesToCall) {
 			Thread t = new Thread(new Runnable() {
 
