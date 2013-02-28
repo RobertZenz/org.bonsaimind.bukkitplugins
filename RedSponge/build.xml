@@ -34,7 +34,7 @@
 		<jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"
 			manifest="MANIFEST.MF">
 			<zipfileset dir="${src}" includes="plugin.yml" />
-			<zipfileset dir="." includes="config.yml" />
+			<zipfileset dir="${src}" includes="config.yml" />
 		</jar>
 	</target>
 </project>
