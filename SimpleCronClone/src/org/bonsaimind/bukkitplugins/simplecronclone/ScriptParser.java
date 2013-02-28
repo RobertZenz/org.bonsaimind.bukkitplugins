@@ -110,7 +110,10 @@ public final class ScriptParser {
 							Matcher matcher = fetchVariables.matcher(line);
 							while (matcher.find()) {
 								int arg = Integer.parseInt(matcher.group(2));
-								line = line.replace(VARIABLE_START_TOKEN + matcher.group(2), args[arg]);
+								if (arg < args.length) {
+									// Silently skip over wrong variables...or should we warn the user?
+									line = line.replace(VARIABLE_START_TOKEN + matcher.group(2), args[arg]);
+								}
 							}
 						}
 
