@@ -54,10 +54,10 @@ public final class EventEngine {
 	private List<String> eventWorldEmpty;
 	private List<String> eventWorldNotEmpty;
 
-	public EventEngine(Plugin _plugin, Server server, File workingDir) {
+	public EventEngine(Plugin plugin, Server server, File workingDir) {
 		this.server = server;
 		this.workingDir = workingDir;
-		this.plugin = _plugin;
+		this.plugin = plugin;
 		this.logger = plugin.getLogger();
 	}
 
