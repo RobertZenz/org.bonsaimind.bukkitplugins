@@ -30,6 +30,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -58,6 +59,14 @@ public final class ScriptParser {
 	 * Go and vote that awesome guy up!
 	 */
 	private static Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
+	/**
+	 * This should allow us to fetch the variables, and also ignore thos
+	 * which start with leading \ .
+	 * 
+	 * Duplicate removal is written by m.buettner:
+	 * http://stackoverflow.com/questions/13613813/get-unique-regex-matcher-results-without-using-maps-or-lists
+	 */
+	private static Pattern fetchVariables = Pattern.compile("([^\\\\]\\$([0-9]+))(?!.*\\1)");
 
 	/**
 	 * Parses and executes the given script.
@@ -67,38 +76,7 @@ public final class ScriptParser {
 	 * @return Returns true of the execution was without incident.
 	 */
 	public static boolean executeScript(final Server server, final Logger logger, File script) {
-		logger.log(Level.INFO, "Executing: {0}", script.getPath());
-
-		String lastOutput = "";
-
-		try {
-			for (String line : getLines(script)) {
-				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
-					// Remove inlined comments
-					if (line.contains(COMMENT_START)) {
-						line = line.substring(0, line.indexOf(COMMENT_START));
-					}
-
-					line = line.trim();
-
-					if (!line.isEmpty() && line.indexOf(' ') > 0) {
-						lastOutput = parseScriptLine(server, logger, line.trim().replace(OUTPUT_TOKEN, lastOutput));
-					}
-				}
-			}
-		} catch (FileNotFoundException ex) {
-			logger.log(Level.WARNING, "Could not find script: \"{0}\"", script);
-			return false;
-		} catch (IOException ex) {
-			logger.log(Level.WARNING, "Failed to read from \"{0}\"\n{1}", new Object[]{script, ex.getMessage()});
-			return false;
-		} catch (ScriptExecutionException ex) {
-			logger.log(Level.WARNING, "Failed to execute script \"{0}\" at \"{1}\"\n{2}", new Object[]{script, ex.getMessage(), ex.getCause().getMessage()});
-			return false;
-		}
-
-
-		return true;
+		return executeScript(server, logger, script, null);
 	}
 
 	/**
@@ -126,12 +104,16 @@ public final class ScriptParser {
 
 					if (!line.isEmpty() && line.indexOf(' ') > 0) {
 						line = line.replace(VARIABLE_START_TOKEN + OUTPUT_TOKEN, lastOutput);
-						// replace $0,$1 ect... with what it actually is
-						//TODO: make it so that we ignore the VARIABLE_START_TOKEN if it is preceded with `\`
-						//or just do whatever string-escaping is needed, there should be a built-in for it right?
-						for (int i = 0; i < args.length; i++) {
-							line = line.replace(String.format("%s%d", VARIABLE_START_TOKEN, i), args[i]);
+
+						if (args != null && args.length > 0) {
+							// Only do this if we have arguments we can replace.
+							Matcher matcher = fetchVariables.matcher(line);
+							while (matcher.find()) {
+								int arg = Integer.parseInt(matcher.group(2));
+								line = line.replace(VARIABLE_START_TOKEN + matcher.group(2), args[arg]);
+							}
 						}
+
 						lastOutput = parseScriptLine(server, logger, line);
 					}
 				}
