@@ -62,7 +62,7 @@ public class EventListener implements Listener {
 		//eventPlayerWorldMove
 		sccMain.eventEngine.eventPlayerWorldMove(event.getPlayer().getName(), event.getFrom().getName(), event.getPlayer().getWorld().getName());
 
-		if (event.getFrom().getPlayers().size() == 0) {
+		if (event.getFrom().getPlayers().isEmpty()) {
 			//eventWorldEmpty
 			sccMain.eventEngine.eventWorldEmpty(event.getPlayer().getName(), event.getFrom().getName());
 		}
