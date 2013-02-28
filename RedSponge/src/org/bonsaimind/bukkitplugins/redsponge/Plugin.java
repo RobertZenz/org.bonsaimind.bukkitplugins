@@ -83,43 +83,23 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 		int newCurrent = event.getNewCurrent();
 		int oldCurrent = event.getOldCurrent();
-		//left in until I can confirm it works...
-		//minecraft is derping again on this system :/
-		/*
-		Block north = event.getBlock().getRelative(BlockFace.NORTH);
-		Block east = event.getBlock().getRelative(BlockFace.EAST);
-		Block south = event.getBlock().getRelative(BlockFace.SOUTH);
-		Block west = event.getBlock().getRelative(BlockFace.WEST);
-		Block up = event.getBlock().getRelative(BlockFace.UP);
-		Block down = event.getBlock().getRelative(BlockFace.DOWN);
 
-		Block sponge = null;
-		if (north.getType() == Material.SPONGE) {
-			sponge = north;
-		} else if (east.getType() == Material.SPONGE) {
-			sponge = east;
-		} else if (south.getType() == Material.SPONGE) {
-			sponge = south;
-		} else if (west.getType() == Material.SPONGE) {
-			sponge = west;
-		} else if (up.getType() == Material.SPONGE) {
-			sponge = up;
-		} else if (down.getType() == Material.SPONGE) {
-			sponge = down;
-		}
-		*/
 		for(Block sponge : getRelative(event.getBlock(),1)) {
-
+			
+			//dont use Block.isBlockIndirectlyPowered() or Block.isBlockPowered() because we are still processing the event
+			//that would cause them to receive power. (this is just assumption for those methods failed...)
+			
+			
 			// redstone changes from low to high
 			if (sponge.getType() == Material.SPONGE && oldCurrent == 0 && newCurrent >= 1)
 			{
-				getLogger().info("low->high");
+				//getLogger().info("low->high");
 				updateBlocks(sponge);
 			}
 			// redstone changes from high to low
 			else if (sponge.getType() == Material.SPONGE && oldCurrent >= 1 && newCurrent == 0)
 			{
-				getLogger().info("high->low");
+				//getLogger().info("high->low");
 				clearArea(sponge);
 			}
 		}
@@ -149,9 +129,9 @@ public class Plugin extends JavaPlugin implements Listener {
 	}
 
 	public void clearArea(Block center) {
-		getLogger().info(
-				String.format("clearing area around: %d,%d,%d", center.getX(),
-						center.getY(), center.getZ()));
+		//getLogger().info(
+		//		String.format("clearing area around: %d,%d,%d", center.getX(),
+		//				center.getY(), center.getZ()));
 		int radius = getConfig().getInt("options.radius");
 		for (Block b : getRelative(center,radius)){
 			if (isLiquid(b)) {
