@@ -155,6 +155,12 @@ public final class EventEngine {
 		//TODO: better name this logging output?
 		logger.info(String.format("SCE waiting: %s:::%s", eventPart,commandPart));
 	}
+	
+	/**
+	 * Parse the given line and add it to the event runner.
+	 * @param ArrayList of the files that have been added to the event we are now calling
+	 * @param "arguments" to replace inside of the .sce
+	 */
 	private void runEvents(ArrayList<String> filesToCall,final String[] args){
 		for (final String filePath : filesToCall){
 			Thread t = new Thread(new Runnable() {

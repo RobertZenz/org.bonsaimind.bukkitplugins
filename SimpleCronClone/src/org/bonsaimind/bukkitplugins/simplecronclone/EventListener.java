@@ -18,9 +18,10 @@ public class EventListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event){
 		//eventJoin
 		sccMain.eventEngine.eventPlayerJoin(event.getPlayer().getName());
+		
 		if (!event.getPlayer().hasPlayedBefore()){
 			//eventFirstJoin
-			//TODO: this seems not to be reliable? 
+			//TODO: this seems not to be reliable? any ideas on why? :/
 			sccMain.eventEngine.eventFirstJoin(event.getPlayer().getName());
 		}
 		if (sccMain.getServer().getOnlinePlayers().length == 1){
@@ -33,8 +34,9 @@ public class EventListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		//eventQuit
 		sccMain.eventEngine.eventPlayerQuit(event.getPlayer().getName());
-		if (sccMain.getServer().getOnlinePlayers().length == 0){
-			//no users logged in, means last player just quit.
+		
+		if (sccMain.getServer().getOnlinePlayers().length == 1){
+			//this event fires before the server removes the player from the OnlinePlayers, so 1 not 0
 			sccMain.eventEngine.eventServerEmpty(event.getPlayer().getName());
 		}
 	}
