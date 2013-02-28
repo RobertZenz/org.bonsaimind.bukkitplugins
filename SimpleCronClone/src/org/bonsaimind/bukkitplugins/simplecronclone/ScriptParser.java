@@ -109,7 +109,7 @@ public final class ScriptParser {
 	 * @param args array of arguments to replace within the script (eg replace "$1" with args[1]), arg[0] is event name
 	 * @return Returns true of the execution was without incident.
 	 */
-	public static boolean executeScript(final Server server, final Logger logger, File script, String[] args){
+	public static boolean executeScript(final Server server, final Logger logger, File script, String[] args) {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 
 		String lastOutput = "";
@@ -125,12 +125,12 @@ public final class ScriptParser {
 					line = line.trim();
 
 					if (!line.isEmpty() && line.indexOf(' ') > 0) {
-						line = line.replace(VARIABLE_START_TOKEN+OUTPUT_TOKEN, lastOutput);
+						line = line.replace(VARIABLE_START_TOKEN + OUTPUT_TOKEN, lastOutput);
 						// replace $0,$1 ect... with what it actually is
 						//TODO: make it so that we ignore the VARIABLE_START_TOKEN if it is preceded with `\`
 						//or just do whatever string-escaping is needed, there should be a built-in for it right?
-						for (int i=0; i<args.length; i++){
-							line = line.replace(String.format("%s%d",VARIABLE_START_TOKEN,i),args[i]);
+						for (int i = 0; i < args.length; i++) {
+							line = line.replace(String.format("%s%d", VARIABLE_START_TOKEN, i), args[i]);
 						}
 						lastOutput = parseScriptLine(server, logger, line);
 					}
@@ -149,7 +149,6 @@ public final class ScriptParser {
 
 		return true;
 	}
-
 
 	/**
 	 * Reads all lines from the given file and returns it as String-Array.

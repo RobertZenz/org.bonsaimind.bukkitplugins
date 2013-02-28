@@ -36,7 +36,6 @@ public class Plugin extends JavaPlugin {
 	private Server server;
 	private CronEngine engine;
 	private EventListener eventListener;
-
 	//public so that eventListener calls into it via this.plugin.scriptEngine.$EVENT_NAME()
 	public EventEngine eventEngine;
 
