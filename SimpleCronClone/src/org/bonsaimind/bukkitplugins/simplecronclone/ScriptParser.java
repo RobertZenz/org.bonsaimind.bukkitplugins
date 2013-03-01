@@ -60,7 +60,7 @@ public final class ScriptParser {
 	 */
 	private static Pattern preparePattern = Pattern.compile("(?<=^[^']*(?:'[^']?'[^']?)?) (?=(?:[^']*'[^']*')*[^']*$)");
 	/**
-	 * This should allow us to fetch the variables, and also ignore thos
+	 * This should allow us to fetch the variables, and also ignore those
 	 * which start with leading \ .
 	 * 
 	 * Duplicate removal is written by m.buettner:
