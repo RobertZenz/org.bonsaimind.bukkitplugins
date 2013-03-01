@@ -135,10 +135,13 @@ public class Plugin extends JavaPlugin {
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
 						engine.stop();
+						eventEngine.stop();
 						engine.start();
+						eventEngine.start();
 						sender.sendMessage("SimpleCronClone: Restarted.");
 					} else if (arg.equalsIgnoreCase("stop")) {
 						engine.stop();
+						eventEngine.stop();
 						sender.sendMessage("SimpleCronClone: HALTED!");
 						sender.sendMessage("SimpleCronClone: Use \"/simplecronclone restart\" to restart it.");
 					}
