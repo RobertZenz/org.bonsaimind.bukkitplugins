@@ -1,0 +1,14 @@
+
+doAsync say start of async command
+doAsync adm_debug_sleep
+doAsync adm_debug_sleep
+doAsync adm_debug_sleep
+doAsync adm_debug_sleep
+doAsync adm_debug_sleep
+doAsync say end of async command
+# might see something like "start...", "end...", "command run"
+
+exec sleep 10
+waitForAsync
+
+do say test

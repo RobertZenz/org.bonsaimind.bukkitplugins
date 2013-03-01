@@ -155,7 +155,9 @@ public final class EventEngine {
 
 				@Override
 				public void run() {
-					ScriptParser.executeScript(server, logger, new File(workingDir, filePath), args);
+
+					ScriptParser script = new ScriptParser();
+					script.executeScript(server,logger, new File(workingDir,filePath),args);
 				}
 			});
 			t.start();

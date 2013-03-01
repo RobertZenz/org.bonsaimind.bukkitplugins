@@ -106,7 +106,8 @@ public final class CronEngine {
 
 			@Override
 			public void run() {
-				ScriptParser.executeScript(server, logger, new File(workingDir, commandPart));
+				ScriptParser script = new ScriptParser();
+				script.executeScript(server,logger, new File(workingDir,commandPart));
 			}
 		});
 	}

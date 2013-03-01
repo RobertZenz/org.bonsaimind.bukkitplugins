@@ -108,7 +108,9 @@ public class Plugin extends JavaPlugin {
 
 								@Override
 								public void run() {
-									if (ScriptParser.executeScript(server, getLogger(), new File("plugins/SimpleCronClone/" + finalScript))) {
+
+									ScriptParser script = new ScriptParser();
+									if (script.executeScript(server, getLogger(), new File("plugins/SimpleCronClone/" + finalScript))) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 

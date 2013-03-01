@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -45,9 +46,14 @@ public final class ScriptParser {
 	private static final String COMMAND_DO_ASYNC = "doasync";
 	private static final String COMMAND_EXEC = "exec";
 	private static final String COMMAND_EXECWAIT = "execWait";
+	private static final String COMMAND_WAIT_ASYNC = "waitForAsync";
 	private static final String COMMENT_START = "#";
 	private static final String VARIABLE_START_TOKEN = "$";
 	private static final String OUTPUT_TOKEN = "?";
+	
+	private List<Future<Boolean>> asyncDosWaiting = new ArrayList<Future<Boolean>>();
+	private List<Process> asyncExecWaiting = new ArrayList<Process>();
+	
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -75,7 +81,7 @@ public final class ScriptParser {
 	 * @param script The file which represents the script.
 	 * @return Returns true of the execution was without incident.
 	 */
-	public static boolean executeScript(final Server server, final Logger logger, File script) {
+	public boolean executeScript(final Server server, final Logger logger, File script) {
 		return executeScript(server, logger, script, null);
 	}
 
@@ -87,7 +93,7 @@ public final class ScriptParser {
 	 * @param args array of arguments to replace within the script (eg replace "$1" with args[1]), arg[0] is event name
 	 * @return Returns true of the execution was without incident.
 	 */
-	public static boolean executeScript(final Server server, final Logger logger, File script, String[] args) {
+	public boolean executeScript(final Server server, final Logger logger, File script, String[] args) {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 
 		String lastOutput = "";
@@ -167,7 +173,7 @@ public final class ScriptParser {
 	 * @return
 	 * @throws ScriptExecutionException 
 	 */
-	public static String parseScriptLine(final Server server, final Logger logger, String line) throws ScriptExecutionException {
+	private String parseScriptLine(final Server server, final Logger logger, String line) throws ScriptExecutionException {
 		final String type = line.substring(0, line.indexOf(" ")).trim();
 		final String command = line.substring(line.indexOf(" ") + 1).trim();
 
@@ -176,16 +182,45 @@ public final class ScriptParser {
 			runDo(server, command);
 		} else if (type.equalsIgnoreCase(COMMAND_DO_ASYNC)) {
 			// Server command
-			runDoAsync(server, command);
+			asyncDosWaiting.add(runDoAsync(server, command));
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
-			runExec(server, command);
+			asyncExecWaiting.add(runExec(server, command));
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
 			return runExecWait(server, logger, command);
+		} else if (type.equalsIgnoreCase(COMMAND_WAIT_ASYNC)) {
+			// Wait for those Async tasks. No command to pass, just wait
+			runWaitAsync(server, logger); 
 		}
 
 		return "";
+	}
+
+	private void runWaitAsync(Server server, Logger logger) throws ScriptExecutionException {
+		for (Process p : asyncExecWaiting){
+			try {
+				p.waitFor();
+			} catch (InterruptedException ex) {
+				//pass along, we can't do anything really. The command failed before we even got here
+				//but thanks to it being in a separate threadish thingy it should have already caused a stack trace.
+				throw new ScriptExecutionException("Exec failed to wait in runWaitAsync D:", ex);
+			} finally{
+				asyncExecWaiting.clear(); //no matter the failures of our past, we must carry on.
+			}
+		}
+		for (Future<Boolean> f : asyncDosWaiting){
+			try {
+				f.get();
+			} catch (InterruptedException ex) {
+				throw new ScriptExecutionException("asyncDo failed to wait in runWaitAsync D:", ex);
+			} catch (ExecutionException ex) {
+				throw new ScriptExecutionException("asyncDo failed to wait in runWaitAsync D:", ex);
+			} finally{
+				asyncDosWaiting.clear(); //no matter the failures of our past, we must carry on.
+			}
+			
+		}
 	}
 
 	/**
@@ -193,17 +228,9 @@ public final class ScriptParser {
 	 * @param server
 	 * @param command The command to execute.
 	 */
-	public static void runDo(final Server server, final String command) throws ScriptExecutionException {
+	private static void runDo(final Server server, final String command) throws ScriptExecutionException {
 		try {
-			BukkitScheduler bscheduler = server.getScheduler();
-			bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
-
-				@Override
-				public Boolean call() throws Exception {
-					server.dispatchCommand(server.getConsoleSender(), command);
-					return true;
-				}
-			}).get();
+			runDoAsync(server, command).get();
 		} catch (InterruptedException ex) {
 			throw new ScriptExecutionException(command, ex);
 		} catch (ExecutionException ex) {
@@ -216,14 +243,17 @@ public final class ScriptParser {
 	 * returning.
 	 * @param server
 	 * @param command The command to execute.
+	 * @return returns the Future object that can be .get()'d later on
 	 */
-	private static void runDoAsync(final Server server, final String command) throws ScriptExecutionException {
-		server.getScheduler().scheduleSyncDelayedTask(
-				server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
+	private static Future<Boolean> runDoAsync(final Server server, final String command) throws ScriptExecutionException {
+		
+		BukkitScheduler bscheduler = server.getScheduler();
+		return bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
 
 			@Override
-			public void run() {
+			public Boolean call() throws Exception {
 				server.dispatchCommand(server.getConsoleSender(), command);
+				return true;
 			}
 		});
 	}
@@ -232,10 +262,11 @@ public final class ScriptParser {
 	 * Executes an external command
 	 * @param server
 	 * @param command The command to execute.
+	 * @return 
 	 */
-	public static void runExec(final Server server, final String command) throws ScriptExecutionException {
+	private static Process runExec(final Server server, final String command) throws ScriptExecutionException {
 		try {
-			Runtime.getRuntime().exec(command);
+			return Runtime.getRuntime().exec(command);
 		} catch (IOException ex) {
 			throw new ScriptExecutionException(command, ex);
 		}
@@ -248,7 +279,7 @@ public final class ScriptParser {
 	 * @param command The command to execute.
 	 * @return The output (stdout) of the executed command.
 	 */
-	public static String runExecWait(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
+	private static String runExecWait(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
 		try {
 			// We need to split the string to pass it to the system
 			String[] splittedCommand = preparePattern.split(command);
