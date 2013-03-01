@@ -20,5 +20,5 @@ doAsync say end of async command
 # might see something like "start...", "end...", "command run"
 
 
-# depending on your server and what else you have it may be in a diffrent order
-# or even the order that it was when it was run syncronusly. 
+# depending on your server and what else you have it may be in a different order
+# or even the order that it was when it was run synchronously. 
