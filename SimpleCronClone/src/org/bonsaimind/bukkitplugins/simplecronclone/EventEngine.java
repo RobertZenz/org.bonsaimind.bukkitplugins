@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,26 +33,20 @@ import org.bukkit.Server;
 public final class EventEngine {
 
 	private static final String COMMENT_START = "#";
-	private static final String EVENT_JOIN = "playerJoin";
-	private static final String EVENT_QUIT = "playerQuit";
-	private static final String EVENT_FIRST_JOIN = "playerFirstJoin";
-	private static final String EVENT_SERVER_EMPTY = "serverEmpty";
-	private static final String EVENT_SERVER_NOT_EMPTY = "serverNotEmpty";
-	private static final String EVENT_PLAYER_WORLD_MOVE = "playerTeleportWorld";
-	private static final String EVENT_WORLD_EMPTY = "worldEmpty";
-	private static final String EVENT_WORLD_NOT_EMPTY = "worldNotEmpty";
+	public static final String EVENT_JOIN = "playerJoin";
+	public static final String EVENT_QUIT = "playerQuit";
+	public static final String EVENT_FIRST_JOIN = "playerFirstJoin";
+	public static final String EVENT_SERVER_EMPTY = "serverEmpty";
+	public static final String EVENT_SERVER_NOT_EMPTY = "serverNotEmpty";
+	public static final String EVENT_PLAYER_WORLD_MOVE = "playerTeleportWorld";
+	public static final String EVENT_WORLD_EMPTY = "worldEmpty";
+	public static final String EVENT_WORLD_NOT_EMPTY = "worldNotEmpty";
+	
 	private File workingDir;
 	private Server server;
 	private Logger logger;
 	//strings of the filePaths to the .sce files
-	private List<String> eventJoin;
-	private List<String> eventFirstJoin;
-	private List<String> eventQuit;
-	private List<String> eventServerEmpty;
-	private List<String> eventServerNotEmpty;
-	private List<String> eventPlayerWorldMove;
-	private List<String> eventWorldEmpty;
-	private List<String> eventWorldNotEmpty;
+	private HashMap<String, List<String>> events;
 
 	public EventEngine(Server server, Logger logger, File workingDir) {
 		this.server = server;
@@ -62,22 +57,21 @@ public final class EventEngine {
 	public void start() {
 		// clear all the old stuff away
 		stop();
+
+		events.put(EVENT_JOIN, new ArrayList<String>());
+		events.put(EVENT_FIRST_JOIN, new ArrayList<String>());
+		events.put(EVENT_QUIT, new ArrayList<String>());
+		events.put(EVENT_SERVER_EMPTY, new ArrayList<String>());
+		events.put(EVENT_SERVER_NOT_EMPTY, new ArrayList<String>());
+		events.put(EVENT_PLAYER_WORLD_MOVE, new ArrayList<String>());
+		events.put(EVENT_WORLD_EMPTY, new ArrayList<String>());
+		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<String>());
+		
 		readTab();//TODO: when does this fail? what do we do if it does?
 	}
 
 	public void stop() {
-		eventJoin = new ArrayList<String>();
-
-		eventFirstJoin = new ArrayList<String>();
-		eventQuit = new ArrayList<String>();
-
-		eventServerEmpty = new ArrayList<String>();
-		eventServerNotEmpty = new ArrayList<String>();
-
-		eventPlayerWorldMove = new ArrayList<String>();
-
-		eventWorldEmpty = new ArrayList<String>();
-		eventWorldNotEmpty = new ArrayList<String>();
+		events.clear();
 	}
 
 	/**
@@ -119,88 +113,36 @@ public final class EventEngine {
 		String eventPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
-		if (eventPart.equalsIgnoreCase(EVENT_JOIN)) {
-			eventJoin.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_FIRST_JOIN)) {
-			eventFirstJoin.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_QUIT)) {
-			eventQuit.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_SERVER_EMPTY)) {
-			eventServerEmpty.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_SERVER_NOT_EMPTY)) {
-			eventServerNotEmpty.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_PLAYER_WORLD_MOVE)) {
-			eventPlayerWorldMove.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_WORLD_EMPTY)) {
-			eventWorldEmpty.add(commandPart);
-		} else if (eventPart.equalsIgnoreCase(EVENT_WORLD_NOT_EMPTY)) {
-			eventWorldNotEmpty.add(commandPart);
+		if (events.containsKey(eventPart)){
+			events.get(eventPart).add(commandPart);
 		} else {
-			//TODO: do we want to raise an exception if the line fails parsing?
 			logger.warning(String.format("line failed parsing:'%s':eventPart:'%s':commandPart:'%s'", line, eventPart, commandPart));
 			return; //bypasses the next logging. Already logged that we failed this line.
 		}
 		//TODO: better name this logging output?
-		logger.info(String.format("SCE waiting: %s:::%s", eventPart, commandPart));
+		logger.info(String.format("SCE waiting for: %s:::%s", eventPart, commandPart));
 	}
 
 	/**
 	 * Parse the given line and add it to the event runner.
-	 * @param List of the files that have been added to the event we are now calling
+	 * @param event name
 	 * @param "arguments" to replace inside of the .sce
 	 */
-	private void runEvents(List<String> filesToCall, final String[] args) {
-		for (final String filePath : filesToCall) {
-			Thread t = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-
-					ScriptParser script = new ScriptParser();
-					script.executeScript(server,logger, new File(workingDir,filePath),args);
-				}
-			});
-			t.start();
+	public void runEventsFor(String event_name, final String[] args) {
+		if (events.containsKey(event_name)){
+			
+			for (final String filePath : events.get(event_name)) {
+				Thread t = new Thread(new Runnable() {
+	
+					@Override
+					public void run() {
+	
+						ScriptParser script = new ScriptParser();
+						script.executeScript(server,logger, new File(workingDir,filePath),args);
+					}
+				});
+				t.start();
+			}
 		}
-	}
-
-	public void eventPlayerJoin(final String player) {
-		final String[] args = {EVENT_JOIN, player};
-		runEvents(eventJoin, args);
-	}
-
-	public void eventFirstJoin(String player) {
-		final String[] args = {EVENT_FIRST_JOIN, player};
-		runEvents(eventFirstJoin, args);
-	}
-
-	public void eventPlayerQuit(String player) {
-		final String[] args = {EVENT_QUIT, player};
-		runEvents(eventQuit, args);
-	}
-
-	public void eventPlayerWorldMove(String player, String from, String to) {
-		final String[] args = {EVENT_PLAYER_WORLD_MOVE, player, from, to};
-		runEvents(eventPlayerWorldMove, args);
-	}
-
-	public void eventWorldEmpty(String player, String world) {
-		final String[] args = {EVENT_WORLD_EMPTY, player, world};
-		runEvents(eventWorldEmpty, args);
-	}
-
-	public void eventWorldNotEmpty(String player, String world) {
-		final String[] args = {EVENT_WORLD_NOT_EMPTY, player, world};
-		runEvents(eventWorldNotEmpty, args);
-	}
-
-	public void eventServerNotEmpty(String player) {
-		final String[] args = {EVENT_SERVER_NOT_EMPTY, player};
-		runEvents(eventServerNotEmpty, args);
-	}
-
-	public void eventServerEmpty(String player) {
-		final String[] args = {EVENT_SERVER_EMPTY, player};
-		runEvents(eventServerEmpty, args);
 	}
 }

@@ -32,43 +32,57 @@ public class EventListener implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		//eventJoin
-		sccMain.eventEngine.eventPlayerJoin(event.getPlayer().getName());
 
+		// if it is a new player, do stuff before anything else
 		if (!event.getPlayer().hasPlayedBefore()) {
-			//eventFirstJoin
-			//TODO: this seems not to be reliable? any ideas on why? :/
-			sccMain.eventEngine.eventFirstJoin(event.getPlayer().getName());
+			// eventFirstJoin
+			// TODO: this seems not to be reliable? any ideas on why? :/
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_FIRST_JOIN, new String[] { EventEngine.EVENT_FIRST_JOIN,
+					event.getPlayer().getName() });
 		}
+
+		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_JOIN, new String[] { EventEngine.EVENT_JOIN,
+				event.getPlayer().getName() });
+
+		// now that the player has "joined" lets see if the player is alone...
 		if (sccMain.getServer().getOnlinePlayers().length == 1) {
-			//only user logged in means that we were just empty.
-			sccMain.eventEngine.eventServerNotEmpty(event.getPlayer().getName());
+			// only user logged in means that we were just empty.
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_NOT_EMPTY, new String[] {
+					EventEngine.EVENT_SERVER_NOT_EMPTY, event.getPlayer().getName() });
 		}
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		//eventQuit
-		sccMain.eventEngine.eventPlayerQuit(event.getPlayer().getName());
+		// eventQuit
+		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_QUIT, new String[] { EventEngine.EVENT_QUIT,
+				event.getPlayer().getName() });
 
 		if (sccMain.getServer().getOnlinePlayers().length == 1) {
-			//this event fires before the server removes the player from the OnlinePlayers, so 1 not 0
-			sccMain.eventEngine.eventServerEmpty(event.getPlayer().getName());
+			// this event fires before the server removes the player from the OnlinePlayers, so 1 not 0
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_EMPTY, new String[] {
+					EventEngine.EVENT_SERVER_EMPTY, event.getPlayer().getName() });
 		}
 	}
 
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-		//eventPlayerWorldMove
-		sccMain.eventEngine.eventPlayerWorldMove(event.getPlayer().getName(), event.getFrom().getName(), event.getPlayer().getWorld().getName());
+		// eventPlayerWorldMove
+		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_PLAYER_WORLD_MOVE, new String[] {
+				EventEngine.EVENT_PLAYER_WORLD_MOVE, event.getPlayer().getName(), event.getFrom().getName(),
+				event.getPlayer().getWorld().getName() });
 
 		if (event.getFrom().getPlayers().isEmpty()) {
-			//eventWorldEmpty
-			sccMain.eventEngine.eventWorldEmpty(event.getPlayer().getName(), event.getFrom().getName());
+			// eventWorldEmpty
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_EMPTY, new String[] {
+					EventEngine.EVENT_WORLD_EMPTY, event.getPlayer().getName(), event.getFrom().getName() });
 		}
 		if (event.getPlayer().getWorld().getPlayers().size() == 1) {
-			//eventWorldNotEmpty  (if one player, that must means its ours that just moved)
-			sccMain.eventEngine.eventWorldNotEmpty(event.getPlayer().getName(), event.getPlayer().getWorld().getName());
+			// eventWorldNotEmpty (if one player, that must means its ours that
+			// just moved)
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_NOT_EMPTY, new String[] {
+					EventEngine.EVENT_WORLD_NOT_EMPTY, event.getPlayer().getName(),
+					event.getPlayer().getWorld().getName() });
 		}
 
 	}
