@@ -42,7 +42,6 @@ public final class EventEngine {
 	private static final String EVENT_WORLD_NOT_EMPTY = "worldNotEmpty";
 	private File workingDir;
 	private Server server;
-	private Plugin plugin;
 	private Logger logger;
 	//strings of the filePaths to the .sce files
 	private List<String> eventJoin;
@@ -54,11 +53,10 @@ public final class EventEngine {
 	private List<String> eventWorldEmpty;
 	private List<String> eventWorldNotEmpty;
 
-	public EventEngine(Plugin plugin, Server server, File workingDir) {
+	public EventEngine(Server server, Logger logger, File workingDir) {
 		this.server = server;
 		this.workingDir = workingDir;
-		this.plugin = plugin;
-		this.logger = plugin.getLogger();
+		this.logger = logger;
 	}
 
 	public void start() {

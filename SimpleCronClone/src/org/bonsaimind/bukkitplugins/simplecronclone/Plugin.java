@@ -58,7 +58,7 @@ public class Plugin extends JavaPlugin {
 		engine = new CronEngine(server, getLogger(), new File("plugins/SimpleCronClone/"));
 		engine.start();
 
-		eventEngine = new EventEngine(this, server, new File("plugins/SimpleCronClone"));
+		eventEngine = new EventEngine(server,getLogger(), new File("plugins/SimpleCronClone"));
 		eventEngine.start();
 
 		eventListener = new EventListener(this);
