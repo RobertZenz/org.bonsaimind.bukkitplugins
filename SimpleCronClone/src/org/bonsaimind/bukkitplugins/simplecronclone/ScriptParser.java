@@ -190,6 +190,8 @@ public final class ScriptParser {
 		} else if (type.equalsIgnoreCase(COMMAND_WAIT_ASYNC)) {
 			// Wait for those Async tasks. No command to pass, just wait
 			runWaitAsync(server, logger);
+		} else {
+			logger.log(Level.WARNING, "Unknown command: {0}", type);
 		}
 
 		return "";
