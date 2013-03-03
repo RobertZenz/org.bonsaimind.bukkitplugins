@@ -50,10 +50,8 @@ public final class ScriptParser {
 	private static final String COMMENT_START = "#";
 	private static final String VARIABLE_START_TOKEN = "$";
 	private static final String OUTPUT_TOKEN = "?";
-	
 	private List<Future<Boolean>> asyncDosWaiting = new ArrayList<Future<Boolean>>();
 	private List<Process> asyncExecWaiting = new ArrayList<Process>();
-	
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -191,35 +189,35 @@ public final class ScriptParser {
 			return runExecWait(server, logger, command);
 		} else if (type.equalsIgnoreCase(COMMAND_WAIT_ASYNC)) {
 			// Wait for those Async tasks. No command to pass, just wait
-			runWaitAsync(server, logger); 
+			runWaitAsync(server, logger);
 		}
 
 		return "";
 	}
 
 	private void runWaitAsync(Server server, Logger logger) throws ScriptExecutionException {
-		for (Process p : asyncExecWaiting){
+		for (Process p : asyncExecWaiting) {
 			try {
 				p.waitFor();
 			} catch (InterruptedException ex) {
 				//pass along, we can't do anything really. The command failed before we even got here
 				//but thanks to it being in a separate threadish thingy it should have already caused a stack trace.
 				throw new ScriptExecutionException("Exec failed to wait in runWaitAsync D:", ex);
-			} finally{
+			} finally {
 				asyncExecWaiting.clear(); //no matter the failures of our past, we must carry on.
 			}
 		}
-		for (Future<Boolean> f : asyncDosWaiting){
+		for (Future<Boolean> f : asyncDosWaiting) {
 			try {
 				f.get();
 			} catch (InterruptedException ex) {
 				throw new ScriptExecutionException("asyncDo failed to wait in runWaitAsync D:", ex);
 			} catch (ExecutionException ex) {
 				throw new ScriptExecutionException("asyncDo failed to wait in runWaitAsync D:", ex);
-			} finally{
+			} finally {
 				asyncDosWaiting.clear(); //no matter the failures of our past, we must carry on.
 			}
-			
+
 		}
 	}
 
@@ -246,7 +244,7 @@ public final class ScriptParser {
 	 * @return returns the Future object that can be .get()'d later on
 	 */
 	private static Future<Boolean> runDoAsync(final Server server, final String command) throws ScriptExecutionException {
-		
+
 		BukkitScheduler bscheduler = server.getScheduler();
 		return bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
 
