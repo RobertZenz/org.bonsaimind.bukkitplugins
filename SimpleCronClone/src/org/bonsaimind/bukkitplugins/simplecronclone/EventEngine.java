@@ -46,7 +46,7 @@ public final class EventEngine {
 	private Server server;
 	private Logger logger;
 	//strings of the filePaths to the .sce files
-	private HashMap<String, List<String>> events;
+	private HashMap<String, List<String>> events = new HashMap<String, List<String>>();
 
 	public EventEngine(Server server, Logger logger, File workingDir) {
 		this.server = server;
