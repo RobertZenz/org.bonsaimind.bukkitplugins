@@ -43,7 +43,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 public final class ScriptParser {
 
 	private static final String COMMAND_DO = "do";
-	private static final String COMMAND_DO_ASYNC = "doasync";
+	private static final String COMMAND_DO_ASYNC = "doAsync";
 	private static final String COMMAND_EXEC = "exec";
 	private static final String COMMAND_EXECWAIT = "execWait";
 	private static final String COMMAND_WAIT_ASYNC = "waitForAsync";
