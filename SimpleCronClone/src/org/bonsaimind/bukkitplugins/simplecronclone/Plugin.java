@@ -143,7 +143,10 @@ public class Plugin extends JavaPlugin {
 						}
 						engine.stop();
 						eventEngine.stop();
+						reloadConfig();
+						engine.verbose = getConfig().getBoolean("SCC.verbose");
 						engine.start();
+						eventEngine.verbose = getConfig().getBoolean("SCE.verbose");
 						eventEngine.start();
 						sender.sendMessage("SimpleCronClone: Restarted.");
 					} else if (arg.equalsIgnoreCase("stop")) {

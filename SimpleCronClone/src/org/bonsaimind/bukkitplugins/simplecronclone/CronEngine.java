@@ -40,7 +40,7 @@ public final class CronEngine {
 	private Server server;
 	private Scheduler scheduler;
 	private Logger logger;
-	private boolean verbose;
+	public boolean verbose;
 
 	public CronEngine(Server server, Logger logger, File workingDir,boolean verbose) {
 		this.server = server;

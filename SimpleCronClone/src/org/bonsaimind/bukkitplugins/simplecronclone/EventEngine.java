@@ -44,7 +44,7 @@ public final class EventEngine {
 	private File workingDir;
 	private Server server;
 	private Logger logger;
-	private boolean verbose;
+	public boolean verbose;
 	//strings of the filePaths to the .sce files
 	private HashMap<String, List<String>> events = new HashMap<String, List<String>>();
 
