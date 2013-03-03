@@ -93,6 +93,10 @@ public class Plugin extends JavaPlugin {
 					String arg = args[idx];
 
 					if (arg.equalsIgnoreCase("exec")) {
+						if (!sender.hasPermission("simplecronclone.exec")) {
+							sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that. You do not have the permission simplecronclone.exec");
+							return true;
+						}
 						for (int scriptIdx = idx + 1; scriptIdx < args.length; scriptIdx++) {
 							String script = args[scriptIdx];
 
@@ -135,12 +139,20 @@ public class Plugin extends JavaPlugin {
 							t.start();
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
+						if (!sender.hasPermission("simplecronclone.restart")) {
+							sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that. You do not have the permission simplecronclone.restart");
+							return true;
+						}
 						engine.stop();
 						eventEngine.stop();
 						engine.start();
 						eventEngine.start();
 						sender.sendMessage("SimpleCronClone: Restarted.");
 					} else if (arg.equalsIgnoreCase("stop")) {
+						if (!sender.hasPermission("simplecronclone.stop")) {
+							sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that. You do not have the permission simplecronclone.stop");
+							return true;
+						}
 						engine.stop();
 						eventEngine.stop();
 						sender.sendMessage("SimpleCronClone: HALTED!");

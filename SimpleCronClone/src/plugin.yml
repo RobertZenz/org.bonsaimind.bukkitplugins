@@ -8,3 +8,20 @@ commands:
   simplecronclone:
     description: Main command.
     usage: /<command> [exec|restart|stop]
+
+permissions:
+    simplecronclone.*:
+        description: Gives access to all SimpleCronClone commands
+        children:
+            simplecronclone.exec: true
+            simplecronclone.stop: true
+            simplecronclone.restart: true
+    simplecronclone.exec:
+        description: Allows you to execute .scc files outside of the scheduler.
+        default: op
+    simplecronclone.stop:
+        description: Allows you to stop the EventEngine and the CronEngine.
+        default: op
+    simplecronclone.restart:
+        description: Allows you to start/restart the EventEngine and the CronEngine.
+        default: op
