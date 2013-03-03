@@ -80,11 +80,6 @@ public class Plugin extends JavaPlugin {
 
 			@Override
 			public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
-				if (!sender.isOp()) {
-					sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that.");
-					return true;
-				}
-
 				if (args.length == 0) {
 					return false;
 				}
