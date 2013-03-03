@@ -37,8 +37,7 @@ import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitScheduler;
 
 /**
- * A static helper class which can parse scripts and execute
- * all kinds of fancy fuck...arrr stuff.
+ * Parses and executes and scripts.
  */
 public final class ScriptParser {
 
@@ -81,8 +80,6 @@ public final class ScriptParser {
 
 	/**
 	 * Parses and executes the given script.
-	 * @param server
-	 * @param logger
 	 * @param script The file which represents the script.
 	 * @return Returns true of the execution was without incident.
 	 */
@@ -92,8 +89,6 @@ public final class ScriptParser {
 
 	/**
 	 * Parses and executes the given script.
-	 * @param server
-	 * @param logger
 	 * @param script The file which represents the script.
 	 * @param args array of arguments to replace within the script (eg replace "$1" with args[1]), arg[0] is event name
 	 * @return Returns true of the execution was without incident.
@@ -102,6 +97,8 @@ public final class ScriptParser {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 
 		String lastOutput = "";
+		
+		// Clearthe previous state so that this instance can be safely reused.
 		asyncDosWaiting.clear();
 		asyncExecWaiting.clear();
 
@@ -150,10 +147,8 @@ public final class ScriptParser {
 
 	/**
 	 * Parses the given lines and executes whatever was within.
-	 * @param server
-	 * @param logger
-	 * @param line a well-formed line would look like this: command parameter parameter ...
-	 * @return
+	 * @param line A well-formed line would look like this: command parameter parameter ...
+	 * @return The output of the command (if any).
 	 * @throws ScriptExecutionException 
 	 */
 	public String parseScriptLine(String line) throws ScriptExecutionException {
@@ -213,7 +208,6 @@ public final class ScriptParser {
 
 	/**
 	 * Runs the given command via the Bukkit/InGame-Console. Waits for the command to complete before returning.
-	 * @param server
 	 * @param command The command to execute.
 	 */
 	private void runDo(final String command) throws ScriptExecutionException {
@@ -229,7 +223,6 @@ public final class ScriptParser {
 	/**
 	 * Runs the given command via the Bukkit/InGame-Console. Does not wait for the command to be completed before
 	 * returning.
-	 * @param server
 	 * @param command The command to execute.
 	 * @return returns the Future object that can be .get()'d later on
 	 */
@@ -247,9 +240,8 @@ public final class ScriptParser {
 
 	/**
 	 * Executes an external command
-	 * @param server
 	 * @param command The command to execute.
-	 * @return 
+	 * @return The process which was launched.
 	 */
 	private Process runExec(final String command) throws ScriptExecutionException {
 		// We need to split the string to pass it to the system
@@ -268,8 +260,6 @@ public final class ScriptParser {
 
 	/**
 	 * Executes an external command and returns its output (stdout).
-	 * @param server
-	 * @param logger
 	 * @param command The command to execute.
 	 * @return The output (stdout) of the executed command.
 	 */
@@ -315,7 +305,6 @@ public final class ScriptParser {
 
 	/**
 	 * Reads from the stream and returns what was read.
-	 * @param server
 	 * @param logger
 	 * @param strm The input stream.
 	 * @return The content which could be read from the stream. 
