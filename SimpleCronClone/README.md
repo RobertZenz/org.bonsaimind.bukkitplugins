@@ -57,7 +57,7 @@ For further information [see the Wikipedia-Page of cron](http://en.wikipedia.org
 Script Format
 -------------
 
-There are four basic commands: `do` `doAsync` `exec` and `execWait`. 
+There are five basic commands: `do`, `doAsync`, `exec`, `execWait`, and `waitForAsync`.
 
  * `do` executes a command as the console, eg: `do say hello world!` is like typing in `say hello world!` at the console. see `exampleDo.scc` for some basic uses, other examples show more advanced fun stuff you can do. The system will wait for the command to finish before it continues with the execution of the script.
  
@@ -67,3 +67,4 @@ There are four basic commands: `do` `doAsync` `exec` and `execWait`.
  
  * `execWait` is much like `exec` except it executes your program and waits for it to close. this is useful for back up scripts. because you can do a `save-all` just before and just after, or even have a `say warning: backup in progress, beware lag`. It also captures the output so that you can use it in script for something else. see `exampleExecWait.scc` for some uses.
 
+ * `waitForAsync` allows you to wait for all asynchronous operations launched via `doAsync` or `exec` to finish.
