@@ -50,8 +50,6 @@ public final class ScriptParser {
 	private static final String COMMENT_START = "#";
 	private static final String VARIABLE_START_TOKEN = "$";
 	private static final String OUTPUT_TOKEN = "?";
-	private List<Future<Boolean>> asyncDosWaiting = new ArrayList<Future<Boolean>>();
-	private List<Process> asyncExecWaiting = new ArrayList<Process>();
 	/**
 	 * If you wonder what this is, no problem. I'll tell you.
 	 * This is some awesome RegEx written by Tim Pietzcker
@@ -71,6 +69,15 @@ public final class ScriptParser {
 	 * http://stackoverflow.com/questions/13613813/get-unique-regex-matcher-results-without-using-maps-or-lists
 	 */
 	private static Pattern fetchVariables = Pattern.compile("([^\\\\]\\$([0-9]+))(?!.*\\1)");
+	private List<Future<Boolean>> asyncDosWaiting = new ArrayList<Future<Boolean>>();
+	private List<Process> asyncExecWaiting = new ArrayList<Process>();
+	private Server server;
+	private Logger logger;
+
+	public ScriptParser(Server server, Logger logger) {
+		this.server = server;
+		this.logger = logger;
+	}
 
 	/**
 	 * Parses and executes the given script.
@@ -79,8 +86,8 @@ public final class ScriptParser {
 	 * @param script The file which represents the script.
 	 * @return Returns true of the execution was without incident.
 	 */
-	public boolean executeScript(final Server server, final Logger logger, File script) {
-		return executeScript(server, logger, script, null);
+	public boolean executeScript(File script) {
+		return executeScript(script, null);
 	}
 
 	/**
@@ -91,10 +98,12 @@ public final class ScriptParser {
 	 * @param args array of arguments to replace within the script (eg replace "$1" with args[1]), arg[0] is event name
 	 * @return Returns true of the execution was without incident.
 	 */
-	public boolean executeScript(final Server server, final Logger logger, File script, String[] args) {
+	public boolean executeScript(File script, String[] args) {
 		logger.log(Level.INFO, "Executing: {0}", script.getPath());
 
 		String lastOutput = "";
+		asyncDosWaiting.clear();
+		asyncExecWaiting.clear();
 
 		try {
 			for (String line : getLines(script)) {
@@ -121,7 +130,7 @@ public final class ScriptParser {
 							}
 						}
 
-						lastOutput = parseScriptLine(server, logger, line);
+						lastOutput = parseScriptLine(line);
 					}
 				}
 			}
@@ -140,30 +149,6 @@ public final class ScriptParser {
 	}
 
 	/**
-	 * Reads all lines from the given file and returns it as String-Array.
-	 * @param file The file to read from.
-	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException 
-	 */
-	public static String[] getLines(File file) throws FileNotFoundException, IOException {
-		List<String> lines = new ArrayList<String>();
-
-		Reader reader = new FileReader(file);
-		BufferedReader bufReader = new BufferedReader(reader);
-
-		String line;
-		while ((line = bufReader.readLine()) != null) {
-			lines.add(line);
-		}
-
-		bufReader.close();
-		reader.close();
-
-		return lines.toArray(new String[lines.size() - 1]);
-	}
-
-	/**
 	 * Parses the given lines and executes whatever was within.
 	 * @param server
 	 * @param logger
@@ -171,30 +156,30 @@ public final class ScriptParser {
 	 * @return
 	 * @throws ScriptExecutionException 
 	 */
-	private String parseScriptLine(final Server server, final Logger logger, String line) throws ScriptExecutionException {
+	public String parseScriptLine(String line) throws ScriptExecutionException {
 		String type = line;
 		String command = "";
-		
-		if(line.contains(" ")) {
+
+		if (line.contains(" ")) {
 			type = line.substring(0, line.indexOf(" ")).trim();
 			command = line.substring(line.indexOf(" ") + 1).trim();
 		}
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
-			runDo(server, command);
+			runDo(command);
 		} else if (type.equalsIgnoreCase(COMMAND_DO_ASYNC)) {
 			// Server command
-			asyncDosWaiting.add(runDoAsync(server, command));
+			asyncDosWaiting.add(runDoAsync(command));
 		} else if (type.equalsIgnoreCase(COMMAND_EXEC)) {
 			// Kick off a process
-			asyncExecWaiting.add(runExec(server, command));
+			asyncExecWaiting.add(runExec(command));
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
-			return runExecWait(server, logger, command);
+			return runExecWait(command);
 		} else if (type.equalsIgnoreCase(COMMAND_WAIT_ASYNC)) {
 			// Wait for those Async tasks. No command to pass, just wait
-			runWaitAsync(server, logger);
+			runWaitForAsync();
 		} else {
 			logger.log(Level.WARNING, "Unknown command: {0}", type);
 		}
@@ -202,7 +187,7 @@ public final class ScriptParser {
 		return "";
 	}
 
-	private void runWaitAsync(Server server, Logger logger) throws ScriptExecutionException {
+	private void runWaitForAsync() throws ScriptExecutionException {
 		for (Process p : asyncExecWaiting) {
 			try {
 				p.waitFor();
@@ -210,8 +195,6 @@ public final class ScriptParser {
 				//pass along, we can't do anything really. The command failed before we even got here
 				//but thanks to it being in a separate threadish thingy it should have already caused a stack trace.
 				throw new ScriptExecutionException("Exec failed to wait in runWaitAsync D:", ex);
-			} finally {
-				asyncExecWaiting.clear(); //no matter the failures of our past, we must carry on.
 			}
 		}
 		for (Future<Boolean> f : asyncDosWaiting) {
@@ -221,11 +204,11 @@ public final class ScriptParser {
 				throw new ScriptExecutionException("asyncDo failed to wait in runWaitAsync D:", ex);
 			} catch (ExecutionException ex) {
 				throw new ScriptExecutionException("asyncDo failed to wait in runWaitAsync D:", ex);
-			} finally {
-				asyncDosWaiting.clear(); //no matter the failures of our past, we must carry on.
 			}
-
 		}
+
+		asyncExecWaiting.clear();
+		asyncDosWaiting.clear();
 	}
 
 	/**
@@ -233,9 +216,9 @@ public final class ScriptParser {
 	 * @param server
 	 * @param command The command to execute.
 	 */
-	private static void runDo(final Server server, final String command) throws ScriptExecutionException {
+	private void runDo(final String command) throws ScriptExecutionException {
 		try {
-			runDoAsync(server, command).get();
+			runDoAsync(command).get();
 		} catch (InterruptedException ex) {
 			throw new ScriptExecutionException(command, ex);
 		} catch (ExecutionException ex) {
@@ -250,7 +233,7 @@ public final class ScriptParser {
 	 * @param command The command to execute.
 	 * @return returns the Future object that can be .get()'d later on
 	 */
-	private static Future<Boolean> runDoAsync(final Server server, final String command) throws ScriptExecutionException {
+	private Future<Boolean> runDoAsync(final String command) throws ScriptExecutionException {
 
 		BukkitScheduler bscheduler = server.getScheduler();
 		return bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
@@ -269,7 +252,7 @@ public final class ScriptParser {
 	 * @param command The command to execute.
 	 * @return 
 	 */
-	private static Process runExec(final Server server, final String command) throws ScriptExecutionException {
+	private Process runExec(final String command) throws ScriptExecutionException {
 		// We need to split the string to pass it to the system
 		String[] splittedCommand = preparePattern.split(command);
 		for (int idx = 0; idx < splittedCommand.length; idx++) {
@@ -291,20 +274,44 @@ public final class ScriptParser {
 	 * @param command The command to execute.
 	 * @return The output (stdout) of the executed command.
 	 */
-	private static String runExecWait(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
+	private String runExecWait(final String command) throws ScriptExecutionException {
 		try {
-			Process proc = runExec(server, command);
+			Process proc = runExec(command);
 			proc.waitFor();
 
-			String errOutput = readFromStream(server, logger, proc.getErrorStream());
+			String errOutput = readFromStream(logger, proc.getErrorStream());
 			if (errOutput.length() > 0) {
 				logger.log(Level.WARNING, "Command returned with an error: {0}", errOutput);
 			}
 
-			return readFromStream(server, logger, proc.getInputStream());
+			return readFromStream(logger, proc.getInputStream());
 		} catch (InterruptedException ex) {
 			throw new ScriptExecutionException(command, ex);
 		}
+	}
+
+	/**
+	 * Reads all lines from the given file and returns it as String-Array.
+	 * @param file The file to read from.
+	 * @return All the lines of the file or an empty array, obviously.
+	 * @throws FileNotFoundException
+	 * @throws IOException 
+	 */
+	public static String[] getLines(File file) throws FileNotFoundException, IOException {
+		List<String> lines = new ArrayList<String>();
+
+		Reader reader = new FileReader(file);
+		BufferedReader bufReader = new BufferedReader(reader);
+
+		String line;
+		while ((line = bufReader.readLine()) != null) {
+			lines.add(line);
+		}
+
+		bufReader.close();
+		reader.close();
+
+		return lines.toArray(new String[0]);
 	}
 
 	/**
@@ -314,7 +321,7 @@ public final class ScriptParser {
 	 * @param strm The input stream.
 	 * @return The content which could be read from the stream. 
 	 */
-	private static String readFromStream(final Server server, final Logger logger, InputStream strm) {
+	private static String readFromStream(final Logger logger, InputStream strm) {
 		StringBuilder builder = new StringBuilder();
 
 		String line;

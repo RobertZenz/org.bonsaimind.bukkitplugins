@@ -41,7 +41,6 @@ public final class EventEngine {
 	public static final String EVENT_PLAYER_WORLD_MOVE = "playerTeleportWorld";
 	public static final String EVENT_WORLD_EMPTY = "worldEmpty";
 	public static final String EVENT_WORLD_NOT_EMPTY = "worldNotEmpty";
-	
 	private File workingDir;
 	private Server server;
 	private Logger logger;
@@ -66,7 +65,7 @@ public final class EventEngine {
 		events.put(EVENT_PLAYER_WORLD_MOVE, new ArrayList<String>());
 		events.put(EVENT_WORLD_EMPTY, new ArrayList<String>());
 		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<String>());
-		
+
 		readTab();
 	}
 
@@ -113,7 +112,7 @@ public final class EventEngine {
 		String eventPart = line.substring(0, line.lastIndexOf(" ")).trim();
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
-		if (events.containsKey(eventPart)){
+		if (events.containsKey(eventPart)) {
 			events.get(eventPart).add(commandPart);
 		} else {
 			logger.warning(String.format("line failed parsing:'%s':eventPart:'%s':commandPart:'%s'", line, eventPart, commandPart));
@@ -129,16 +128,16 @@ public final class EventEngine {
 	 * @param "arguments" to replace inside of the .sce
 	 */
 	public void runEventsFor(String event_name, final String[] args) {
-		if (events.containsKey(event_name)){
-			
+		if (events.containsKey(event_name)) {
+
 			for (final String filePath : events.get(event_name)) {
 				Thread t = new Thread(new Runnable() {
-	
+
 					@Override
 					public void run() {
-	
-						ScriptParser script = new ScriptParser();
-						script.executeScript(server,logger, new File(workingDir,filePath),args);
+
+						ScriptParser script = new ScriptParser(server, logger);
+						script.executeScript(new File(workingDir, filePath), args);
 					}
 				});
 				t.start();

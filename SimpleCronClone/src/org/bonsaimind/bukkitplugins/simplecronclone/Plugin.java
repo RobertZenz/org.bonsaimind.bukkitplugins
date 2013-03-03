@@ -58,7 +58,7 @@ public class Plugin extends JavaPlugin {
 		engine = new CronEngine(server, getLogger(), new File("plugins/SimpleCronClone/"));
 		engine.start();
 
-		eventEngine = new EventEngine(server,getLogger(), new File("plugins/SimpleCronClone"));
+		eventEngine = new EventEngine(server, getLogger(), new File("plugins/SimpleCronClone"));
 		eventEngine.start();
 
 		eventListener = new EventListener(this);
@@ -109,8 +109,8 @@ public class Plugin extends JavaPlugin {
 								@Override
 								public void run() {
 
-									ScriptParser script = new ScriptParser();
-									if (script.executeScript(server, getLogger(), new File("plugins/SimpleCronClone/" + finalScript))) {
+									ScriptParser script = new ScriptParser(server, getLogger());
+									if (script.executeScript(new File("plugins/SimpleCronClone/" + finalScript))) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
