@@ -263,8 +263,15 @@ public final class ScriptParser {
 	 * @return 
 	 */
 	private static Process runExec(final Server server, final String command) throws ScriptExecutionException {
+		// We need to split the string to pass it to the system
+		String[] splittedCommand = preparePattern.split(command);
+		for (int idx = 0; idx < splittedCommand.length; idx++) {
+			// Strip single quotes from the commands
+			splittedCommand[idx] = splittedCommand[idx].replaceAll("^'|'$", "");
+		}
+
 		try {
-			return Runtime.getRuntime().exec(command);
+			return Runtime.getRuntime().exec(splittedCommand);
 		} catch (IOException ex) {
 			throw new ScriptExecutionException(command, ex);
 		}
@@ -279,14 +286,7 @@ public final class ScriptParser {
 	 */
 	private static String runExecWait(final Server server, final Logger logger, final String command) throws ScriptExecutionException {
 		try {
-			// We need to split the string to pass it to the system
-			String[] splittedCommand = preparePattern.split(command);
-			for (int idx = 0; idx < splittedCommand.length; idx++) {
-				// Strip single quotes from the commands
-				splittedCommand[idx] = splittedCommand[idx].replaceAll("^'|'$", "");
-			}
-
-			Process proc = Runtime.getRuntime().exec(splittedCommand);
+			Process proc = runExec(server, command);
 			proc.waitFor();
 
 			String errOutput = readFromStream(server, logger, proc.getErrorStream());
@@ -295,8 +295,6 @@ public final class ScriptParser {
 			}
 
 			return readFromStream(server, logger, proc.getInputStream());
-		} catch (IOException ex) {
-			throw new ScriptExecutionException(command, ex);
 		} catch (InterruptedException ex) {
 			throw new ScriptExecutionException(command, ex);
 		}
