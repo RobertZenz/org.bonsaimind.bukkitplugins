@@ -44,13 +44,15 @@ public final class EventEngine {
 	private File workingDir;
 	private Server server;
 	private Logger logger;
+	private boolean verbose;
 	//strings of the filePaths to the .sce files
 	private HashMap<String, List<String>> events = new HashMap<String, List<String>>();
 
-	public EventEngine(Server server, Logger logger, File workingDir) {
+	public EventEngine(Server server, Logger logger, File workingDir,boolean verbose) {
 		this.server = server;
 		this.workingDir = workingDir;
 		this.logger = logger;
+		this.verbose = verbose;
 	}
 
 	public void start() {
@@ -134,7 +136,7 @@ public final class EventEngine {
 
 					@Override
 					public void run() {
-						ScriptParser script = new ScriptParser(server, logger);
+						ScriptParser script = new ScriptParser(server, logger,verbose);
 						script.executeScript(new File(workingDir, filePath), args);
 					}
 				});

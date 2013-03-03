@@ -72,10 +72,12 @@ public final class ScriptParser {
 	private List<Process> asyncExecWaiting = new ArrayList<Process>();
 	private Server server;
 	private Logger logger;
+	private boolean verbose;
 
-	public ScriptParser(Server server, Logger logger) {
+	public ScriptParser(Server server, Logger logger,boolean verbose) {
 		this.server = server;
 		this.logger = logger;
+		this.verbose = verbose;
 	}
 
 	/**
@@ -94,8 +96,9 @@ public final class ScriptParser {
 	 * @return Returns true of the execution was without incident.
 	 */
 	public boolean executeScript(File script, String[] args) {
-		logger.log(Level.INFO, "Executing: {0}", script.getPath());
-
+		if (verbose){
+			logger.log(Level.INFO, "Executing: {0}", script.getPath());
+		}
 		String lastOutput = "";
 		
 		// Clearthe previous state so that this instance can be safely reused.

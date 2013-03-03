@@ -1,0 +1,10 @@
+
+#the CRON engine
+SCC:
+    #how much noise does it make when a script is run?
+    verbose: false
+
+#the event engine
+SCE:
+    #how much noise does it make when a script is run?
+    verbose: false

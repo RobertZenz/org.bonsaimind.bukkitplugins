@@ -35,6 +35,7 @@
 		<jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"
 			manifest="MANIFEST.MF">
 			<zipfileset dir="${src}" includes="plugin.yml" />
+			<zipfileset dir="examples/" includes="config.yml" />
 			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
 		</jar>
 		<zip destfile="${dist}/${ant.project.name}.zip">

@@ -36,11 +36,13 @@ public final class CronEngine {
 	private Server server;
 	private Scheduler scheduler;
 	private Logger logger;
+	private boolean verbose;
 
-	public CronEngine(Server server, Logger logger, File workingDir) {
+	public CronEngine(Server server, Logger logger, File workingDir,boolean verbose) {
 		this.server = server;
 		this.workingDir = workingDir;
 		this.logger = logger;
+		this.verbose = verbose;
 	}
 
 	public void start() {
@@ -106,7 +108,7 @@ public final class CronEngine {
 
 			@Override
 			public void run() {
-				ScriptParser script = new ScriptParser(server, logger);
+				ScriptParser script = new ScriptParser(server, logger,verbose);
 				script.executeScript(new File(workingDir, commandPart));
 			}
 		});
