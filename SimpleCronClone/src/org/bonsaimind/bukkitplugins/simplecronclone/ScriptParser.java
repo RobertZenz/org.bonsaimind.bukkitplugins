@@ -234,7 +234,6 @@ public final class ScriptParser {
 	 * @return returns the Future object that can be .get()'d later on
 	 */
 	private Future<Boolean> runDoAsync(final String command) throws ScriptExecutionException {
-
 		BukkitScheduler bscheduler = server.getScheduler();
 		return bscheduler.callSyncMethod(server.getPluginManager().getPlugin("SimpleCronClone"), new Callable<Boolean>() {
 

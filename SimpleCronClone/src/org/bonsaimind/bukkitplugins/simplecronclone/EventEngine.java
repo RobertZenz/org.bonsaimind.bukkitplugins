@@ -129,13 +129,11 @@ public final class EventEngine {
 	 */
 	public void runEventsFor(String event_name, final String[] args) {
 		if (events.containsKey(event_name)) {
-
 			for (final String filePath : events.get(event_name)) {
 				Thread t = new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-
 						ScriptParser script = new ScriptParser(server, logger);
 						script.executeScript(new File(workingDir, filePath), args);
 					}
