@@ -67,7 +67,7 @@ public final class EventEngine {
 		events.put(EVENT_WORLD_EMPTY, new ArrayList<String>());
 		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<String>());
 		
-		readTab();//TODO: when does this fail? what do we do if it does?
+		readTab();
 	}
 
 	public void stop() {
