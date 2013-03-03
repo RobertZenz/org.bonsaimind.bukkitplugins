@@ -17,6 +17,10 @@
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import it.sauronsoftware.cron4j.Scheduler;
+import it.sauronsoftware.cron4j.TaskExecutionContext;
+import it.sauronsoftware.cron4j.TaskExecutor;
+import it.sauronsoftware.cron4j.Task;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -58,6 +62,15 @@ public final class CronEngine {
 
 	public void stop() {
 		if (scheduler != null && scheduler.isStarted()) {
+			//kill any running scripts...
+			for (TaskExecutor running : scheduler.getExecutingTasks()){
+				if (running.canBeStopped()){
+					running.stop();
+				}
+				else {
+					logger.warning("unable to kill a task!");
+				}
+			}
 			scheduler.stop();
 		}
 
@@ -104,12 +117,17 @@ public final class CronEngine {
 		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
 
 		logger.log(Level.INFO, "Scheduling: {0}", commandPart);
-		scheduler.schedule(timerPart, new Runnable() {
+		scheduler.schedule(timerPart, new Task() {
 
 			@Override
-			public void run() {
+			public void execute(TaskExecutionContext context) throws RuntimeException {
+				
 				ScriptParser script = new ScriptParser(server, logger,verbose);
 				script.executeScript(new File(workingDir, commandPart));
+			}
+			@Override
+			public boolean canBeStopped(){
+				return true;
 			}
 		});
 	}

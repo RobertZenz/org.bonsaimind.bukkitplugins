@@ -140,6 +140,9 @@ public final class EventEngine {
 						script.executeScript(new File(workingDir, filePath), args);
 					}
 				});
+				//set to a daemon so that when we are stopped, we ignore this thread
+				//TODO: does this bork a reload command?
+				t.setDaemon(true);
 				t.start();
 			}
 		}

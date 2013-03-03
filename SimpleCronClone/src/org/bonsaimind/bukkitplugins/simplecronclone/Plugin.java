@@ -136,6 +136,9 @@ public class Plugin extends JavaPlugin {
 									}
 								}
 							});
+							//set to a daemon so that when we are stopped, we ignore this thread
+							//TODO: does this bork a reload command?
+							t.setDaemon(true);
 							t.start();
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
