@@ -106,7 +106,7 @@ public final class ScriptParser {
 
 					line = line.trim();
 
-					if (!line.isEmpty() && line.indexOf(' ') > 0) {
+					if (!line.isEmpty()) {
 						line = line.replace(VARIABLE_START_TOKEN + OUTPUT_TOKEN, lastOutput);
 
 						if (args != null && args.length > 0) {
@@ -172,8 +172,13 @@ public final class ScriptParser {
 	 * @throws ScriptExecutionException 
 	 */
 	private String parseScriptLine(final Server server, final Logger logger, String line) throws ScriptExecutionException {
-		final String type = line.substring(0, line.indexOf(" ")).trim();
-		final String command = line.substring(line.indexOf(" ") + 1).trim();
+		String type = line;
+		String command = "";
+		
+		if(line.contains(" ")) {
+			type = line.substring(0, line.indexOf(" ")).trim();
+			command = line.substring(line.indexOf(" ") + 1).trim();
+		}
 
 		if (type.equalsIgnoreCase(COMMAND_DO)) {
 			// Server command
