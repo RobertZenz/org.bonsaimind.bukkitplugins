@@ -112,18 +112,34 @@ public final class CronEngine {
 	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
+		// search for the 5th space after trimming leading and trailing whitespace
+		// this should be the space between the timerPart and commandPart.
+		int splitPoint = ScriptParser.nthOccurrence(line, ' ', 4);
+		String timerPart = line.substring(0, splitPoint+1).trim();
+		final String commandPart = line.substring(splitPoint+1).trim();
 
-		String timerPart = line.substring(0, line.lastIndexOf(" ")).trim();
-		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
-
-		logger.log(Level.INFO, "Scheduling: {0}", commandPart);
+		logger.log(Level.INFO, "SCC Scheduling: {0}", commandPart);
 		scheduler.schedule(timerPart, new Task() {
 
 			@Override
 			public void execute(TaskExecutionContext context) throws RuntimeException {
 				
 				ScriptParser script = new ScriptParser(server, logger,verbose);
-				script.executeScript(new File(workingDir, commandPart));
+				if (commandPart.split(" ")[0].endsWith(".scc")) {
+					// We have a script
+					// Note that args will = [] if the tab line is blank afterwards as well, so no special casing needed.
+					String[] args = commandPart.split(" ");
+					String file = commandPart.split(" ")[0];
+					script.executeScript(new File(workingDir, file), args);
+				}
+				else {
+					// not a script, only a one line script-thing
+					try {
+						script.parseScriptLine(commandPart, "",null);
+					} catch (ScriptExecutionException ex) {
+						logger.log(Level.WARNING, "Failed to execute PartialScript \"{0}\" at \"{1}\"\n{2}", new Object[]{commandPart, ex.getMessage(), ex.getCause().getMessage()});
+					}
+				}
 			}
 			@Override
 			public boolean canBeStopped(){

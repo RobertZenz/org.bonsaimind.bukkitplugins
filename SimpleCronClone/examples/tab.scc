@@ -8,3 +8,5 @@
 # | | | | |     +--> Script/File
 # | | | | |     | 
   * * * * * sayHello.scc
+  * * * * * examples/exampleArgumentTest.scc arg1 arg2 arg3
+  * * * * * do say An example of a command straight from tab.scc

@@ -101,7 +101,7 @@ public final class ScriptParser {
 		}
 		String lastOutput = "";
 		
-		// Clearthe previous state so that this instance can be safely reused.
+		// Clear the previous state so that this instance can be safely reused.
 		asyncDosWaiting.clear();
 		asyncExecWaiting.clear();
 
@@ -116,21 +116,7 @@ public final class ScriptParser {
 					line = line.trim();
 
 					if (!line.isEmpty()) {
-						line = line.replace(VARIABLE_START_TOKEN + OUTPUT_TOKEN, lastOutput);
-
-						if (args != null && args.length > 0) {
-							// Only do this if we have arguments we can replace.
-							Matcher matcher = fetchVariables.matcher(line);
-							while (matcher.find()) {
-								int arg = Integer.parseInt(matcher.group(2));
-								if (arg < args.length) {
-									// Silently skip over wrong variables...or should we warn the user?
-									line = line.replace(VARIABLE_START_TOKEN + matcher.group(2), args[arg]);
-								}
-							}
-						}
-
-						lastOutput = parseScriptLine(line);
+						lastOutput = parseScriptLine(line,lastOutput,args);
 					}
 				}
 			}
@@ -154,7 +140,22 @@ public final class ScriptParser {
 	 * @return The output of the command (if any).
 	 * @throws ScriptExecutionException 
 	 */
-	public String parseScriptLine(String line) throws ScriptExecutionException {
+	public String parseScriptLine(String line, String lastOutput, String[] args) throws ScriptExecutionException {
+		line = line.replace(VARIABLE_START_TOKEN + OUTPUT_TOKEN, lastOutput);
+
+		if (args != null && args.length > 0) {
+			// Only do this if we have arguments we can replace.
+			Matcher matcher = fetchVariables.matcher(line);
+			while (matcher.find()) {
+				int arg = Integer.parseInt(matcher.group(2));
+				if (arg < args.length) {
+					// Silently skip over wrong variables...or should we warn the user?
+					line = line.replace(VARIABLE_START_TOKEN + matcher.group(2), args[arg]);
+				}
+			}
+		}
+		
+		
 		String type = line;
 		String command = "";
 

@@ -89,7 +89,7 @@ public final class EventEngine {
 
 		try {
 			for (String line : ScriptParser.getLines(tab)) {
-				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START) && line.trim().endsWith(".sce")) {
+				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
 					parseTabLine(line);
 				}
 			}
@@ -111,8 +111,8 @@ public final class EventEngine {
 	protected void parseTabLine(String line) {
 		line = line.trim();
 
-		String eventPart = line.substring(0, line.lastIndexOf(" ")).trim();
-		final String commandPart = line.substring(line.lastIndexOf(" ") + 1).trim();
+		String eventPart = line.substring(0, line.indexOf(" ")).trim();
+		final String commandPart = line.substring(line.indexOf(" ") + 1).trim();
 
 		if (events.containsKey(eventPart)) {
 			events.get(eventPart).add(commandPart);
@@ -137,6 +137,21 @@ public final class EventEngine {
 					@Override
 					public void run() {
 						ScriptParser script = new ScriptParser(server, logger,verbose);
+						if (filePath.split(" ")[0].endsWith(".sce")) {
+							// We have a script
+							// Note that args will = [] if the tab line is blank afterwards as well, so no special casing needed.
+							String[] args = filePath.split(" ");
+							String file = filePath.split(" ")[0];
+							script.executeScript(new File(workingDir, file), args);
+						}
+						else {
+							// not a script, only a one line script-thing
+							try {
+								script.parseScriptLine(filePath,"",args);
+							} catch (ScriptExecutionException ex) {
+								logger.log(Level.WARNING, "Failed to execute PartialScript \"{0}\" at \"{1}\"\n{2}", new Object[]{filePath, ex.getMessage(), ex.getCause().getMessage()});
+							}
+						}
 						script.executeScript(new File(workingDir, filePath), args);
 					}
 				});
