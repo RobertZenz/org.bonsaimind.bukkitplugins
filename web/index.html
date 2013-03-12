@@ -1,0 +1,92 @@
+<html>
+
+<head>
+	<title>BukkitPlugins - BonsaiMind</title>
+	
+	<link href="excite-bike/jquery-ui-1.10.1.custom.min.css" rel="stylesheet">
+	<script src="jquery-1.9.1.js"></script>
+	<script src="jquery-ui-1.10.1.custom.min.js"></script>
+	
+	<style type="text/css">
+		p {
+			background-color:rgba(46, 52, 54, 0.5);
+			border-radius: 1em;
+			color: #eeeeec;
+			padding: 1em;
+		}
+		#accordion {
+			width: 960px;
+		}
+		
+		#ghostbuster {
+			background-image: url('./GhostBuster.png');
+			background-repeat: no-repeat;
+			background-position: 0 0;
+		}
+		
+		#healthynames {
+			background-image: url('./HealthyNames.png');
+			background-repeat: no-repeat;
+			background-position: 0 0;
+		}
+		
+		#redsponge {
+			background-image: url('./RedSponge.png');
+			background-repeat: no-repeat;
+			background-position: 0 0;
+		}
+		
+		#savestopper {
+			background-image: url('./SaveStopper.png');
+			background-repeat: no-repeat;
+			background-position: 0 0;
+		}
+		
+		#simpleCronClone {
+			background-image: url('./SimpleCronClone.png');
+			background-repeat: no-repeat;
+			background-position: 0 0;
+		}
+		
+		#spawnrandomizer {
+			background-image: url('./SpawnRandomizer.png');
+			background-repeat: no-repeat;
+			background-position: 0 0;
+		}
+	</style>
+	
+	<script>
+		$(function() {		
+			$("#accordion").accordion({
+				collapsible: true
+			});
+		});
+	</script>
+</head>
+
+<body>
+
+<a href="https://github.com/RobertZenz/org.bonsaimind.bukkitplugins"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+
+<div id="accordion">
+	<h3>GhostBuster</h3>
+	<div id="ghostbuster"><p>Ban dead players for a certain amount of time.</p></div>
+	
+	<h3>HealthyNames</h3>
+	<div id="healthynames"><p>Show the player names in chat in different colors according to their health.</p></div>
+	
+	<h3>RedSponge</h3>
+	<div id="redsponge"><p>Allows sponges to consume nearby liquids...red stone controlled!</p></div>
+	
+	<h3>SaveStopper</h3>
+	<div id="savestopper"><p>Stops the automatic saving of the world.</p></div>
+	
+	<h3>SimpleCronClone</h3>
+	<div id="simplecronclone"><p>A simple cron clone for bukkit, using the cron4j scheduler from Carlo Pelliccia.</p></div>
+	
+	<h3>SpawnRandomizer</h3>
+	<div id="spawnrandomizer"><p>Teleports the player to random locations on respawn.</p></div>
+</div>
+</body>
+
+</html>
