@@ -48,7 +48,7 @@ public final class EventEngine {
 	//strings of the filePaths to the .sce files
 	private HashMap<String, List<String>> events = new HashMap<String, List<String>>();
 
-	public EventEngine(Server server, Logger logger, File workingDir,boolean verbose) {
+	public EventEngine(Server server, Logger logger, File workingDir, boolean verbose) {
 		this.server = server;
 		this.workingDir = workingDir;
 		this.logger = logger;
@@ -136,18 +136,17 @@ public final class EventEngine {
 
 					@Override
 					public void run() {
-						ScriptParser script = new ScriptParser(server, logger,verbose);
+						ScriptParser script = new ScriptParser(server, logger, verbose);
 						if (filePath.split(" ")[0].endsWith(".sce")) {
 							// We have a script
 							// Note that args will = [] if the tab line is blank afterwards as well, so no special casing needed.
 							String[] args = filePath.split(" ");
 							String file = filePath.split(" ")[0];
 							script.executeScript(new File(workingDir, file), args);
-						}
-						else {
+						} else {
 							// not a script, only a one line script-thing
 							try {
-								script.parseScriptLine(filePath,"",args);
+								script.parseScriptLine(filePath, "", args);
 							} catch (ScriptExecutionException ex) {
 								logger.log(Level.WARNING, "Failed to execute PartialScript \"{0}\" at \"{1}\"\n{2}", new Object[]{filePath, ex.getMessage(), ex.getCause().getMessage()});
 							}

@@ -55,10 +55,10 @@ public class Plugin extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		getLogger().log(Level.INFO, "{0} {1} is enabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 
-		engine = new CronEngine(server, getLogger(), new File("plugins/SimpleCronClone/"),getConfig().getBoolean("SCC.verbose"));
+		engine = new CronEngine(server, getLogger(), new File("plugins/SimpleCronClone/"), getConfig().getBoolean("SCC.verbose"));
 		engine.start();
 
-		eventEngine = new EventEngine(server, getLogger(), new File("plugins/SimpleCronClone"),getConfig().getBoolean("SCE.verbose"));
+		eventEngine = new EventEngine(server, getLogger(), new File("plugins/SimpleCronClone"), getConfig().getBoolean("SCE.verbose"));
 		eventEngine.start();
 
 		eventListener = new EventListener(this);
@@ -107,7 +107,7 @@ public class Plugin extends JavaPlugin {
 
 								@Override
 								public void run() {
-									ScriptParser script = new ScriptParser(server, getLogger(),true); //from console we are always verbose.
+									ScriptParser script = new ScriptParser(server, getLogger(), true); //from console we are always verbose.
 									if (script.executeScript(new File("plugins/SimpleCronClone/" + finalScript))) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
