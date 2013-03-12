@@ -74,7 +74,7 @@ public final class ScriptParser {
 	private Logger logger;
 	private boolean verbose;
 
-	public ScriptParser(Server server, Logger logger,boolean verbose) {
+	public ScriptParser(Server server, Logger logger, boolean verbose) {
 		this.server = server;
 		this.logger = logger;
 		this.verbose = verbose;
@@ -96,11 +96,11 @@ public final class ScriptParser {
 	 * @return Returns true of the execution was without incident.
 	 */
 	public boolean executeScript(File script, String[] args) {
-		if (verbose){
+		if (verbose) {
 			logger.log(Level.INFO, "Executing: {0}", script.getPath());
 		}
 		String lastOutput = "";
-		
+
 		// Clear the previous state so that this instance can be safely reused.
 		asyncDosWaiting.clear();
 		asyncExecWaiting.clear();
@@ -116,7 +116,7 @@ public final class ScriptParser {
 					line = line.trim();
 
 					if (!line.isEmpty()) {
-						lastOutput = parseScriptLine(line,lastOutput,args);
+						lastOutput = parseScriptLine(line, lastOutput, args);
 					}
 				}
 			}
@@ -154,8 +154,8 @@ public final class ScriptParser {
 				}
 			}
 		}
-		
-		
+
+
 		String type = line;
 		String command = "";
 
@@ -333,6 +333,7 @@ public final class ScriptParser {
 
 		return builder.toString();
 	}
+
 	/**
 	 * Finds the nth occurrence of char c in str
 	 * logics from http://stackoverflow.com/questions/3976616/how-to-find-nth-occurrence-of-character-in-a-string
@@ -342,9 +343,10 @@ public final class ScriptParser {
 	 * @return index of the nth occurrence  
 	 */
 	public static int nthOccurrence(String str, char c, int n) {
-	    int pos = str.indexOf(c, 0);
-	    while (n-- > 0 && pos != -1)
-	        pos = str.indexOf(c, pos+1);
-	    return pos-1;
+		int pos = str.indexOf(c, 0);
+		while (n-- > 0 && pos != -1) {
+			pos = str.indexOf(c, pos + 1);
+		}
+		return pos - 1;
 	}
 }
