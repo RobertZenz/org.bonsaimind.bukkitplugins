@@ -151,7 +151,6 @@ public final class EventEngine {
 								logger.log(Level.WARNING, "Failed to execute PartialScript \"{0}\" at \"{1}\"\n{2}", new Object[]{filePath, ex.getMessage(), ex.getCause().getMessage()});
 							}
 						}
-						script.executeScript(new File(workingDir, filePath), args);
 					}
 				});
 				//set to a daemon so that when we are stopped, we ignore this thread
