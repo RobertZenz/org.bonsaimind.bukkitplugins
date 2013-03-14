@@ -50,6 +50,13 @@ public class EventListener implements Listener {
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_NOT_EMPTY, new String[]{
 						EventEngine.EVENT_SERVER_NOT_EMPTY, event.getPlayer().getName()});
 		}
+		if (event.getPlayer().getWorld().getPlayers().size() == 0){
+			//eventWorldNotEmpty joined and made a world no longer empty
+			//fired before the player is a part of the world list (because onjoin might move them?)
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_NOT_EMPTY, new String[]{
+					EventEngine.EVENT_WORLD_NOT_EMPTY, event.getPlayer().getName(),
+					event.getPlayer().getWorld().getName()});
+		}
 	}
 
 	@EventHandler
@@ -62,6 +69,11 @@ public class EventListener implements Listener {
 			// this event fires before the server removes the player from the OnlinePlayers, so 1 not 0
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_EMPTY, new String[]{
 						EventEngine.EVENT_SERVER_EMPTY, event.getPlayer().getName()});
+		}
+		if (event.getPlayer().getWorld().getPlayers().size() == 1){
+			//eventWorldEmpty, left and made a world empty
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_EMPTY, new String[]{
+						EventEngine.EVENT_WORLD_EMPTY, event.getPlayer().getName(), event.getPlayer().getWorld().getName()});
 		}
 	}
 
