@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import java.util.ArrayList;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.Material;
 
 import org.bukkit.event.EventHandler;
