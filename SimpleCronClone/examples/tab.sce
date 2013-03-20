@@ -1,20 +1,59 @@
-#list of event then file to run when that event occurs
-#PS: spaces in the file name are a bad idea mmkay?
 
-playerJoin          events/playerJoin.sce
+playerJoin:
+    'events/playerJoin.sce':
+        filters:
+            players:
+                #event must match player name
+                - admalledd
+                #negated, so do NOT match this
+                - -notch
+            worlds:
+                #same kind of thing here, negation regex ect...
+                - -hub
 
-playerFirstJoin     events/playerFirstJoin.sce
 
-playerQuit          events/playerQuit.sce
+playerFirstJoin:
+    'events/playerFirstJoin.sce':
+        filters:
+            players:
+            worlds:
+
+playerQuit:
+    'events/playerQuit.sce':
+        filters:
+            players:
+            worlds:
 
 
-serverEmpty         events/serverEmpty.sce
+serverEmpty:
+    'events/serverEmpty.sce':
+        filters:
+            players:
+            worlds:
 
-serverNotEmpty      events/serverNotEmpty.sce
+
+serverNotEmpty:
+    'events/serverNotEmpty.sce':
+        filters:
+            players:
+            worlds:
+
+playerTeleportWorld:
+    'events/playerTeleportWorld.sce':
+        filters:
+            players:
+            worlds:
 
 
-playerTeleportWorld events/playerTeleportWorld.sce
+worldEmpty:
+    'events/worldEmpty.sce':
+        filters:
+            players:
+            worlds:
 
-worldEmpty          events/worldEmpty.sce
 
-worldNotEmpty       events/worldNotEmpty.sce
+worldNotEmpty:
+    'events/worldNotEmpty.sce':
+        filters:
+            players:
+            worlds:

@@ -17,8 +17,6 @@
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,13 +24,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
-
+import org.bukkit.configuration.MemorySection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Event;
 /**
  * This is the engine which does the heavy lifting and interfacing
  */
 public final class EventEngine {
 
 	private static final String COMMENT_START = "#";
+	//TODO: there has to be a better data structure for all of these that we could iterate over...
 	public static final String EVENT_JOIN = "playerJoin";
 	public static final String EVENT_QUIT = "playerQuit";
 	public static final String EVENT_FIRST_JOIN = "playerFirstJoin";
@@ -46,7 +48,7 @@ public final class EventEngine {
 	private Logger logger;
 	public boolean verbose;
 	//strings of the filePaths to the .sce files
-	private HashMap<String, List<String>> events = new HashMap<String, List<String>>();
+	private HashMap<String, List<MemorySection>> events = new HashMap<String, List<MemorySection>>();
 
 	public EventEngine(Server server, Logger logger, File workingDir, boolean verbose) {
 		this.server = server;
@@ -59,14 +61,14 @@ public final class EventEngine {
 		// clear all the old stuff away
 		stop();
 
-		events.put(EVENT_JOIN, new ArrayList<String>());
-		events.put(EVENT_FIRST_JOIN, new ArrayList<String>());
-		events.put(EVENT_QUIT, new ArrayList<String>());
-		events.put(EVENT_SERVER_EMPTY, new ArrayList<String>());
-		events.put(EVENT_SERVER_NOT_EMPTY, new ArrayList<String>());
-		events.put(EVENT_PLAYER_WORLD_MOVE, new ArrayList<String>());
-		events.put(EVENT_WORLD_EMPTY, new ArrayList<String>());
-		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<String>());
+		events.put(EVENT_JOIN, new ArrayList<MemorySection>());
+		events.put(EVENT_FIRST_JOIN, new ArrayList<MemorySection>());
+		events.put(EVENT_QUIT, new ArrayList<MemorySection>());
+		events.put(EVENT_SERVER_EMPTY, new ArrayList<MemorySection>());
+		events.put(EVENT_SERVER_NOT_EMPTY, new ArrayList<MemorySection>());
+		events.put(EVENT_PLAYER_WORLD_MOVE, new ArrayList<MemorySection>());
+		events.put(EVENT_WORLD_EMPTY, new ArrayList<MemorySection>());
+		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<MemorySection>());
 
 		readTab();
 	}
@@ -80,48 +82,42 @@ public final class EventEngine {
 	 * @return Returns true if reading and parsing was without incident.
 	 */
 	protected boolean readTab() {
-		File tab = new File(workingDir, "tab.sce");
+		File tabfile = new File(workingDir, "tab.sce");
 
-		if (!tab.exists() || !tab.canRead()) {
-			logger.log(Level.WARNING, "{0} does not exist or is not accessible.", tab.getPath());
+		if (!tabfile.exists() || !tabfile.canRead()) {
+			logger.log(Level.WARNING, "{0} does not exist or is not accessible.", tabfile.getPath());
 			return false;
 		}
+		
+		FileConfiguration tab = YamlConfiguration.loadConfiguration(tabfile);
+		logger.info("SCE tab loaded, parsing...");
+		parseEventSection(EVENT_JOIN, tab);
+		parseEventSection(EVENT_FIRST_JOIN, tab);
+		parseEventSection(EVENT_QUIT, tab);
+		parseEventSection(EVENT_SERVER_EMPTY, tab);
+		parseEventSection(EVENT_SERVER_NOT_EMPTY, tab);
+		parseEventSection(EVENT_PLAYER_WORLD_MOVE, tab);
+		parseEventSection(EVENT_WORLD_EMPTY, tab);
+		parseEventSection(EVENT_WORLD_NOT_EMPTY, tab);
+		
 
-		try {
-			for (String line : ScriptParser.getLines(tab)) {
-				if (!line.isEmpty() && !line.trim().startsWith(COMMENT_START)) {
-					parseTabLine(line);
-				}
-			}
-
-			return true;
-		} catch (FileNotFoundException ex) {
-			logger.log(Level.WARNING, "tab.sce does not exists!");
-		} catch (IOException ex) {
-			logger.log(Level.WARNING, "Failed to read tab.sce:\n{0}", ex.getMessage());
-		}
+		
+		
+		
+		
 
 		return false;
 	}
 
-	/**
-	 * Parse the given line and add it to the event runner.
-	 * @param line The line form the tab.sce.
-	 */
-	protected void parseTabLine(String line) {
-		line = line.trim();
 
-		String eventPart = line.substring(0, line.indexOf(" ")).trim();
-		final String commandPart = line.substring(line.indexOf(" ") + 1).trim();
-
-		if (events.containsKey(eventPart)) {
-			events.get(eventPart).add(commandPart);
-		} else {
-			logger.warning(String.format("line failed parsing:'%s':eventPart:'%s':commandPart:'%s'", line, eventPart, commandPart));
-			return; //bypasses the next logging. Already logged that we failed this line.
+	protected void parseEventSection(String event_name, FileConfiguration tab) {
+		logger.info(String.format("SCE loading %s events...",event_name));
+		MemorySection ej = (MemorySection) tab.getConfigurationSection(event_name);
+		for (String partialKey : ej.getKeys(false)){
+			MemorySection script = (MemorySection) ej.getConfigurationSection(String.format("%s.sce", partialKey));
+			events.get(event_name).add(script);
+			System.out.println(script.getCurrentPath().split("\\.", 2)[1]);
 		}
-		//TODO: better name this logging output?
-		logger.info(String.format("SCE waiting for: %s:::%s", eventPart, commandPart));
 	}
 
 	/**
@@ -131,7 +127,8 @@ public final class EventEngine {
 	 */
 	public void runEventsFor(String event_name, final String[] args) {
 		if (events.containsKey(event_name)) {
-			for (final String filePath : events.get(event_name)) {
+			for (MemorySection config : events.get(event_name)) {
+				final String filePath = config.getCurrentPath().split("\\.", 2)[1];
 				Thread t = new Thread(new Runnable() {
 
 					@Override
