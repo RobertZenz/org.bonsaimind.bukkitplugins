@@ -143,13 +143,14 @@ public final class EventEngine {
 			logger.warning(String.format("Missing event structure for %s!", event_name));
 			return;
 		}
-		for (String partialKey : ej.getKeys(false)){
-			MemorySection script = (MemorySection) ej.getConfigurationSection(String.format("%s.sce", partialKey));
-			if (script == null){
+		for (String key : ej.getKeys(false)){
+			MemorySection script = (MemorySection) ej.getConfigurationSection(key);
+			if (!script.contains("file") || script.getString("file") == null){
+				//script contains bad file argument.
+				
 				//see if the script is actually just a "one line command"...
-				script = (MemorySection) ej.getConfigurationSection(String.format("%s", partialKey));
 				if (!script.contains("command")){
-					logger.warning(String.format("Missing sub-event structure for %s.%s.sce! (one . in name please, for the .sce!)", event_name,partialKey));
+					logger.warning(String.format("Missing sub-event structure for %s.%s! must have file or command!", event_name,key));
 					continue;
 				}
 			}
@@ -189,13 +190,13 @@ public final class EventEngine {
 					continue;
 				}
 				//if we are here, all the filters check out.
-				final String filePath = config.getCurrentPath().split("\\.", 2)[1];
+				final String filePath = config.getString("file");
 				Thread t = new Thread(new Runnable() {
 
 					@Override
 					public void run() {
 						ScriptParser script = new ScriptParser(server, logger, verbose);
-						if (filePath.endsWith(".sce")) {
+						if (filePath != null) {
 							// We have a script
 							script.executeScript(new File(workingDir, filePath), args);
 						} else {

@@ -1,6 +1,7 @@
 
 playerJoin:
-    'events/playerJoin.sce':
+    'NamesHereDoNotMatterIsh':
+        file: 'events/playerJoin.sce'
         filters:
             players:
                 #event must match player name
@@ -13,40 +14,46 @@ playerJoin:
 
 
 playerFirstJoin:
-    'events/playerFirstJoin.sce':
+    'justNoPeriodsOrDots':
+        file: 'events/playerFirstJoin.sce'
         filters:
             players:
             worlds:
 
 playerQuit:
-    'events/playerQuit.sce':
+    'becauseOtherwiseItEndsBadly':
+        file: 'events/playerQuit.sce'
         filters:
             players:
             worlds:
 
 
 serverEmpty:
-    'events/serverEmpty.sce':
+    'trustMeOnThisOne':
+        file: 'events/serverEmpty.sce'
         filters:
             players:
             worlds:
 
 
 serverNotEmpty:
-    'events/serverNotEmpty.sce':
+    'alsoNamesMustBeUniqueForEachEvent':
+        file: 'events/serverNotEmpty.sce'
         filters:
             players:
             worlds:
 
 playerTeleportWorld:
-    'events/playerTeleportWorld.sce':
+    'theseCommentsShouldBeMovedToDocumentationButImTiredThisIsntAReleaseBuildAnywho':
+        file: 'events/playerTeleportWorld.sce'
         filters:
             players:
             worlds:
 
 
 worldEmpty:
-    'events/worldEmpty.sce':
+    'wonderfulNamingHere':
+        file: 'events/worldEmpty.sce'
         filters:
             players:
                 - admalledd
@@ -61,7 +68,8 @@ worldEmpty:
 
 
 worldNotEmpty:
-    'events/worldNotEmpty.sce':
+    'helpfulName':
+        file: 'events/worldNotEmpty.sce'
         filters:
             players:
             worlds:
