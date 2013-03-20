@@ -65,3 +65,41 @@ worldNotEmpty:
         filters:
             players:
             worlds:
+
+
+hourChange:
+    'sample one liner':
+        command: 'do say allevents:::$0:$1:$2'
+        filters:
+            players: #empty event though not in use/ applicable to this event
+            worlds:
+dawn:
+    'sample one liner':
+        command: 'do say allevents:::$0:$1'
+        filters:
+            players: #empty event though not in use/ applicable to this event
+            worlds:
+midday:
+    'sample one liner':
+        command: 'do say allevents:::$0:$1'
+        filters:
+            players: #empty event though not in use/ applicable to this event
+            worlds:
+dusk:
+    'sample one liner':
+        command: 'do say allevents:::$0:$1'
+        filters:
+            players: #empty event though not in use/ applicable to this event
+            worlds:
+night:
+    'sample one liner':
+        command: 'do say allevents:::$0:$1'
+        filters:
+            players: #empty event though not in use/ applicable to this event
+            worlds:
+midnight:
+    'sample one liner':
+        command: 'do say allevents:::$0:$1'
+        filters:
+            players: #empty event though not in use/ applicable to this event
+            worlds:
