@@ -27,14 +27,12 @@ import org.bukkit.Server;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Event;
 /**
  * This is the engine which does the heavy lifting and interfacing
  */
 public final class EventEngine {
 
-	private static final String COMMENT_START = "#";
-	//TODO: there has to be a better data structure for all of these that we could iterate over...
+	
 	public static final String EVENT_JOIN = "playerJoin";
 	public static final String EVENT_QUIT = "playerQuit";
 	public static final String EVENT_FIRST_JOIN = "playerFirstJoin";
@@ -100,23 +98,30 @@ public final class EventEngine {
 		parseEventSection(EVENT_WORLD_EMPTY, tab);
 		parseEventSection(EVENT_WORLD_NOT_EMPTY, tab);
 		
-
-		
-		
-		
-		
-
-		return false;
+		return true;
 	}
 
 
 	protected void parseEventSection(String event_name, FileConfiguration tab) {
+		
 		logger.info(String.format("SCE loading %s events...",event_name));
 		MemorySection ej = (MemorySection) tab.getConfigurationSection(event_name);
+		if (ej == null){
+			logger.warning(String.format("Missing event structure for %s!", event_name));
+			return;
+		}
 		for (String partialKey : ej.getKeys(false)){
 			MemorySection script = (MemorySection) ej.getConfigurationSection(String.format("%s.sce", partialKey));
+			if (script == null){
+				//see if the script is actually just a "one line command"...
+				script = (MemorySection) ej.getConfigurationSection(String.format("%s", partialKey));
+				if (!script.contains("command")){
+					logger.warning(String.format("Missing sub-event structure for %s.%s.sce! (one . in name please, for the .sce!)", event_name,partialKey));
+					continue;
+				}
+			}
 			events.get(event_name).add(script);
-			System.out.println(script.getCurrentPath().split("\\.", 2)[1]);
+			logger.info(String.format("SCE \"%s\" set on event %s",script.getCurrentPath().split("\\.", 2)[1], event_name));
 		}
 	}
 
@@ -127,23 +132,25 @@ public final class EventEngine {
 	 */
 	public void runEventsFor(String event_name, final String[] args) {
 		if (events.containsKey(event_name)) {
-			for (MemorySection config : events.get(event_name)) {
+			for (final MemorySection config : events.get(event_name)) {
+				//first off: check the filters and all that
+				if (filterEvent(config, event_name, args)){
+					continue;
+				}
+				//if we are here, all the filters check out.
 				final String filePath = config.getCurrentPath().split("\\.", 2)[1];
 				Thread t = new Thread(new Runnable() {
 
 					@Override
 					public void run() {
 						ScriptParser script = new ScriptParser(server, logger, verbose);
-						if (filePath.split(" ")[0].endsWith(".sce")) {
+						if (filePath.endsWith(".sce")) {
 							// We have a script
-							// Note that args will = [] if the tab line is blank afterwards as well, so no special casing needed.
-							String[] args = filePath.split(" ");
-							String file = filePath.split(" ")[0];
-							script.executeScript(new File(workingDir, file), args);
+							script.executeScript(new File(workingDir, filePath), args);
 						} else {
 							// not a script, only a one line script-thing
 							try {
-								script.parseScriptLine(filePath, "", args);
+								script.parseScriptLine(config.getString("command"), "", args);
 							} catch (ScriptExecutionException ex) {
 								logger.log(Level.WARNING, "Failed to execute PartialScript \"{0}\" at \"{1}\"\n{2}", new Object[]{filePath, ex.getMessage(), ex.getCause().getMessage()});
 							}
@@ -156,5 +163,56 @@ public final class EventEngine {
 				t.start();
 			}
 		}
+	}
+	private boolean filterEvent(MemorySection config, String Event_name,String[] args){
+		//returns true if event should be filtered (out)
+		List<String> player_filters = config.getStringList("filters.players");
+		if (player_filters != null){
+			for (String player : player_filters){
+				boolean inverted = false;
+				if (player.startsWith("-")){
+					inverted = true;
+					player=player.substring(1); //strip out negation indicator
+					////logger.info(String.format("inverting player match: %s", player));
+				}
+				if (!(args[1].equalsIgnoreCase(player) && !inverted)){
+					// player does not match OR it does match, but we are inverted
+					// carry on without running the script
+					////logger.info(String.format("flag=true: player %s", args[1]));
+					return true; 
+				}
+				
+			}
+		}
+		List<String> world_filters = config.getStringList("filters.worlds");
+		if (world_filters != null){
+			for (String world : world_filters){
+				boolean inverted = false;
+				if (world.startsWith("-")){
+					inverted = true;
+					world=world.substring(1); //strip out negation indicator
+					////logger.info(String.format("inverting world match: %s", world));
+				}
+				for (String arg : args){
+					//skip first two args, those are always event name and player (for now)
+					if (arg == args[0]) {
+						continue;
+					} else if (arg == args[1]) {
+						continue;
+					}
+					
+					if (arg.equalsIgnoreCase(world) && inverted){
+						// world does not match OR it does match, but we are inverted
+						// carry on without running the script
+						////logger.info(String.format("flag=true: world %s", arg));
+						return true;
+					}
+				}
+				
+			}
+		}
+		//nope, all checks out, run along and execute the script
+		return false;
+		
 	}
 }

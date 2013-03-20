@@ -49,7 +49,15 @@ worldEmpty:
     'events/worldEmpty.sce':
         filters:
             players:
+                - admalledd
             worlds:
+    'sample one liner':
+        command: 'do say sample one liner $0 $1 $2 $3'
+        filters:
+            players:
+                - admalledd
+            worlds:
+                - -world
 
 
 worldNotEmpty:
