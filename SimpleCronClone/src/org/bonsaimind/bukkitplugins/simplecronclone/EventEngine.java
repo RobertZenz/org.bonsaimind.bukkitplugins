@@ -29,6 +29,7 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitTask;
+
 /**
  * This is the engine which does the heavy lifting and interfacing
  */
@@ -37,7 +38,7 @@ public final class EventEngine {
 	/*TODO: there has to be a better data structure for all of these that we could iterate over...
 	 * No really, this is getting out of hand fast, and when i have to start filtering based on events...
 	 * ideas? I need basic "is world time event?" and `for (String event : EVENTS){...}` 
-	*/
+	 */
 	public static final String EVENT_JOIN = "playerJoin";
 	public static final String EVENT_QUIT = "playerQuit";
 	public static final String EVENT_FIRST_JOIN = "playerFirstJoin";
@@ -52,7 +53,6 @@ public final class EventEngine {
 	public static final String EVENT_DUSK = "dusk";
 	public static final String EVENT_NIGHT = "night";
 	public static final String EVENT_MIDNIGHT = "midnight";
-	
 	private File workingDir;
 	private Server server;
 	private Logger logger;
@@ -88,16 +88,17 @@ public final class EventEngine {
 		events.put(EVENT_MIDNIGHT, new ArrayList<MemorySection>());
 
 		readTab();
-		timer = server.getScheduler().runTaskTimerAsynchronously(server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable()
-		{	
-			public void run() {timerTick();}
+		timer = server.getScheduler().runTaskTimerAsynchronously(server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
+			public void run() {
+				timerTick();
+			}
 		}, 20, 20);
 	}
 
 	public void stop() {
 		events.clear();
-		if (timer != null){
+		if (timer != null) {
 			timer.cancel();
 		}
 	}
@@ -113,7 +114,7 @@ public final class EventEngine {
 			logger.log(Level.WARNING, "{0} does not exist or is not accessible.", tabfile.getPath());
 			return false;
 		}
-		
+
 		FileConfiguration tab = YamlConfiguration.loadConfiguration(tabfile);
 		logger.info("SCE tab loaded, parsing...");
 		parseEventSection(EVENT_JOIN, tab);
@@ -130,53 +131,55 @@ public final class EventEngine {
 		parseEventSection(EVENT_DUSK, tab);
 		parseEventSection(EVENT_NIGHT, tab);
 		parseEventSection(EVENT_MIDNIGHT, tab);
-		
+
 		return true;
 	}
 
-
 	protected void parseEventSection(String event_name, FileConfiguration tab) {
-		
-		logger.info(String.format("SCE loading %s events...",event_name));
+
+		logger.info(String.format("SCE loading %s events...", event_name));
 		MemorySection ej = (MemorySection) tab.getConfigurationSection(event_name);
-		if (ej == null){
+		if (ej == null) {
 			logger.warning(String.format("Missing event structure for %s!", event_name));
 			return;
 		}
-		for (String key : ej.getKeys(false)){
+		for (String key : ej.getKeys(false)) {
 			MemorySection script = (MemorySection) ej.getConfigurationSection(key);
-			if (!script.contains("file") || script.getString("file") == null){
+			if (!script.contains("file") || script.getString("file") == null) {
 				//script contains bad file argument.
-				
+
 				//see if the script is actually just a "one line command"...
-				if (!script.contains("command")){
-					logger.warning(String.format("Missing sub-event structure for %s.%s! must have file or command!", event_name,key));
+				if (!script.contains("command")) {
+					logger.warning(String.format("Missing sub-event structure for %s.%s! must have file or command!", event_name, key));
 					continue;
 				}
 			}
 			events.get(event_name).add(script);
-			logger.info(String.format("SCE \"%s\" set on event %s",script.getCurrentPath().split("\\.", 2)[1], event_name));
+			logger.info(String.format("SCE \"%s\" set on event %s", script.getCurrentPath().split("\\.", 2)[1], event_name));
 		}
 	}
 
 	private void timerTick() {
-		for (World world : server.getWorlds()){
+		for (World world : server.getWorlds()) {
 			long l = world.getTime();
 			long i = l % 1000;
-			if (i > 0 && i <= 19)
-				runEventsFor(EVENT_HOUR, new String[]{EVENT_HOUR,world.getName(),Integer.toString((int)l / 1000)});
-			if (l > 0 && l <= 19)
-				runEventsFor(EVENT_DAWN, new String[]{EVENT_DAWN,world.getName()});
-			else if (l > 6000 && l <= 6019)
-				runEventsFor(EVENT_MIDDAY, new String[]{EVENT_MIDDAY,world.getName()});
-			else if (l > 12000 && l <= 12019)
-				runEventsFor(EVENT_DUSK, new String[]{EVENT_DUSK,world.getName()});
-			else if (l > 12500 && l <= 12519)
-				runEventsFor(EVENT_NIGHT, new String[]{EVENT_NIGHT,world.getName()});
-			else if (l > 18000 && l <= 18019)
-				runEventsFor(EVENT_MIDNIGHT, new String[]{EVENT_MIDNIGHT,world.getName()});
-		}		
+			if (i > 0 && i <= 19) {
+				runEventsFor(EVENT_HOUR, new String[]{EVENT_HOUR, world.getName(), Integer.toString((int) l / 1000)});
+			}
+			if (l > 0 && l <= 19) {
+				runEventsFor(EVENT_DAWN, new String[]{EVENT_DAWN, world.getName()});
+			} else if (l > 6000 && l <= 6019) {
+				runEventsFor(EVENT_MIDDAY, new String[]{EVENT_MIDDAY, world.getName()});
+			} else if (l > 12000 && l <= 12019) {
+				runEventsFor(EVENT_DUSK, new String[]{EVENT_DUSK, world.getName()});
+			} else if (l > 12500 && l <= 12519) {
+				runEventsFor(EVENT_NIGHT, new String[]{EVENT_NIGHT, world.getName()});
+			} else if (l > 18000 && l <= 18019) {
+				runEventsFor(EVENT_MIDNIGHT, new String[]{EVENT_MIDNIGHT, world.getName()});
+			}
+		}
 	}
+
 	/**
 	 * Parse the given line and add it to the event runner.
 	 * @param event name
@@ -186,7 +189,7 @@ public final class EventEngine {
 		if (events.containsKey(event_name)) {
 			for (final MemorySection config : events.get(event_name)) {
 				//first off: check the filters and all that
-				if (filterEvent(config, event_name, args)){
+				if (filterEvent(config, event_name, args)) {
 					continue;
 				}
 				//if we are here, all the filters check out.
@@ -216,65 +219,66 @@ public final class EventEngine {
 			}
 		}
 	}
-	private boolean filterEvent(MemorySection config, String eventName,String[] args){
+
+	private boolean filterEvent(MemorySection config, String eventName, String[] args) {
 		//returns true if event should be filtered (out)
 		List<String> player_filters = config.getStringList("filters.players");
-		if (player_filters != null){
-			for (String player : player_filters){
+		if (player_filters != null) {
+			for (String player : player_filters) {
 				boolean inverted = false;
-				if (player.startsWith("-")){
+				if (player.startsWith("-")) {
 					inverted = true;
-					player=player.substring(1); //strip out negation indicator
+					player = player.substring(1); //strip out negation indicator
 					////logger.info(String.format("inverting player match: %s", player));
 				}
-				if (!(args[1].equalsIgnoreCase(player) && !inverted)){
+				if (!(args[1].equalsIgnoreCase(player) && !inverted)) {
 					// player does not match OR it does match, but we are inverted
 					// carry on without running the script
 					////logger.info(String.format("flag=true: player %s", args[1]));
-					return true; 
+					return true;
 				}
-				
+
 			}
 		}
 		List<String> world_filters = config.getStringList("filters.worlds");
-		if (world_filters != null){
-			for (String world : world_filters){
+		if (world_filters != null) {
+			for (String world : world_filters) {
 				boolean inverted = false;
-				if (world.startsWith("-")){
+				if (world.startsWith("-")) {
 					inverted = true;
-					world=world.substring(1); //strip out negation indicator
+					world = world.substring(1); //strip out negation indicator
 					////logger.info(String.format("inverting world match: %s", world));
 				}
 				if (eventName.equals(EVENT_DAWN) || eventName.equals(EVENT_DUSK) || eventName.equals(EVENT_HOUR)
 						|| eventName.equals(EVENT_MIDDAY) || eventName.equals(EVENT_MIDNIGHT)
 						|| eventName.equals(EVENT_NIGHT)) {
-					if (args[1].equalsIgnoreCase(world) && inverted){
+					if (args[1].equalsIgnoreCase(world) && inverted) {
 						//world is arg[1] for all time events.
 						////logger.info(String.format("flag=true: world %s", arg));
 						return true;
 					}
 				} else {
-					for (String arg : args){
+					for (String arg : args) {
 						//skip first two args, those are always event name and player
 						if (arg == args[0]) {
 							continue;
 						} else if (arg == args[1]) {
 							continue;
 						}
-						
-						if (arg.equalsIgnoreCase(world) && inverted){
+
+						if (arg.equalsIgnoreCase(world) && inverted) {
 							// world does not match OR it does match, but we are inverted
 							// carry on without running the script
 							////logger.info(String.format("flag=true: world %s", arg));
 							return true;
 						}
 					}
-					
+
 				}
 			}
 		}
 		//nope, all checks out, run along and execute the script
 		return false;
-		
+
 	}
 }
