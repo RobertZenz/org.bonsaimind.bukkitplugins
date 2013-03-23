@@ -261,9 +261,9 @@ public final class EventEngine {
 				} else {
 					for (String arg : args) {
 						// Skip first two args, those are always event name and player
-						if (arg == args[0]) {
+						if (arg.equals(args[0])) {
 							continue;
-						} else if (arg == args[1]) {
+						} else if (arg.equals(args[1])) {
 							continue;
 						}
 
