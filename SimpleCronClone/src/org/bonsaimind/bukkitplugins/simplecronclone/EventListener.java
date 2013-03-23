@@ -50,7 +50,7 @@ public class EventListener implements Listener {
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_NOT_EMPTY, new String[]{
 						EventEngine.EVENT_SERVER_NOT_EMPTY, event.getPlayer().getName()});
 		}
-		if (event.getPlayer().getWorld().getPlayers().size() == 0) {
+		if (event.getPlayer().getWorld().getPlayers().isEmpty()) {
 			//eventWorldNotEmpty joined and made a world no longer empty
 			//fired before the player is a part of the world list (because onjoin might move them?)
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_NOT_EMPTY, new String[]{
