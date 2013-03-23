@@ -57,7 +57,7 @@ public final class EventEngine {
 	private Server server;
 	private Logger logger;
 	public boolean verbose;
-	//strings of the filePaths to the .sce files
+	// Strings of the filePaths to the .sce files
 	private HashMap<String, List<MemorySection>> events = new HashMap<String, List<MemorySection>>();
 	private BukkitTask timer;
 
@@ -69,7 +69,7 @@ public final class EventEngine {
 	}
 
 	public void start() {
-		// clear all the old stuff away
+		// Clear all the old stuff away
 		stop();
 
 		events.put(EVENT_JOIN, new ArrayList<MemorySection>());
@@ -90,6 +90,7 @@ public final class EventEngine {
 		readTab();
 		timer = server.getScheduler().runTaskTimerAsynchronously(server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
+			@Override
 			public void run() {
 				timerTick();
 			}
@@ -146,9 +147,9 @@ public final class EventEngine {
 		for (String key : ej.getKeys(false)) {
 			MemorySection script = (MemorySection) ej.getConfigurationSection(key);
 			if (!script.contains("file") || script.getString("file") == null) {
-				//script contains bad file argument.
+				// Script contains bad file argument.
 
-				//see if the script is actually just a "one line command"...
+				// See if the script is actually just a "one line command"...
 				if (!script.contains("command")) {
 					logger.warning(String.format("Missing sub-event structure for %s.%s! must have file or command!", event_name, key));
 					continue;
@@ -188,11 +189,11 @@ public final class EventEngine {
 	public void runEventsFor(String event_name, final String[] args) {
 		if (events.containsKey(event_name)) {
 			for (final MemorySection config : events.get(event_name)) {
-				//first off: check the filters and all that
+				// First off: check the filters and all that
 				if (filterEvent(config, event_name, args)) {
 					continue;
 				}
-				//if we are here, all the filters check out.
+				// if we are here, all the filters check out.
 				final String filePath = config.getString("file");
 				Thread t = new Thread(new Runnable() {
 
@@ -203,7 +204,7 @@ public final class EventEngine {
 							// We have a script
 							script.executeScript(new File(workingDir, filePath), args);
 						} else {
-							// not a script, only a one line script-thing
+							// Not a script, only a one line script-thing
 							try {
 								script.parseScriptLine(config.getString("command"), "", args);
 							} catch (ScriptExecutionException ex) {
@@ -212,7 +213,7 @@ public final class EventEngine {
 						}
 					}
 				});
-				//set to a daemon so that when we are stopped, we ignore this thread
+				// Set to a daemon so that when we are stopped, we ignore this thread
 				//TODO: does this bork a reload command?
 				t.setDaemon(true);
 				t.start();
@@ -221,18 +222,18 @@ public final class EventEngine {
 	}
 
 	private boolean filterEvent(MemorySection config, String eventName, String[] args) {
-		//returns true if event should be filtered (out)
+		// Returns true if event should be filtered (out)
 		List<String> player_filters = config.getStringList("filters.players");
 		if (player_filters != null) {
 			for (String player : player_filters) {
 				boolean inverted = false;
 				if (player.startsWith("-")) {
 					inverted = true;
-					player = player.substring(1); //strip out negation indicator
+					player = player.substring(1); // Strip out negation indicator
 					////logger.info(String.format("inverting player match: %s", player));
 				}
 				if (!(args[1].equalsIgnoreCase(player) && !inverted)) {
-					// player does not match OR it does match, but we are inverted
+					// Player does not match OR it does match, but we are inverted
 					// carry on without running the script
 					////logger.info(String.format("flag=true: player %s", args[1]));
 					return true;
@@ -246,20 +247,20 @@ public final class EventEngine {
 				boolean inverted = false;
 				if (world.startsWith("-")) {
 					inverted = true;
-					world = world.substring(1); //strip out negation indicator
+					world = world.substring(1); //sStrip out negation indicator
 					////logger.info(String.format("inverting world match: %s", world));
 				}
 				if (eventName.equals(EVENT_DAWN) || eventName.equals(EVENT_DUSK) || eventName.equals(EVENT_HOUR)
 						|| eventName.equals(EVENT_MIDDAY) || eventName.equals(EVENT_MIDNIGHT)
 						|| eventName.equals(EVENT_NIGHT)) {
 					if (args[1].equalsIgnoreCase(world) && inverted) {
-						//world is arg[1] for all time events.
+						// world is arg[1] for all time events.
 						////logger.info(String.format("flag=true: world %s", arg));
 						return true;
 					}
 				} else {
 					for (String arg : args) {
-						//skip first two args, those are always event name and player
+						// Skip first two args, those are always event name and player
 						if (arg == args[0]) {
 							continue;
 						} else if (arg == args[1]) {
@@ -277,7 +278,7 @@ public final class EventEngine {
 				}
 			}
 		}
-		//nope, all checks out, run along and execute the script
+		// Nope, all checks out, run along and execute the script
 		return false;
 
 	}

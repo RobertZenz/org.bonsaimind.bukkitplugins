@@ -62,12 +62,12 @@ public final class CronEngine {
 
 	public void stop() {
 		if (scheduler != null && scheduler.isStarted()) {
-			//kill any running scripts...
+			// Kill any running scripts...
 			for (TaskExecutor running : scheduler.getExecutingTasks()) {
 				if (running.canBeStopped()) {
 					running.stop();
 				} else {
-					logger.warning("unable to kill a task!");
+					logger.warning("Unable to kill a task because if does not support stopping...this is very odd!");
 				}
 			}
 			scheduler.stop();
@@ -111,8 +111,8 @@ public final class CronEngine {
 	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
-		// search for the 5th space after trimming leading and trailing whitespace
-		// this should be the space between the timerPart and commandPart.
+		// Search for the 5th space after trimming leading and trailing whitespace
+		// This should be the space between the timerPart and commandPart.
 		int splitPoint = ScriptParser.nthOccurrence(line, ' ', 4);
 		String timerPart = line.substring(0, splitPoint + 1).trim();
 		final String commandPart = line.substring(splitPoint + 1).trim();
@@ -131,7 +131,7 @@ public final class CronEngine {
 					String file = commandPart.split(" ")[0];
 					script.executeScript(new File(workingDir, file), args);
 				} else {
-					// not a script, only a one line script-thing
+					// Not a script, only a one line script-thing
 					try {
 						script.parseScriptLine(commandPart, "", null);
 					} catch (ScriptExecutionException ex) {
