@@ -18,6 +18,7 @@ package org.bonsaimind.bukkitplugins.savestopper;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -45,6 +46,9 @@ public class Plugin extends JavaPlugin {
 		listener = null;
 
 		server = null;
+
+		PluginDescriptionFile pdfFile = this.getDescription();
+		getLogger().log(Level.INFO, "{0} {1} is disabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 	}
 
 	@Override
@@ -54,7 +58,7 @@ public class Plugin extends JavaPlugin {
 		server.getPluginManager().registerEvents(listener, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
+		getLogger().log(Level.INFO, "{0} {1} is enabled.", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 
 		setCommand();
 
@@ -99,10 +103,6 @@ public class Plugin extends JavaPlugin {
 		server.dispatchCommand(server.getConsoleSender(), command);
 	}
 
-	private void println(String text) {
-		System.out.println("SaveStopper: " + text);
-	}
-
 	private void purgeTask() {
 		if (currentTask != null) {
 			currentTask.cancel();
@@ -112,7 +112,7 @@ public class Plugin extends JavaPlugin {
 	}
 
 	private void saveOff() {
-		println("Disabling saving.");
+		getLogger().log(Level.INFO, "Disabling saving.");
 
 		if (settings.getSaveAll()) {
 			dispatchCommand("save-all");
@@ -123,7 +123,7 @@ public class Plugin extends JavaPlugin {
 
 	private void saveOffScheduled() {
 		if (settings.getWait() > 0) {
-			println("Disabling scheduled, " + settings.getWait() + " seconds.");
+			getLogger().log(Level.INFO, "Disabling scheduled, {0} seconds.", settings.getWait());
 
 			currentTask = new TimerTask() {
 
@@ -140,7 +140,7 @@ public class Plugin extends JavaPlugin {
 	}
 
 	private void saveOn() {
-		println("Enabling saving.");
+		getLogger().log(Level.INFO, "Enabling saving.");
 
 		dispatchCommand("save-on");
 	}
@@ -167,12 +167,12 @@ public class Plugin extends JavaPlugin {
 					} else if (arg.equalsIgnoreCase("save-on")) {
 						saveOn();
 					} else if (arg.equalsIgnoreCase("start")) {
-						println("Started.");
+						getLogger().log(Level.INFO, "Started.");
 						listener.setEnabled(true);
 					} else if (arg.equalsIgnoreCase("status")) {
-						println("Monitoring: " + listener.isEnabled());
+						getLogger().log(Level.INFO, "Monitoring: {0}", listener.isEnabled());
 					} else if (arg.equalsIgnoreCase("stop")) {
-						println("Stopped.");
+						getLogger().log(Level.INFO, "Stopped.");
 						listener.setEnabled(false);
 					}
 				}
