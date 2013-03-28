@@ -7,7 +7,7 @@
 	<property name="build" value="build" />
 	<property name="dist" value="dist" />
 
-	<property name="craftbukkit" value="../lib/bukkit.jar" />
+	<property name="bukkit" value="../lib/bukkit.jar" />
 	<property name="cron4j" value="./lib/cron4j.jar" />
 
 	<target name="clean"
@@ -26,7 +26,7 @@
 		description="Compiles all source files.">
 		<javac srcdir="${src}" destdir="${build}" 
 			includeantruntime="false"
-			classpath="${craftbukkit};${cron4j}" />
+			classpath="${bukkit};${cron4j}" />
 		<manifest file="MANIFEST.MF" />
 	</target>
 	
