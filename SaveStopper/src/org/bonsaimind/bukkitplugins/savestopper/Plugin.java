@@ -37,6 +37,7 @@ public class Plugin extends JavaPlugin {
 	private PlayerListener listener = new PlayerListener(this);
 	private Settings settings;
 
+	@Override
 	public void onDisable() {
 		settings.save();
 		settings = null;
@@ -49,6 +50,7 @@ public class Plugin extends JavaPlugin {
 		server = null;
 	}
 
+	@Override
 	public void onEnable() {
 		server = getServer();
 
@@ -151,6 +153,7 @@ public class Plugin extends JavaPlugin {
 	private void setCommand() {
 		getCommand("savestopper").setExecutor(new CommandExecutor() {
 
+			@Override
 			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 				if (!sender.isOp()) {
 					sender.sendMessage("Touch me one more time and I'll scream rape!");
