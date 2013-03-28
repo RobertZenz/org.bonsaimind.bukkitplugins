@@ -25,7 +25,7 @@
 		description="Compiles all source files.">
 		<javac srcdir="${src}" destdir="${build}"
 			includeantruntime="false"
-			classpath="${crbukkit}" />
+			classpath="${bukkit}" />
 		<manifest file="MANIFEST.MF" />
 	</target>
 	
