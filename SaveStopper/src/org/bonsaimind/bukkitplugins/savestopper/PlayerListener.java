@@ -16,30 +16,33 @@
  */
 package org.bonsaimind.bukkitplugins.savestopper;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerListener extends org.bukkit.event.player.PlayerListener {
+public class PlayerListener implements Listener {
 
 	private Plugin parent = null;
 	private boolean enabled = true;
 
-	public PlayerListener(Plugin parentInstance) {
-		parent = parentInstance;
+	public PlayerListener(Plugin parent) {
+		this.parent = parent;
 	}
 
 	public boolean isEnabled() {
 		return enabled;
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		if (enabled) {
 			parent.guess();
 		}
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (enabled) {
 			parent.guess();

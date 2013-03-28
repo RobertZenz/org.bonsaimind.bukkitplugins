@@ -22,10 +22,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Plugin extends JavaPlugin {
@@ -54,9 +51,7 @@ public class Plugin extends JavaPlugin {
 	public void onEnable() {
 		server = getServer();
 
-		PluginManager pm = server.getPluginManager();
-		pm.registerEvent(Type.PLAYER_LOGIN, listener, Priority.Monitor, this);
-		pm.registerEvent(Type.PLAYER_QUIT, listener, Priority.Monitor, this);
+		server.getPluginManager().registerEvents(listener, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
