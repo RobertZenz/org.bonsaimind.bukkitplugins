@@ -7,7 +7,7 @@
 	<property name="build" value="build" />
 	<property name="dist" value="dist" />
 
-	<property name="craftbukkit" value="../lib/craftbukkit.jar" />
+	<property name="bukkit" value="../lib/bukkit.jar" />
 
 	<target name="clean"
 		description="Cleans the working directory from everything build related.">
@@ -25,7 +25,7 @@
 		description="Compiles all source files.">
 		<javac srcdir="${src}" destdir="${build}"
 			includeantruntime="false"
-			classpath="${craftbukkit}" />
+			classpath="${crbukkit}" />
 		<manifest file="MANIFEST.MF" />
 	</target>
 	
