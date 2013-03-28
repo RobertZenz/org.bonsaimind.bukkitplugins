@@ -78,7 +78,7 @@ public class Plugin extends JavaPlugin {
 		purgeTask();
 
 		if (server.getOnlinePlayers().length == 0) {
-			saveOffScheduled();
+			saveOff();
 		} else {
 			saveOn();
 		}
