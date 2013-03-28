@@ -21,24 +21,18 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author admalledd
  */
 public class Plugin extends JavaPlugin implements Listener {
+
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
 		PluginDescriptionFile pdfFile = this.getDescription();
-		this.getLogger().log(
-				Level.INFO,
-				pdfFile.getName() + " version " + pdfFile.getVersion()
-						+ " is enabled!");
+		this.getLogger().log(Level.INFO, "{0} version {1} is enabled!", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 	}
 
 	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
-
-		this.getLogger().log(
-				Level.INFO,
-				pdfFile.getName() + " version " + pdfFile.getVersion()
-						+ " is disabled!");
+		this.getLogger().log(Level.INFO, "{0} version {1} is disabled!", new Object[]{pdfFile.getName(), pdfFile.getVersion()});
 	}
 
 	@EventHandler
@@ -83,21 +77,18 @@ public class Plugin extends JavaPlugin implements Listener {
 		int newCurrent = event.getNewCurrent();
 		int oldCurrent = event.getOldCurrent();
 
-		for(Block sponge : getRelative(event.getBlock(),1)) {
-			
+		for (Block sponge : getRelative(event.getBlock(), 1)) {
+
 			//dont use Block.isBlockIndirectlyPowered() or Block.isBlockPowered() because we are still processing the event
 			//that would cause them to receive power. (this is just assumption for those methods failed...)
-			
-			
+
+
 			// redstone changes from low to high
-			if (sponge.getType() == Material.SPONGE && oldCurrent == 0 && newCurrent >= 1)
-			{
+			if (sponge.getType() == Material.SPONGE && oldCurrent == 0 && newCurrent >= 1) {
 				//getLogger().info("low->high");
 				updateBlocks(sponge);
-			}
-			// redstone changes from high to low
-			else if (sponge.getType() == Material.SPONGE && oldCurrent >= 1 && newCurrent == 0)
-			{
+			} // redstone changes from high to low
+			else if (sponge.getType() == Material.SPONGE && oldCurrent >= 1 && newCurrent == 0) {
 				//getLogger().info("high->low");
 				clearArea(sponge);
 			}
@@ -116,8 +107,7 @@ public class Plugin extends JavaPlugin implements Listener {
 					clearArea(blockPlaced);
 
 				}
-			}
-			// blockWhenPowered == true -> sponge works like sponge WITH
+			} // blockWhenPowered == true -> sponge works like sponge WITH
 			// redstone current
 			else {
 				if (ispowered(blockPlaced)) {
@@ -132,7 +122,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		//		String.format("clearing area around: %d,%d,%d", center.getX(),
 		//				center.getY(), center.getZ()));
 		int radius = getConfig().getInt("options.radius");
-		for (Block b : getRelative(center,radius)){
+		for (Block b : getRelative(center, radius)) {
 			if (isLiquid(b)) {
 				b.setType(Material.AIR);
 			}
@@ -145,7 +135,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		boolean blockWhenPowered = getConfig().getBoolean("options.invert");
 		int radius = getConfig().getInt("options.radius");
 
-		for (Block isThisSponge : getRelative(blockTo,radius)){
+		for (Block isThisSponge : getRelative(blockTo, radius)) {
 			Material id = isThisSponge.getType();
 			if (blockWhenPowered == false) {
 				if (id == Material.SPONGE && !ispowered(isThisSponge)) {
@@ -166,8 +156,6 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
-
-
 	// is it a liquid that we care to remove?
 	public boolean isLiquid(Block block) {
 		boolean waterSponge = getConfig().getBoolean("options.water");
@@ -175,12 +163,12 @@ public class Plugin extends JavaPlugin implements Listener {
 
 		if (lavaSponge
 				&& (block.getType() == Material.STATIONARY_LAVA
-					|| block.getType() == Material.LAVA)) {
+				|| block.getType() == Material.LAVA)) {
 			return true;
 		}
 		if (waterSponge
-				&& (block.getType() == Material.STATIONARY_WATER 
-					|| block.getType() == Material.WATER)) {
+				&& (block.getType() == Material.STATIONARY_WATER
+				|| block.getType() == Material.WATER)) {
 			return true;
 		}
 		// default false :(
@@ -194,7 +182,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		//getLogger().info(
 		//		String.format("updating area around: %d,%d,%d", center.getX(),
 		//				center.getY(), center.getZ()));
-		for (Block block : getRelative(center,radius+1)){
+		for (Block block : getRelative(center, radius + 1)) {
 			// only update the block if it is water/lava ect
 			if (isLiquid(block)) {
 				// use the original id if all else fails (no need to update)
@@ -203,13 +191,13 @@ public class Plugin extends JavaPlugin implements Listener {
 						|| tempid == Material.STATIONARY_LAVA.getId()) {
 					//use "moving" lava so that the server knows to update it
 					tempid = Material.LAVA.getId();
-					}
+				}
 				if (tempid == Material.WATER.getId()
 						|| tempid == Material.STATIONARY_WATER.getId()) {
 					//use "moving" water so that the server knows to update it
 					tempid = Material.WATER.getId();
 				}
-					byte tempdata = block.getData();
+				byte tempdata = block.getData();
 				// TODO: for some reason when it is the last block of
 				// water only it fails to update?
 
@@ -219,7 +207,7 @@ public class Plugin extends JavaPlugin implements Listener {
 
 				//removeing the block, so that there is a block change to update with
 				block.setType(Material.AIR);
-					//this now sets it to what it was, causing a update
+				//this now sets it to what it was, causing a update
 				block.setTypeIdAndData(tempid, tempdata, true);
 			}
 		}
@@ -229,12 +217,13 @@ public class Plugin extends JavaPlugin implements Listener {
 		return (tocheck.isBlockIndirectlyPowered() || tocheck.isBlockPowered());
 		// return tocheck.isBlockPowered();
 	}
-	public ArrayList<Block> getRelative(Block center,int radius){
+
+	public ArrayList<Block> getRelative(Block center, int radius) {
 		ArrayList<Block> blocks = new ArrayList<Block>();
 		for (int x = -(radius); x <= (radius); x++) {
 			for (int y = -(radius); y <= (radius); y++) {
 				for (int z = -(radius); z <= (radius); z++) {
-					blocks.add(center.getRelative(x,y,z));
+					blocks.add(center.getRelative(x, y, z));
 				}
 			}
 		}
