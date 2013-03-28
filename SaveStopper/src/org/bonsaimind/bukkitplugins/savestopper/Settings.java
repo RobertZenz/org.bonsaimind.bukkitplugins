@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with SaveStopper.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.bonsaimind.bukkitplugins.savestopper;
 
 import java.io.File;
