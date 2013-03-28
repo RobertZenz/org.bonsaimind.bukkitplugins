@@ -120,14 +120,14 @@ public class Plugin extends JavaPlugin implements Listener {
 			// sponge without redstone current
 			// check here as well in case on block place we are powered
 			if (blockWhenPowered == false) {
-				if (!ispowered(blockPlaced)) {
+				if (!isPowered(blockPlaced)) {
 					clearArea(blockPlaced);
 
 				}
 			} // blockWhenPowered == true -> sponge works like sponge WITH
 			// redstone current
 			else {
-				if (ispowered(blockPlaced)) {
+				if (isPowered(blockPlaced)) {
 					clearArea(blockPlaced);
 				}
 			}
@@ -155,7 +155,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		for (Block isThisSponge : getRelative(blockTo, radius)) {
 			Material id = isThisSponge.getType();
 			if (blockWhenPowered == false) {
-				if (id == Material.SPONGE && !ispowered(isThisSponge)) {
+				if (id == Material.SPONGE && !isPowered(isThisSponge)) {
 					// getLogger().info(String.format("power off, flow cancelled sponge/from/to: %d,%d,%d / %d,%d,%d / %d,%d,%d",
 					// isThisSponge.getX(),isThisSponge.getY(),isThisSponge.getZ(),
 					// event.getBlock().getX(),event.getBlock().getY(),event.getBlock().getZ(),
@@ -164,7 +164,7 @@ public class Plugin extends JavaPlugin implements Listener {
 					return;
 				}
 			} else {
-				if (id == Material.SPONGE && ispowered(isThisSponge)) {
+				if (id == Material.SPONGE && isPowered(isThisSponge)) {
 					// getLogger().info("power on, flow cancelled");
 					event.setCancelled(true);
 					return;
@@ -230,7 +230,7 @@ public class Plugin extends JavaPlugin implements Listener {
 		}
 	}
 
-	public boolean ispowered(Block tocheck) {
+	public boolean isPowered(Block tocheck) {
 		return (tocheck.isBlockIndirectlyPowered() || tocheck.isBlockPowered());
 		// return tocheck.isBlockPowered();
 	}
