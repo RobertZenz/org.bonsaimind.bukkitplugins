@@ -19,6 +19,7 @@ package org.bonsaimind.bukkitplugins.redsponge;
 import java.util.logging.Level;
 import java.util.ArrayList;
 
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 
@@ -234,8 +235,8 @@ public class Plugin extends JavaPlugin implements Listener {
 		// return tocheck.isBlockPowered();
 	}
 
-	public ArrayList<Block> getRelative(Block center, int radius) {
-		ArrayList<Block> blocks = new ArrayList<Block>();
+	public List<Block> getRelative(Block center, int radius) {
+		List<Block> blocks = new ArrayList<Block>();
 		for (int x = -(radius); x <= (radius); x++) {
 			for (int y = -(radius); y <= (radius); y++) {
 				for (int z = -(radius); z <= (radius); z++) {
