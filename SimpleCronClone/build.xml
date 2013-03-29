@@ -26,6 +26,7 @@
 		description="Compiles all source files.">
 		<javac srcdir="${src}" destdir="${build}" 
 			includeantruntime="false"
+			debug="true"
 			classpath="${bukkit};${cron4j}" />
 		<manifest file="MANIFEST.MF" />
 	</target>
