@@ -9,5 +9,6 @@
 # | | | | |     | 
   * * * * * sayHello.scc
   * * * * * examples/exampleArgumentTest.scc arg1 arg2 arg3
-  * * * * *: do say An example of a command straight from tab.scc
-  * *    *    *    *   :  do say An example of a command straight from tab.scc with lots of spaces to show that this works now.
+  * * * * * do say An example of a command straight from tab.scc
+  * *    *    *    *     do say An example of a command straight from tab.scc with lots of spaces to show that this works now.
+    */12 */3    *    *    *     do say complicated time to test the regex of splitting between timePart and commandPart

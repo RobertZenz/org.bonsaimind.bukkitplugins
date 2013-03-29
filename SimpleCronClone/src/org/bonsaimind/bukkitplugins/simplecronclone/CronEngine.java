@@ -26,6 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Server;
 
@@ -111,10 +113,14 @@ public final class CronEngine {
 	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
-		// Search for the first ":" this should be the split between the timer and the script stuff.
-		int splitPoint = line.indexOf(":");
-		String timerPart = line.substring(0, splitPoint).trim();
-		final String commandPart = line.substring(splitPoint + 1).trim();
+		/* Use a regex to split between the timePart and commandPart, there are only so many "spaces"
+		 * that exist in the time part, however there can be many next to each other, so glob those up!
+		 */
+		Pattern pattern = Pattern.compile("^([^ ]* +[^ ]* +[^ ]* +[^ ]* +[^ ]* +)(.*)$");
+		Matcher matcher = pattern.matcher(line);
+		matcher.find();
+		String timerPart = matcher.group(1).trim();
+		final String commandPart = matcher.group(2).trim();
 
 		logger.log(Level.INFO, "SCC Scheduling: {0}", commandPart);
 		scheduler.schedule(timerPart, new Task() {
