@@ -333,20 +333,4 @@ public final class ScriptParser {
 
 		return builder.toString();
 	}
-
-	/**
-	 * Finds the nth occurrence of char c in str
-	 * logics from http://stackoverflow.com/questions/3976616/how-to-find-nth-occurrence-of-character-in-a-string
-	 * @param str String to search in
-	 * @param c char to search for
-	 * @param n times to find char c
-	 * @return index of the nth occurrence  
-	 */
-	public static int nthOccurrence(String str, char c, int n) {
-		int pos = str.indexOf(c, 0);
-		while (n-- > 0 && pos != -1) {
-			pos = str.indexOf(c, pos + 1);
-		}
-		return pos - 1;
-	}
 }

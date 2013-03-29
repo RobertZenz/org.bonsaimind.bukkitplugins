@@ -111,10 +111,9 @@ public final class CronEngine {
 	 */
 	protected void parseTabLine(String line) {
 		line = line.trim();
-		// Search for the 5th space after trimming leading and trailing whitespace
-		// This should be the space between the timerPart and commandPart.
-		int splitPoint = ScriptParser.nthOccurrence(line, ' ', 4);
-		String timerPart = line.substring(0, splitPoint + 1).trim();
+		// Search for the first ":" this should be the split between the timer and the script stuff.
+		int splitPoint = line.indexOf(":");
+		String timerPart = line.substring(0, splitPoint).trim();
 		final String commandPart = line.substring(splitPoint + 1).trim();
 
 		logger.log(Level.INFO, "SCC Scheduling: {0}", commandPart);
@@ -124,11 +123,11 @@ public final class CronEngine {
 			public void execute(TaskExecutionContext context) throws RuntimeException {
 
 				ScriptParser script = new ScriptParser(server, logger, verbose);
-				if (commandPart.split(" ")[0].endsWith(".scc")) {
+				if (commandPart.split(" ")[0].trim().endsWith(".scc")) {
 					// We have a script
 					// Note that args will = [] if the tab line is blank afterwards as well, so no special casing needed.
 					String[] args = commandPart.split(" ");
-					String file = commandPart.split(" ")[0];
+					String file = commandPart.split(" ")[0].trim();
 					script.executeScript(new File(workingDir, file), args);
 				} else {
 					// Not a script, only a one line script-thing
