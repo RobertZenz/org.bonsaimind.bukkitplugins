@@ -20,13 +20,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.configuration.MemorySection;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -58,7 +58,7 @@ public final class EventEngine {
 	private Logger logger;
 	public boolean verbose;
 	// Strings of the filePaths to the .sce files
-	private HashMap<String, List<MemorySection>> events = new HashMap<String, List<MemorySection>>();
+	private HashMap<String, List<ConfigurationSection>> events = new HashMap<String, List<ConfigurationSection>>();
 	private BukkitTask timer;
 
 	public EventEngine(Server server, Logger logger, File workingDir, boolean verbose) {
@@ -72,20 +72,20 @@ public final class EventEngine {
 		// Clear all the old stuff away
 		stop();
 
-		events.put(EVENT_JOIN, new ArrayList<MemorySection>());
-		events.put(EVENT_FIRST_JOIN, new ArrayList<MemorySection>());
-		events.put(EVENT_QUIT, new ArrayList<MemorySection>());
-		events.put(EVENT_SERVER_EMPTY, new ArrayList<MemorySection>());
-		events.put(EVENT_SERVER_NOT_EMPTY, new ArrayList<MemorySection>());
-		events.put(EVENT_PLAYER_WORLD_MOVE, new ArrayList<MemorySection>());
-		events.put(EVENT_WORLD_EMPTY, new ArrayList<MemorySection>());
-		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<MemorySection>());
-		events.put(EVENT_HOUR, new ArrayList<MemorySection>());
-		events.put(EVENT_DAWN, new ArrayList<MemorySection>());
-		events.put(EVENT_MIDDAY, new ArrayList<MemorySection>());
-		events.put(EVENT_DUSK, new ArrayList<MemorySection>());
-		events.put(EVENT_NIGHT, new ArrayList<MemorySection>());
-		events.put(EVENT_MIDNIGHT, new ArrayList<MemorySection>());
+		events.put(EVENT_JOIN, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_FIRST_JOIN, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_QUIT, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_SERVER_EMPTY, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_SERVER_NOT_EMPTY, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_PLAYER_WORLD_MOVE, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_WORLD_EMPTY, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_WORLD_NOT_EMPTY, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_HOUR, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_DAWN, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_MIDDAY, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_DUSK, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_NIGHT, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_MIDNIGHT, new ArrayList<ConfigurationSection>());
 
 		readTab();
 		timer = server.getScheduler().runTaskTimerAsynchronously(server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
@@ -101,6 +101,7 @@ public final class EventEngine {
 		events.clear();
 		if (timer != null) {
 			timer.cancel();
+			timer = null;
 		}
 	}
 
@@ -116,7 +117,7 @@ public final class EventEngine {
 			return false;
 		}
 
-		FileConfiguration tab = YamlConfiguration.loadConfiguration(tabfile);
+		YamlConfiguration tab = YamlConfiguration.loadConfiguration(tabfile);
 		logger.info("SCE tab loaded, parsing...");
 		parseEventSection(EVENT_JOIN, tab);
 		parseEventSection(EVENT_FIRST_JOIN, tab);
@@ -136,27 +137,37 @@ public final class EventEngine {
 		return true;
 	}
 
-	protected void parseEventSection(String event_name, FileConfiguration tab) {
+	protected void parseEventSection(String event_name, YamlConfiguration tab) {
 
 		logger.info(String.format("SCE loading %s events...", event_name));
-		MemorySection ej = (MemorySection) tab.getConfigurationSection(event_name);
-		if (ej == null) {
-			logger.warning(String.format("Missing event structure for %s!", event_name));
+		if (!tab.isList(event_name)) {
+			logger.warning(String.format("Bad event structure for %s!", event_name));
 			return;
 		}
-		for (String key : ej.getKeys(false)) {
-			MemorySection script = (MemorySection) ej.getConfigurationSection(key);
-			if (!script.contains("file") || script.getString("file") == null) {
-				// Script contains bad file argument.
+		List<?> eventList = tab.getList(event_name);
+		for (int i = 0; i < eventList.size(); i++) {
 
+			YamlConfiguration tempYML = new YamlConfiguration();
+			if (!(eventList.get(i) instanceof Map)) {
+				// No map? GET OUT OF ZE SHOP
+				logger.warning(String.format("Invalid sub-event for %s.%d", event_name, i));
+				continue;
+			}
+			tempYML.createSection("script", (Map<?, ?>) eventList.get(i));
+			ConfigurationSection section = tempYML.getConfigurationSection("script");
+			if (!section.isString("file")) {
+				// Script contains bad file argument.
 				// See if the script is actually just a "one line command"...
-				if (!script.contains("command")) {
-					logger.warning(String.format("Missing sub-event structure for %s.%s! must have file or command!", event_name, key));
+				if (!section.isString("command")) {
+					logger.warning(String.format("Missing sub-event structure for %s.%d! must have file or command!",
+							event_name, i));
 					continue;
 				}
+				logger.info(String.format("SCE \"%s\" set on event %s", section.getString("command"), event_name));
+			} else {
+				logger.info(String.format("SCE \"%s\" set on event %s", section.getString("file"), event_name));
 			}
-			events.get(event_name).add(script);
-			logger.info(String.format("SCE \"%s\" set on event %s", script.getCurrentPath().split("\\.", 2)[1], event_name));
+			events.get(event_name).add(section);
 		}
 	}
 
@@ -188,7 +199,7 @@ public final class EventEngine {
 	 */
 	public void runEventsFor(String event_name, final String[] args) {
 		if (events.containsKey(event_name)) {
-			for (final MemorySection config : events.get(event_name)) {
+			for (final ConfigurationSection config : events.get(event_name)) {
 				// First off: check the filters and all that
 				if (filterEvent(config, event_name, args)) {
 					continue;
@@ -221,7 +232,7 @@ public final class EventEngine {
 		}
 	}
 
-	private boolean filterEvent(MemorySection config, String eventName, String[] args) {
+	private boolean filterEvent(ConfigurationSection config, String eventName, String[] args) {
 		// Returns true if event should be filtered (out)
 		List<String> player_filters = config.getStringList("filters.players");
 		if (player_filters != null) {
