@@ -100,3 +100,17 @@ midnight:
       filters:
           players: #empty event though not in use/ applicable to this event
           worlds:
+
+
+playerDeath:
+    - command: 'do say allevents:::$0:$1:$2'
+      filters:
+          players:
+          worlds:
+
+playerRespawn:
+    - command: 'do say allevents:::$0:$1:$2'
+      filters:
+          players:
+          worlds:
+          

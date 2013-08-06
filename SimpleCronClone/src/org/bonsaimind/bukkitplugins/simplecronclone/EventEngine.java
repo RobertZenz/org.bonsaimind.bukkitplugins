@@ -53,6 +53,8 @@ public final class EventEngine {
 	public static final String EVENT_DUSK = "dusk";
 	public static final String EVENT_NIGHT = "night";
 	public static final String EVENT_MIDNIGHT = "midnight";
+	public static final String EVENT_DEATH = "playerDeath";
+	public static final String EVENT_RESPAWN = "playerRespawn";
 	private File workingDir;
 	private Server server;
 	private Logger logger;
@@ -86,6 +88,8 @@ public final class EventEngine {
 		events.put(EVENT_DUSK, new ArrayList<ConfigurationSection>());
 		events.put(EVENT_NIGHT, new ArrayList<ConfigurationSection>());
 		events.put(EVENT_MIDNIGHT, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_DEATH, new ArrayList<ConfigurationSection>());
+		events.put(EVENT_RESPAWN, new ArrayList<ConfigurationSection>());
 
 		readTab();
 		timer = server.getScheduler().runTaskTimerAsynchronously(server.getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
@@ -133,6 +137,8 @@ public final class EventEngine {
 		parseEventSection(EVENT_DUSK, tab);
 		parseEventSection(EVENT_NIGHT, tab);
 		parseEventSection(EVENT_MIDNIGHT, tab);
+		parseEventSection(EVENT_DEATH, tab);
+		parseEventSection(EVENT_RESPAWN, tab);
 
 		return true;
 	}

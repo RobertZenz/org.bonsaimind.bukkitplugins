@@ -21,6 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+
 
 public class EventListener implements Listener {
 
@@ -97,5 +100,19 @@ public class EventListener implements Listener {
 						event.getPlayer().getWorld().getName()});
 		}
 
+	}
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		//eventPlayerDeath
+		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_DEATH, new String[]{
+			EventEngine.EVENT_DEATH, event.getEntity().getName(), event.getEntity().getWorld().getName()
+		});
+	}
+	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		//eventPlayerRespawn
+		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_RESPAWN, new String[]{
+			EventEngine.EVENT_RESPAWN, event.getPlayer().getName(), event.getPlayer().getWorld().getName()
+		});
 	}
 }
