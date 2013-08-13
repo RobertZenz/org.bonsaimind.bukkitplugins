@@ -35,7 +35,7 @@
 		description="Creates the jar.">
 		<jar jarfile="${dist}/${ant.project.name}.jar" basedir="${build}"
 			manifest="MANIFEST.MF">
-			<zipfileset dir="${src}" includes="plugin.yml" />
+			<zipfileset dir="${src}" includes="plugin.yml **/*.java **/*.class" />
 			<zipfileset dir="examples/" includes="config.yml" />
 			<zipfileset src="${cron4j}" includes="**/*.java **/*.class" />
 		</jar>
