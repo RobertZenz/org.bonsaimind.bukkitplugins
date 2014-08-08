@@ -16,6 +16,8 @@
  */
 package org.bonsaimind.bukkitplugins.simplecronclone;
 
+import java.util.logging.Level;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -23,6 +25,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.plugin.IllegalPluginAccessException;
 
 
 public class EventListener implements Listener {
@@ -114,5 +117,19 @@ public class EventListener implements Listener {
 		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_RESPAWN, new String[]{
 			EventEngine.EVENT_RESPAWN, event.getPlayer().getName(), event.getPlayer().getWorld().getName()
 		});
+	}
+	public void onEnable(){
+		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_ENABLE, new String[]{
+				EventEngine.EVENT_ENABLE 
+			});
+	}
+	public void onDisable(){
+		try {
+			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_DISABLE, new String[]{
+					EventEngine.EVENT_DISABLE 
+				});
+		} catch (IllegalPluginAccessException ex) {
+			sccMain.getLogger().log(Level.WARNING, "Unable to execute shutdown events, Likely caused by a script interacting with the main thread! ('exec' is basically the only command available for onDisable events)");
+		}
 	}
 }

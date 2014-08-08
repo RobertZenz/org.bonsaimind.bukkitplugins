@@ -41,6 +41,8 @@ public class Plugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		eventListener.onDisable(); //Fire shutdown events
+		
 		engine.stop();
 		engine = null;
 		eventListener = null;
@@ -73,6 +75,7 @@ public class Plugin extends JavaPlugin {
 			// We don't want to complain loudly if we can't submit stats, just the one line is enough.
 			getLogger().info("Failed to submit the stats. :-(");
 		}
+		eventListener.onEnable(); //Fire startup events
 	}
 
 	private void setCommands() {

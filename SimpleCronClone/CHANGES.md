@@ -1,6 +1,25 @@
-Version 0.9 (in development)
+Version 1.3
 
- > ??????????
+* Update Metrics to stop getting that annoying warning on the Metrics website.
+* Update EventListener.java and Metrics.java such that they understand getOnlinePlayers() is now a collection (thus use `.size()`)
+* Added `onDisable` event: Caution that it happens during plugin shutdown (and thus server shutdown) so most services are unavailable at this time. Meaning that the script command `exec` is basically the only "safe" command.
+* Added `onEnable` event: Ran when the plugin finishes loading. Note that does not mean the server is ready to handle console commands yet (via `do`), but those will be queued and ran once available though.
+
+Version 1.2
+
+* [Change log on DBO](http://dev.bukkit.org/bukkit-plugins/simplecronclone/files/5-simple-cron-clone-v1-2/)
+
+Version 1.1
+
+* [Change log on DBO](http://dev.bukkit.org/bukkit-plugins/simplecronclone/files/4-simple-cron-clone-v1-1/)
+
+Version 1.0
+
+* [Change log on DBO](http://dev.bukkit.org/bukkit-plugins/simplecronclone/files/3-simple-cron-clone-v1-0/)
+
+Version 0.9 
+
+ > (edit notes: oops forgot these existed due to using DBO...)
 
 
 Version 0.8
