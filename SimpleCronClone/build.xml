@@ -7,7 +7,7 @@
 	<property name="build" value="build" />
 	<property name="dist" value="dist" />
 
-	<property name="bukkit" value="../lib/bukkit.jar" />
+	<property name="bukkit" value="../lib/spigot.jar" />
 	<property name="cron4j" value="./lib/cron4j.jar" />
 
 	<target name="clean"

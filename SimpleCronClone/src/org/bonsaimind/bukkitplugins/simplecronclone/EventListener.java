@@ -44,23 +44,23 @@ public class EventListener implements Listener {
 			// eventFirstJoin
 			// TODO: this seems not to be reliable? any ideas on why? :/
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_FIRST_JOIN, new String[]{EventEngine.EVENT_FIRST_JOIN,
-						event.getPlayer().getName()});
+						event.getPlayer().getUniqueId().toString()});
 		}
 
 		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_JOIN, new String[]{EventEngine.EVENT_JOIN,
-					event.getPlayer().getName()});
+					event.getPlayer().getUniqueId().toString()});
 
 		// now that the player has "joined" lets see if the player is alone...
 		if (sccMain.getServer().getOnlinePlayers().size() == 1) {
 			// only user logged in means that we were just empty.
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_NOT_EMPTY, new String[]{
-						EventEngine.EVENT_SERVER_NOT_EMPTY, event.getPlayer().getName()});
+						EventEngine.EVENT_SERVER_NOT_EMPTY, event.getPlayer().getUniqueId().toString()});
 		}
 		if (event.getPlayer().getWorld().getPlayers().isEmpty()) {
 			//eventWorldNotEmpty joined and made a world no longer empty
 			//fired before the player is a part of the world list (because onjoin might move them?)
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_NOT_EMPTY, new String[]{
-						EventEngine.EVENT_WORLD_NOT_EMPTY, event.getPlayer().getName(),
+						EventEngine.EVENT_WORLD_NOT_EMPTY, event.getPlayer().getUniqueId().toString(),
 						event.getPlayer().getWorld().getName()});
 		}
 	}
@@ -69,17 +69,17 @@ public class EventListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		// eventQuit
 		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_QUIT, new String[]{EventEngine.EVENT_QUIT,
-					event.getPlayer().getName()});
+					event.getPlayer().getUniqueId().toString()});
 
 		if (sccMain.getServer().getOnlinePlayers().size() == 1) {
 			// this event fires before the server removes the player from the OnlinePlayers, so 1 not 0
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_SERVER_EMPTY, new String[]{
-						EventEngine.EVENT_SERVER_EMPTY, event.getPlayer().getName()});
+						EventEngine.EVENT_SERVER_EMPTY, event.getPlayer().getUniqueId().toString()});
 		}
 		if (event.getPlayer().getWorld().getPlayers().size() == 1) {
 			//eventWorldEmpty, left and made a world empty
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_EMPTY, new String[]{
-						EventEngine.EVENT_WORLD_EMPTY, event.getPlayer().getName(), event.getPlayer().getWorld().getName()});
+						EventEngine.EVENT_WORLD_EMPTY, event.getPlayer().getUniqueId().toString(), event.getPlayer().getWorld().getName()});
 		}
 	}
 
@@ -87,19 +87,19 @@ public class EventListener implements Listener {
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 		// eventPlayerWorldMove
 		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_PLAYER_WORLD_MOVE, new String[]{
-					EventEngine.EVENT_PLAYER_WORLD_MOVE, event.getPlayer().getName(), event.getFrom().getName(),
+					EventEngine.EVENT_PLAYER_WORLD_MOVE, event.getPlayer().getUniqueId().toString(), event.getFrom().getName(),
 					event.getPlayer().getWorld().getName()});
 
 		if (event.getFrom().getPlayers().isEmpty()) {
 			// eventWorldEmpty
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_EMPTY, new String[]{
-						EventEngine.EVENT_WORLD_EMPTY, event.getPlayer().getName(), event.getFrom().getName()});
+						EventEngine.EVENT_WORLD_EMPTY, event.getPlayer().getUniqueId().toString(), event.getFrom().getName()});
 		}
 		if (event.getPlayer().getWorld().getPlayers().size() == 1) {
 			// eventWorldNotEmpty (if one player, that must means its ours that
 			// just moved)
 			sccMain.eventEngine.runEventsFor(EventEngine.EVENT_WORLD_NOT_EMPTY, new String[]{
-						EventEngine.EVENT_WORLD_NOT_EMPTY, event.getPlayer().getName(),
+						EventEngine.EVENT_WORLD_NOT_EMPTY, event.getPlayer().getUniqueId().toString(),
 						event.getPlayer().getWorld().getName()});
 		}
 
@@ -108,14 +108,14 @@ public class EventListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		//eventPlayerDeath
 		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_DEATH, new String[]{
-			EventEngine.EVENT_DEATH, event.getEntity().getName(), event.getEntity().getWorld().getName()
+			EventEngine.EVENT_DEATH, event.getEntity().getUniqueId().toString(), event.getEntity().getWorld().getName()
 		});
 	}
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		//eventPlayerRespawn
 		sccMain.eventEngine.runEventsFor(EventEngine.EVENT_RESPAWN, new String[]{
-			EventEngine.EVENT_RESPAWN, event.getPlayer().getName(), event.getPlayer().getWorld().getName()
+			EventEngine.EVENT_RESPAWN, event.getPlayer().getUniqueId().toString(), event.getPlayer().getWorld().getName()
 		});
 	}
 	public void onEnable(){

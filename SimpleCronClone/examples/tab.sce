@@ -1,10 +1,11 @@
 
+#admalledd ::: ddef6ca3-03fd-4271-816f-6400c2633ae4
+
 playerJoin:
     - file: 'events/playerJoin.sce'
       filters:
           players:
-              - admalledd
-              - -notch
+              - -ddef6ca3-03fd-4271-816f-6400c2633ae4
           worlds:
               - -hub
     - command: 'do say allevents:::$0:$1'
@@ -48,17 +49,16 @@ playerTeleportWorld:
           players:
           worlds:
   
-  
 worldEmpty:
     - file: 'events/worldEmpty.sce'
       filters:
           players:
-              - admalledd
+              - ddef6ca3-03fd-4271-816f-6400c2633ae4
           worlds:
     - command: 'do say sample one liner $0 $1 $2 $3'
       filters:
           players:
-              - admalledd
+              - ddef6ca3-03fd-4271-816f-6400c2633ae4
           worlds:
               - -world
   
