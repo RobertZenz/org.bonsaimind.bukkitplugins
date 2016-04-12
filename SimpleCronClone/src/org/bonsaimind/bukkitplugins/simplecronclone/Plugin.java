@@ -19,6 +19,7 @@ package org.bonsaimind.bukkitplugins.simplecronclone;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -98,6 +99,12 @@ public class Plugin extends JavaPlugin {
 						for (int scriptIdx = idx + 1; scriptIdx < args.length; scriptIdx++) {
 							String script = args[scriptIdx];
 
+							String[] _scriptArgs = null;
+							if (scriptIdx+1 < args.length){
+								_scriptArgs = Arrays.copyOfRange(args, scriptIdx, args.length);
+							}
+							final String[] scriptArgs = _scriptArgs;
+
 							if (!script.endsWith(".scc")) {
 								script += ".scc";
 							}
@@ -111,7 +118,7 @@ public class Plugin extends JavaPlugin {
 								@Override
 								public void run() {
 									ScriptParser script = new ScriptParser(server, getLogger(), true); //from console we are always verbose.
-									if (script.executeScript(new File("plugins/SimpleCronClone/" + finalScript))) {
+									if (script.executeScript(new File("plugins/SimpleCronClone/" + finalScript), scriptArgs)) {
 										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(
 												Bukkit.getServer().getPluginManager().getPlugin("SimpleCronClone"), new Runnable() {
 
@@ -138,6 +145,7 @@ public class Plugin extends JavaPlugin {
 							//TODO: does this bork a reload command?
 							t.setDaemon(true);
 							t.start();
+							return true;
 						}
 					} else if (arg.equalsIgnoreCase("restart")) {
 						if (!sender.hasPermission("simplecronclone.restart")) {
@@ -152,6 +160,7 @@ public class Plugin extends JavaPlugin {
 						eventEngine.verbose = getConfig().getBoolean("SCE.verbose");
 						eventEngine.start();
 						sender.sendMessage("SimpleCronClone: Restarted.");
+						return true;
 					} else if (arg.equalsIgnoreCase("stop")) {
 						if (!sender.hasPermission("simplecronclone.stop")) {
 							sender.sendMessage("I'm sorry, Dave. I'm afraid I can't do that. You do not have the permission simplecronclone.stop");
@@ -161,6 +170,7 @@ public class Plugin extends JavaPlugin {
 						eventEngine.stop();
 						sender.sendMessage("SimpleCronClone: HALTED!");
 						sender.sendMessage("SimpleCronClone: Use \"/simplecronclone restart\" to restart it.");
+						return true;
 					}
 				}
 
