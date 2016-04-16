@@ -1,0 +1,5 @@
+do say hello!
+sleep 1500
+do say I am a "slow" script
+sleep 1500
+do say introducing myself via sleepy timings!

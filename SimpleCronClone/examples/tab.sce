@@ -16,6 +16,7 @@ playerJoin:
       filters:
           players:
           worlds:
+    - file: 'events/uuid_maptest.sce'
 
 playerFirstJoin:
     - file: 'events/playerFirstJoin.sce'
@@ -135,4 +136,4 @@ onDisable:
       filters:
           players:
           worlds:
-                    
+

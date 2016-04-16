@@ -45,6 +45,7 @@ public final class ScriptParser {
 	private static final String COMMAND_DO_ASYNC = "doAsync";
 	private static final String COMMAND_EXEC = "exec";
 	private static final String COMMAND_EXECWAIT = "execWait";
+	private static final String COMMAND_SLEEP = "sleep";
 	private static final String COMMAND_WAIT_ASYNC = "waitForAsync";
 	private static final String COMMENT_START = "#";
 	private static final String VARIABLE_START_TOKEN = "$";
@@ -176,6 +177,8 @@ public final class ScriptParser {
 		} else if (type.equalsIgnoreCase(COMMAND_EXECWAIT)) {
 			// Execute a process
 			return runExecWait(command);
+		} else if (type.equalsIgnoreCase(COMMAND_SLEEP)){
+			runSleep(command);
 		} else if (type.equalsIgnoreCase(COMMAND_WAIT_ASYNC)) {
 			// Wait for those Async tasks. No command to pass, just wait
 			runWaitForAsync();
@@ -183,7 +186,18 @@ public final class ScriptParser {
 			logger.log(Level.WARNING, "Unknown command: {0}", type);
 		}
 
-		return "";
+		return lastOutput;
+	}
+
+	private void runSleep(String command) throws ScriptExecutionException {
+		try {
+			long time = Long.parseLong(command);
+			Thread.sleep(time);
+		} catch (InterruptedException ex){
+			throw new ScriptExecutionException("Sleep failed waiting", ex);
+		} catch (NumberFormatException ex){
+			throw new ScriptExecutionException("Sleep failed parsing milliseconds argument", ex);
+		}
 	}
 
 	private void runWaitForAsync() throws ScriptExecutionException {
@@ -322,7 +336,6 @@ public final class ScriptParser {
 			BufferedReader bufReader = new BufferedReader(reader);
 			while ((line = bufReader.readLine()) != null) {
 				builder.append(line);
-				builder.append(" ");
 			}
 
 			bufReader.close();
